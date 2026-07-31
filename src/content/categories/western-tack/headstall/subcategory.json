@@ -1,0 +1,12 @@
+{
+  "name": "Headstalls",
+  "shortDescription": "One ear, browband and split ear patterns in tooled, buckstitched and plain finishes.",
+  "description": "Headstalls are cut on the strap line for even stretch, then edged, burnished and hand-set with solid brass or stainless hardware.",
+  "thumbnail": {
+    "src": "/images/categories/western-tack/headstall/headstall-thumb.webp",
+    "width": 1200,
+    "height": 1200
+  },
+  "featured": true,
+  "order": 1
+}

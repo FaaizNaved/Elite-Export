@@ -1,0 +1,324 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens — the single source of truth for the whole application.
+
+   Nothing outside this file should contain a raw hex value, a font stack, a
+   radius, a shadow or an easing curve. Components reference these tokens
+   through Tailwind utilities (`bg-primary`, `rounded-card`, `shadow-md`,
+   `text-h2`, `ease-premium`) or through the `@utility` helpers at the bottom.
+   ========================================================================== */
+
+@theme {
+  /* ---------------------------------------------------------------- Fonts */
+  /* Wired to next/font in src/app/layout.tsx. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
+
+  /* --------------------------------------------------------------- Colors */
+  /* Surfaces — Warm Ivory instead of pure white so leather photography reads richer. */
+  --color-background: #f8f5f0;
+  --color-surface: #ffffff;
+  --color-surface-sunken: #f2eee7;
+
+  /* Text */
+  --color-foreground: #202020;
+  --color-foreground-secondary: #666666;
+  --color-foreground-muted: #8c8c8c;
+
+  /* Lines */
+  --color-border: #eaeaea;
+  --color-border-strong: #d8d4cd;
+
+  /* Brand — Deep Charcoal, Warm Ivory, Antique Gold */
+  --color-primary: #1b1b1b;
+  --color-primary-foreground: #f8f5f0;
+  --color-secondary: #f8f5f0;
+  --color-secondary-foreground: #1b1b1b;
+  --color-accent: #b68d40;
+  --color-accent-foreground: #ffffff;
+  --color-accent-subtle: #f3ead9;
+
+  /* Status */
+  --color-success: #2e7d32;
+  --color-success-subtle: #e6f0e6;
+  --color-error: #c62828;
+  --color-error-subtle: #f9e7e7;
+  /* Extends the documented palette: the Badge component needs a warning tone
+     that reads as a warmer, deeper gold than the accent. */
+  --color-warning: #8a6a1f;
+  --color-warning-subtle: #f5edda;
+
+  /* Interaction */
+  --color-focus: #b68d40;
+  --color-overlay: color-mix(in oklab, #1b1b1b 62%, transparent);
+
+  /* ----------------------------------------------------------- Typography */
+  /* Fluid by design — sizes scale with the viewport instead of stepping at
+     breakpoints, which keeps the editorial rhythm on ultra-wide screens. */
+  --text-display: clamp(3rem, 1.6rem + 5.6vw, 5.5rem);
+  --text-display--line-height: 1.02;
+  --text-display--letter-spacing: -0.03em;
+
+  --text-hero: clamp(2.5rem, 1.5rem + 4vw, 4rem);
+  --text-hero--line-height: 1.06;
+  --text-hero--letter-spacing: -0.025em;
+
+  --text-h1: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);
+  --text-h1--line-height: 1.12;
+  --text-h1--letter-spacing: -0.02em;
+
+  --text-h2: clamp(1.75rem, 1.35rem + 1.5vw, 2.25rem);
+  --text-h2--line-height: 1.18;
+  --text-h2--letter-spacing: -0.015em;
+
+  --text-h3: clamp(1.375rem, 1.2rem + 0.7vw, 1.625rem);
+  --text-h3--line-height: 1.25;
+  --text-h3--letter-spacing: -0.01em;
+
+  --text-h4: 1.25rem;
+  --text-h4--line-height: 1.35;
+  --text-h4--letter-spacing: -0.005em;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.7;
+
+  --text-body: 1rem;
+  --text-body--line-height: 1.7;
+
+  --text-small: 0.875rem;
+  --text-small--line-height: 1.6;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.5;
+
+  --text-overline: 0.75rem;
+  --text-overline--line-height: 1.4;
+  --text-overline--letter-spacing: 0.18em;
+
+  --text-button: 0.875rem;
+  --text-button--line-height: 1;
+  --text-button--letter-spacing: 0.02em;
+
+  /* -------------------------------------------------------------- Spacing */
+  /* 4px base. The approved scale is 4 8 12 16 24 32 48 64 96 128, i.e. the
+     Tailwind steps 1 2 3 4 6 8 12 16 24 32. Never use arbitrary spacing. */
+  --spacing: 0.25rem;
+
+  /* --------------------------------------------------------- Border radius */
+  --radius-button: 14px;
+  --radius-input: 14px;
+  --radius-card: 20px;
+  --radius-image: 24px;
+  --radius-badge: 999px;
+
+  /* -------------------------------------------------------------- Shadows */
+  /* Soft and low-contrast — depth comes from spacing, not from heavy shadows. */
+  --shadow-sm: 0 1px 2px color-mix(in oklab, #1b1b1b 5%, transparent);
+  --shadow-md:
+    0 2px 4px color-mix(in oklab, #1b1b1b 4%, transparent),
+    0 8px 20px color-mix(in oklab, #1b1b1b 6%, transparent);
+  --shadow-lg:
+    0 4px 8px color-mix(in oklab, #1b1b1b 4%, transparent),
+    0 16px 40px color-mix(in oklab, #1b1b1b 8%, transparent);
+  --shadow-floating:
+    0 8px 16px color-mix(in oklab, #1b1b1b 5%, transparent),
+    0 32px 64px color-mix(in oklab, #1b1b1b 12%, transparent);
+
+  /* ------------------------------------------------------------- Motion */
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-premium: 700ms;
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-premium: cubic-bezier(0.19, 1, 0.22, 1);
+
+  /* ------------------------------------------------------------- Z-index */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-sticky: 20;
+  --z-dropdown: 30;
+  --z-overlay: 40;
+  --z-modal: 50;
+  --z-tooltip: 60;
+  --z-toast: 70;
+
+  /* --------------------------------------------------------- Breakpoints */
+  /* Tailwind's sm–2xl are kept; 3xl covers the ultra-wide layouts. */
+  --breakpoint-3xl: 120rem;
+
+  /* ----------------------------------------------------- Container widths */
+  --container-narrow: 45rem; /* long-form reading */
+  --container-content: 64rem; /* standard page content */
+  --container-wide: 90rem; /* editorial / full-bleed sections */
+}
+
+/* ==========================================================================
+   Base layer
+   ========================================================================== */
+
+@layer base {
+  :root {
+    /* Lets height animate to and from `auto` — used by the accordion. */
+    interpolate-size: allow-keywords;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /**
+   * Native `<details>` animation. Browsers without `::details-content`
+   * ignore this and toggle instantly, which is an acceptable fallback.
+   */
+  .accordion-item::details-content {
+    block-size: 0;
+    overflow: hidden;
+    transition:
+      block-size var(--duration-normal) var(--ease-entrance),
+      content-visibility var(--duration-normal) allow-discrete;
+  }
+
+  .accordion-item[open]::details-content {
+    block-size: auto;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-foreground);
+  }
+
+  /* One focus treatment for the entire application. */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  /* Honour the OS setting everywhere, including third-party components. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+/* ==========================================================================
+   Utilities — token-backed helpers for values Tailwind has no namespace for
+   (transition durations and z-index).
+   ========================================================================== */
+
+@utility transition-fast {
+  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
+    transform;
+  transition-duration: var(--duration-fast);
+  transition-timing-function: var(--ease-standard);
+}
+
+/**
+ * Named `base` rather than `normal`: Tailwind v4 already ships
+ * `transition-normal` for the `transition-behavior` property.
+ */
+@utility transition-base {
+  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
+    transform;
+  transition-duration: var(--duration-normal);
+  transition-timing-function: var(--ease-standard);
+}
+
+@utility transition-slow {
+  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
+    transform;
+  transition-duration: var(--duration-slow);
+  transition-timing-function: var(--ease-entrance);
+}
+
+/** The signature easing: long, slow-settling, used for reveals and hero motion. */
+@utility transition-premium {
+  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
+    transform;
+  transition-duration: var(--duration-premium);
+  transition-timing-function: var(--ease-premium);
+}
+
+@utility z-sticky {
+  z-index: var(--z-sticky);
+}
+
+@utility z-dropdown {
+  z-index: var(--z-dropdown);
+}
+
+@utility z-overlay {
+  z-index: var(--z-overlay);
+}
+
+@utility z-modal {
+  z-index: var(--z-modal);
+}
+
+@utility z-tooltip {
+  z-index: var(--z-tooltip);
+}
+
+@utility z-toast {
+  z-index: var(--z-toast);
+}
+
+/** Shimmer used by Skeleton. Static when the user prefers reduced motion. */
+@utility shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in oklab, #ffffff 55%, transparent),
+      transparent
+    );
+    animation: shimmer 1.8s var(--ease-standard) infinite;
+  }
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/** Marquee track: the content is duplicated once, so -50% is one seamless pass. */
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/** Drawer entry (mobile navigation). */
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}

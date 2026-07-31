@@ -1,0 +1,27 @@
+{
+  "//": "Used only by `npm run check:content` — compiles the content engine to CJS so it can run outside Next.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".content-check",
+    "rootDir": ".",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "noEmit": false,
+    "types": ["node"]
+  },
+  "include": ["scripts/**/*.ts", "src/**/*.ts"],
+  "//exclude": "Browser-only layers. The content engine must stay runnable in plain Node.",
+  "exclude": [
+    "src/app/**",
+    "src/mdx/**",
+    "src/components/**",
+    "src/animations/**",
+    "src/providers/**",
+    "src/services/**",
+    "src/lib/cn.ts"
+  ]
+}

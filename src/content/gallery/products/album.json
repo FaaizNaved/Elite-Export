@@ -1,0 +1,50 @@
+{
+  "name": "Products",
+  "shortDescription": "Finished pieces from across the tack and leather goods range.",
+  "cover": {
+    "src": "/images/gallery/products/products-cover.webp",
+    "alt": "Products — Elite Export",
+    "width": 1600,
+    "height": 900
+  },
+  "images": [
+    {
+      "src": "/images/gallery/products/products-1.webp",
+      "alt": "Hand-tooled headstall",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "/images/gallery/products/products-2.webp",
+      "alt": "Breast collar detail",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/products/products-3.webp",
+      "alt": "Messenger bag front",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/products/products-4.webp",
+      "alt": "Stitching detail on a strap",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "/images/gallery/products/products-5.webp",
+      "alt": "Brass hardware close-up",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/products/products-6.webp",
+      "alt": "Finished pieces laid out",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "featured": true,
+  "order": 3
+}

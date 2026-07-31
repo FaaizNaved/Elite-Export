@@ -1,0 +1,50 @@
+{
+  "name": "Machinery",
+  "shortDescription": "The equipment our production lines run on.",
+  "cover": {
+    "src": "/images/gallery/machinery/machinery-cover.webp",
+    "alt": "Machinery — Elite Export",
+    "width": 1600,
+    "height": 900
+  },
+  "images": [
+    {
+      "src": "/images/gallery/machinery/machinery-1.webp",
+      "alt": "Clicking press in operation",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "/images/gallery/machinery/machinery-2.webp",
+      "alt": "Computerised stitching head",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/machinery/machinery-3.webp",
+      "alt": "Skiving machine",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/machinery/machinery-4.webp",
+      "alt": "Edge painting line",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "/images/gallery/machinery/machinery-5.webp",
+      "alt": "Embossing press",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/machinery/machinery-6.webp",
+      "alt": "Strap cutting machine",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "featured": false,
+  "order": 2
+}

@@ -1,0 +1,50 @@
+{
+  "name": "Events",
+  "shortDescription": "Trade fairs, buyer visits and factory audits.",
+  "cover": {
+    "src": "/images/gallery/events/events-cover.webp",
+    "alt": "Events — Elite Export",
+    "width": 1600,
+    "height": 900
+  },
+  "images": [
+    {
+      "src": "/images/gallery/events/events-1.webp",
+      "alt": "Trade fair stand",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "/images/gallery/events/events-2.webp",
+      "alt": "Buyer visiting the factory floor",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/events/events-3.webp",
+      "alt": "Audit in progress",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/events/events-4.webp",
+      "alt": "Product presentation",
+      "width": 1200,
+      "height": 1600
+    },
+    {
+      "src": "/images/gallery/events/events-5.webp",
+      "alt": "Team at an export fair",
+      "width": 1600,
+      "height": 900
+    },
+    {
+      "src": "/images/gallery/events/events-6.webp",
+      "alt": "Factory tour",
+      "width": 1600,
+      "height": 900
+    }
+  ],
+  "featured": false,
+  "order": 5
+}
