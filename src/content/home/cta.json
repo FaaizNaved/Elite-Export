@@ -1,0 +1,8 @@
+{
+  "eyebrow": "What happens next",
+  "heading": "Send us the piece you need made",
+  "description": "Drawings, a reference sample or photographs — whatever you already have. A person reads every enquiry and replies with what we can and cannot do.",
+  "primaryCta": { "label": "Start a buyer enquiry", "href": "/buyer-enquiry" },
+  "secondaryCta": { "label": "Contact us", "href": "/contact" },
+  "reassurances": ["Replies within two business days."]
+}

@@ -1,20 +1,25 @@
 import assert from "node:assert/strict";
-import { faqs } from "../src/data/faqs";
-import { testimonials } from "../src/data/testimonials";
+import { mainNav } from "../src/config/navigation";
 import { productBreadcrumbs, subcategoryBreadcrumbs } from "../src/lib/breadcrumbs";
 import {
+  contentRegistry,
   getBlogPosts,
   getCatalog,
   getCompanyPages,
+  getFaqs,
+  getGalleryAlbums,
+  getHomeContent,
   getLegalPages,
+  getMachines,
   getProduct,
   getProductRoutes,
   getProductsMegaMenu,
   getRelatedProducts,
+  getTestimonials,
 } from "../src/lib/content";
-import { getMainNav, isActivePath } from "../src/lib/navigation";
+import { isActivePath } from "../src/lib/navigation";
 import { productMetadata } from "../src/lib/seo";
-import { breadcrumbJsonLd, productJsonLd } from "../src/lib/structured-data";
+import { breadcrumbJsonLd, productJsonLd } from "../src/lib/seo";
 
 /**
  * Loads every piece of content and asserts the engine's invariants.
@@ -53,6 +58,16 @@ async function main() {
       product.gallery.images.every((image) => image.alt.trim()),
       `${product.slug}: a gallery image is missing alt text`,
     );
+
+    // Assets: content names images relatively, the resolver turns them into
+    // paths under the product's own folder.
+    const expectedBase = `/images/products/${route.category}/${route.subcategory}/${route.product}/`;
+    for (const image of [product.gallery.thumbnail, ...product.gallery.images]) {
+      assert.ok(
+        image.src.startsWith(expectedBase),
+        `${product.slug}: "${image.src}" was not resolved into ${expectedBase}`,
+      );
+    }
   }
 
   // Related products: never include the product itself, never repeat.
@@ -77,7 +92,7 @@ async function main() {
   // Navigation: the mega menu mirrors the catalog.
   const megaMenu = await getProductsMegaMenu();
   assert.equal(megaMenu.columns.length, categories.length);
-  assert.ok(getMainNav().some((item) => item.megaMenu === "products"));
+  assert.ok(mainNav.some((item) => item.megaMenu === "products"));
   assert.ok(isActivePath(first.href, "/products"), "/products should be active on a product page");
   assert.ok(!isActivePath(first.href, "/"), "home should not be active on a product page");
   assert.ok(!isActivePath("/products-archive", "/products"), "prefix match must respect segment boundaries");
@@ -92,22 +107,67 @@ async function main() {
     crumbs.length,
   );
 
-  // Editorial content and static data.
-  const [companyPages, blogPosts, legalPages] = await Promise.all([
-    getCompanyPages(),
-    getBlogPosts(),
-    getLegalPages(),
-  ]);
+  // Editorial content, machinery, gallery and the singleton documents.
+  const [companyPages, blogPosts, legalPages, machines, albums, faqs, testimonials, home] =
+    await Promise.all([
+      getCompanyPages(),
+      getBlogPosts(),
+      getLegalPages(),
+      getMachines(),
+      getGalleryAlbums(),
+      getFaqs(),
+      getTestimonials(),
+      getHomeContent(),
+    ]);
+
   assert.ok(companyPages.length > 0, "no company pages were loaded");
   assert.ok(blogPosts.every((post) => post.readingTime > 0), "reading time was not computed");
   assert.ok(legalPages.every((page) => page.updatedAt instanceof Date));
-  assert.ok(faqs.length > 0 && testimonials.length > 0);
+  assert.ok(machines.length > 0, "no machines were loaded");
+  assert.ok(
+    albums.every((album) => album.images.length > 0),
+    "a gallery album has no images",
+  );
+  assert.ok(faqs.length > 0 && testimonials.length > 0, "singleton collections are empty");
+
+  // Home is assembled from one file per section; every section the page reads
+  // must be present after composition.
+  assert.ok(home.hero.heading.length > 0, "home hero did not load");
+  assert.ok(home.intro.body.length > 0, "home company body did not load");
+  assert.ok(home.pause.image.src.length > 0, "home pause image did not load");
+  assert.ok(home.cta.primaryCta.href.length > 0, "home CTA did not load");
+  for (const key of ["categories", "manufacturing", "quality", "origin"]) {
+    assert.ok(home.sections[key]?.heading, `home section "${key}" is missing after composition`);
+  }
+
+  // Registry: the facade and the loaders must agree, or one of them is stale.
+  assert.equal((await contentRegistry.products.list()).length, products.length);
+  assert.equal((await contentRegistry.machines.list()).length, machines.length);
+  assert.equal((await contentRegistry.pages.list()).length, companyPages.length);
+  assert.ok(await contentRegistry.machines.exists(machines[0].slug));
+  assert.ok(!(await contentRegistry.machines.exists("no-such-machine")));
+  assert.equal((await contentRegistry.machines.find("no-such-machine")), null);
+  assert.equal((await contentRegistry.home.get()).hero.heading, home.hero.heading);
+
+  // Facts register (blueprint §0): the home page must not author figures.
+  // Anything countable is derived from config or the catalogue at render time.
+  const homeJson = JSON.stringify(home);
+  for (const forbidden of ["40,000", "40000", "45,000", "AQL", "0.4%", "MOQ"]) {
+    assert.ok(
+      !homeJson.includes(forbidden),
+      `home content contains the unverified figure "${forbidden}" — see the facts register`,
+    );
+  }
+
+  // Every machine resolves from its own route.
+  assert.equal(new Set(machines.map((machine) => machine.href)).size, machines.length);
 
   console.log(
     `✓ content OK — ${categories.length} categories, ` +
       `${categories.reduce((n, c) => n + c.subcategories.length, 0)} subcategories, ` +
-      `${products.length} products, ${blogPosts.length} posts, ` +
-      `${companyPages.length} company pages, ${legalPages.length} legal pages`,
+      `${products.length} products, ${machines.length} machines, ${albums.length} albums, ` +
+      `${blogPosts.length} posts, ${companyPages.length} company pages, ` +
+      `${legalPages.length} legal pages, ${faqs.length} FAQs`,
   );
 }
 

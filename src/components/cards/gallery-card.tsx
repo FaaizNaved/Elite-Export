@@ -43,15 +43,15 @@ export function GalleryCard({
         loading={priority ? undefined : "lazy"}
         placeholder="blur"
         blurDataURL={BLUR_DATA_URL}
-        className="object-cover transition-premium group-hover/tile:scale-[1.04] motion-reduce:group-hover/tile:scale-100"
+        className="object-cover transition-premium group-hover/tile:scale-[1.03] motion-reduce:group-hover/tile:scale-100"
       />
 
       {onOpen && (
         <span
           aria-hidden
-          className="absolute inset-0 flex items-center justify-center bg-primary/0 opacity-0 transition-base group-hover/tile:bg-primary/35 group-hover/tile:opacity-100 group-focus-visible/tile:bg-primary/35 group-focus-visible/tile:opacity-100"
+          className="absolute inset-0 flex items-center justify-center bg-primary/0 opacity-0 transition-base group-hover/tile:bg-primary/25 group-hover/tile:opacity-100 group-focus-visible/tile:bg-primary/25 group-focus-visible/tile:opacity-100"
         >
-          <span className="inline-flex size-11 items-center justify-center rounded-badge bg-surface/90 text-primary">
+          <span className="inline-flex size-12 items-center justify-center rounded-badge bg-surface/95 text-primary shadow-sm">
             <Icon icon={Maximize2} size="sm" />
           </span>
         </span>

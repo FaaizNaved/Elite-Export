@@ -3,13 +3,13 @@
   "shortDescription": "Headstalls, breast collars and reins built for working riders and show arenas alike.",
   "description": "Our western tack line is cut from vegetable-tanned harness leather and finished by hand. Every buckle, conway and keeper is selected for a working life measured in decades, not seasons.",
   "hero": {
-    "src": "/images/categories/western-tack/western-tack-hero.webp",
+    "src": "western-tack-hero.webp",
     "alt": "Hand-tooled western headstall on a workbench",
     "width": 2400,
     "height": 1200
   },
   "thumbnail": {
-    "src": "/images/categories/western-tack/western-tack-thumb.webp",
+    "src": "western-tack-thumb.webp",
     "width": 1200,
     "height": 1200
   },

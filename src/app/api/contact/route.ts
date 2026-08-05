@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { countryName } from "@/utils/country";
-import { contactFormSchema } from "@/schemas/forms";
+import { contactFormSchema } from "@/models/forms";
 import { isEmailConfigured, sendEnquiryEmail } from "@/services/email";
 
 /**

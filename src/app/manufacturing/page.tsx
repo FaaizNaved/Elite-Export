@@ -7,7 +7,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { ROUTES } from "@/constants";
 import { getCompanyPage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
-import { loadCompanyContent } from "@/mdx";
+import { loadCompanyContent } from "@/lib/mdx";
 
 const SLUG = "manufacturing";
 

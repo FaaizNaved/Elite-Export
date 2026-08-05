@@ -12,8 +12,8 @@ import { Typography } from "@/components/ui/typography";
 import { ROUTES } from "@/constants";
 import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 import { getMachine, getMachineRoutes } from "@/lib/content";
-import { buildMetadata } from "@/lib/seo";
-import { loadMachineContent } from "@/mdx";
+import { machineMetadata } from "@/lib/seo";
+import { loadMachineContent } from "@/lib/mdx";
 
 interface PageProps {
   params: Promise<{ machine: string }>;
@@ -28,16 +28,7 @@ export const dynamicParams = false;
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { machine: slug } = await params;
   const machine = await getMachine(slug);
-  if (!machine) return {};
-
-  return buildMetadata({
-    title: machine.title,
-    description: machine.shortDescription,
-    path: machine.href,
-    seo: machine.seo,
-    image: machine.gallery.thumbnail,
-    modifiedTime: machine.updatedAt,
-  });
+  return machine ? machineMetadata(machine) : {};
 }
 
 export default async function MachinePage({ params }: PageProps) {

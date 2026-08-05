@@ -3,8 +3,7 @@ import { Inter, Playfair_Display } from "next/font/google";
 import { SiteFooter, SiteHeader } from "@/components/layout";
 import { BackToTop } from "@/components/scroll";
 import { DEFAULT_HTML_LANG } from "@/constants";
-import { buildRootMetadata } from "@/lib/seo";
-import { organizationJsonLd } from "@/lib/structured-data";
+import { buildRootMetadata, organizationJsonLd } from "@/lib/seo";
 import { SmoothScroll } from "@/providers/smooth-scroll";
 import "./globals.css";
 

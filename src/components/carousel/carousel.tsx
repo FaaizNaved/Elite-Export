@@ -202,6 +202,14 @@ export function Carousel({
   );
 }
 
+/**
+ * Slide widths, expressed as a share of the track minus the gap.
+ *
+ * On small screens a slide stops short of the viewport edge on purpose: the
+ * next one peeks in, which is what tells you the track continues. These are
+ * layout arithmetic for this component, not design tokens — a shared token
+ * could not carry the `calc()` that subtracts the gap.
+ */
 const slideBasis: Record<CarouselSlideWidth, string> = {
   full: "w-full",
   half: "w-[85%] sm:w-[calc(50%-0.75rem)]",

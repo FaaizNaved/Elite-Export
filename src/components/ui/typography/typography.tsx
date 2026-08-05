@@ -23,7 +23,16 @@ export const typographyVariants = cva("", {
       small: "font-sans text-small",
       caption: "font-sans text-caption text-foreground-muted",
       muted: "font-sans text-body text-foreground-muted text-pretty",
-      overline: "font-sans text-overline font-semibold uppercase text-foreground-muted",
+      /**
+       * Secondary, not muted. An eyebrow is a label a buyer reads, and
+       * `--color-foreground-muted` (#8c8c8c) measures 2.91:1 on the sunken
+       * surface against the 4.5:1 that 12px text requires. The quiet comes from
+       * the size, weight and tracking — it does not need to come from the
+       * contrast as well. Darkening the token itself was not an option: the
+       * value that passes is within six steps of `--color-foreground-secondary`
+       * and would have collapsed the two into one.
+       */
+      overline: "font-sans text-overline font-semibold uppercase text-foreground-secondary",
     },
   },
   defaultVariants: { variant: "body" },

@@ -8,11 +8,11 @@ import { FeatureGrid, PageHero, ProcessSteps, Prose, SectionHeader, StatsBand } 
 import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { siteConfig } from "@/config/site";
+import { company } from "@/config";
 import { ROUTES } from "@/constants";
 import { getCompanyPage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
-import { loadCompanyContent } from "@/mdx";
+import { loadCompanyContent } from "@/lib/mdx";
 
 const SLUG = "quality";
 
@@ -26,7 +26,7 @@ export default async function QualityPage() {
   if (!page) notFound();
 
   const Content = await loadCompanyContent(SLUG);
-  const { certifications } = siteConfig.company;
+  const { certifications } = company;
 
   return (
     <>

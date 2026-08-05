@@ -1,5 +1,5 @@
 import type { Transition, Variants } from "framer-motion";
-import { duration, easing, stagger, travel } from "./tokens";
+import { duration, easing, stagger, travel } from "../theme/motion";
 
 /**
  * Reusable Framer Motion variants.
@@ -26,7 +26,8 @@ export const fadeUp: Variants = {
 };
 
 export const slideIn = (from: "left" | "right" | "up" | "down" = "up"): Variants => {
-  const distance = travel.lg * (from === "left" || from === "up" ? -1 : 1);
+  // 24px, not 48. Blueprint §15: heavy things move less, not more.
+  const distance = travel.md * (from === "left" || from === "up" ? -1 : 1);
   const horizontal = from === "left" || from === "right";
 
   return {
@@ -53,21 +54,18 @@ export const reveal: Variants = {
   },
 };
 
+/**
+ * Panel entrance for menus and dropdowns: a short drop with a fade, fast enough
+ * that it never delays the pointer.
+ */
+export const panel: Variants = {
+  hidden: { opacity: 0, y: -8 },
+  visible: { opacity: 1, y: 0, transition: transition(duration.normal) },
+  exit: { opacity: 0, y: -8, transition: transition(duration.fast) },
+};
+
 /** Parent variant: children with `hidden`/`visible` animate in sequence. */
 export const staggerContainer = (delayChildren = 0, step: number = stagger.normal): Variants => ({
   hidden: {},
   visible: { transition: { staggerChildren: step, delayChildren } },
 });
-
-/** Counter/marquee are timing configs rather than variants — the components in
- *  Phase 5 read them so their pacing matches everything else. */
-export const counter = {
-  duration: 1.8,
-  ease: easing.standard,
-} as const;
-
-export const marquee = {
-  /** Pixels per second. Slow enough to read, fast enough to feel alive. */
-  speed: 40,
-  ease: "linear",
-} as const;

@@ -9,8 +9,13 @@ import { CardImage } from "./card-image";
 
 export interface CategoryCardProps {
   category: Category;
-  /** `overlay` puts the copy on the image — used for the home page grid. */
-  variant?: "default" | "overlay";
+  /**
+   * `overlay` puts the copy on the image.
+   * `editorial` is the home page treatment (blueprint §3): a tall portrait
+   * still with the copy set beneath it, so the photograph leads and the type
+   * follows — not a card with a picture in it.
+   */
+  variant?: "default" | "overlay" | "editorial";
   priority?: boolean;
   className?: string;
 }
@@ -23,6 +28,40 @@ export function CategoryCard({
 }: CategoryCardProps) {
   const image = category.hero ?? category.thumbnail;
   const count = formatCount(category.productCount, "Product");
+
+  if (variant === "editorial") {
+    /**
+     * A plate in a catalogue, not a card in an application: no border, no
+     * surface, no lift, no shadow. It was previously an `interactive` Card with
+     * its border and background switched off, which left a transparent box
+     * rising off the page and casting a shadow onto nothing. The photograph's
+     * own slow zoom and the gold action line carry the affordance.
+     */
+    return (
+      <div className={cn("group flex flex-col", className)}>
+        <Link href={category.href} className="flex flex-1 flex-col gap-6">
+          <CardImage
+            image={image}
+            ratio="portrait"
+            priority={priority}
+            // Two up from 768px — the default three-up hint fetches a image
+            // roughly a third too small for a plate this size.
+            sizes="(min-width: 768px) 50vw, 100vw"
+            className="rounded-image"
+          />
+
+          <div className="flex flex-col gap-3">
+            <Typography variant="overline">{count}</Typography>
+            <CardTitle className="text-h2">{category.name}</CardTitle>
+            <CardDescription className="max-w-md text-body">
+              {category.shortDescription}
+            </CardDescription>
+            <CardAction label={`View ${category.name.toLowerCase()}`} className="mt-2" />
+          </div>
+        </Link>
+      </div>
+    );
+  }
 
   if (variant === "overlay") {
     return (

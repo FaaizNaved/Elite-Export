@@ -5,7 +5,7 @@ import { ROUTES } from "@/constants";
 import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 import { getLegalPage, getLegalRoutes } from "@/lib/content";
 import { legalPageMetadata } from "@/lib/seo";
-import { loadLegalContent } from "@/mdx";
+import { loadLegalContent } from "@/lib/mdx";
 import { formatDate } from "@/utils/format";
 
 interface PageProps {

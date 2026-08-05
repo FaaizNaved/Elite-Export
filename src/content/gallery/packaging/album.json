@@ -2,44 +2,44 @@
   "name": "Packaging",
   "shortDescription": "Export packing, carton marking and palletisation.",
   "cover": {
-    "src": "/images/gallery/packaging/packaging-cover.webp",
+    "src": "packaging-cover.webp",
     "alt": "Packaging — Elite Export",
     "width": 1600,
     "height": 900
   },
   "images": [
     {
-      "src": "/images/gallery/packaging/packaging-1.webp",
+      "src": "packaging-1.webp",
       "alt": "Individual poly bagging",
       "width": 1200,
       "height": 1600
     },
     {
-      "src": "/images/gallery/packaging/packaging-2.webp",
+      "src": "packaging-2.webp",
       "alt": "Export cartons being marked",
       "width": 1600,
       "height": 900
     },
     {
-      "src": "/images/gallery/packaging/packaging-3.webp",
+      "src": "packaging-3.webp",
       "alt": "Packing list preparation",
       "width": 1600,
       "height": 900
     },
     {
-      "src": "/images/gallery/packaging/packaging-4.webp",
+      "src": "packaging-4.webp",
       "alt": "Palletised cartons",
       "width": 1200,
       "height": 1600
     },
     {
-      "src": "/images/gallery/packaging/packaging-5.webp",
+      "src": "packaging-5.webp",
       "alt": "Carton sealing",
       "width": 1600,
       "height": 900
     },
     {
-      "src": "/images/gallery/packaging/packaging-6.webp",
+      "src": "packaging-6.webp",
       "alt": "Container loading",
       "width": 1600,
       "height": 900

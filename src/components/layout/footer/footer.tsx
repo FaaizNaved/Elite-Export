@@ -1,6 +1,7 @@
 import { Mail, MapPin, Phone } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { Badge } from "@/components/ui/badge";
 import { Container } from "@/components/ui/container";
 import { Divider } from "@/components/ui/divider";
 import { Icon } from "@/components/ui/icon";
@@ -13,6 +14,12 @@ export interface FooterColumn {
   links: readonly NavLink[];
 }
 
+/** A single proof point in the trust strip — "27" / "Years manufacturing". */
+export interface FooterTrustItem {
+  value: string;
+  label: string;
+}
+
 export interface FooterProps {
   /** Brand mark. Usually the same node passed to `Navbar`. */
   logo?: ReactNode;
@@ -23,6 +30,14 @@ export interface FooterProps {
   social?: readonly SocialLink[];
   /** Privacy, terms — rendered inline beside the copyright. */
   legalLinks?: readonly NavLink[];
+  /**
+   * Proof points shown above the link columns — years manufacturing, export
+   * markets, monthly capacity. Values are strings so the caller controls
+   * formatting; the footer only lays them out.
+   */
+  trust?: readonly FooterTrustItem[];
+  /** Certification names, rendered as badges beside the trust strip. */
+  certifications?: readonly string[];
   /** Defaults to `© {year} {companyName}`. */
   companyName?: string;
   className?: string;
@@ -42,6 +57,8 @@ export function Footer({
   contact,
   social = [],
   legalLinks = [],
+  trust = [],
+  certifications = [],
   companyName,
   className,
 }: FooterProps) {
@@ -50,6 +67,39 @@ export function Footer({
   return (
     <footer className={cn("mt-auto bg-primary text-primary-foreground", className)}>
       <Container size="lg" className="py-16 md:py-24">
+        {(trust.length > 0 || certifications.length > 0) && (
+          <div className="mb-14 flex flex-col gap-8 border-b border-primary-foreground/15 pb-12">
+            {trust.length > 0 && (
+              <dl className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+                {trust.map((item) => (
+                  <div key={item.label} className="flex flex-col gap-1">
+                    <dt className="sr-only">{item.label}</dt>
+                    <dd className="font-display text-h2 font-medium">{item.value}</dd>
+                    <p className="font-sans text-caption tracking-[0.08em] uppercase text-primary-foreground/50">
+                      {item.label}
+                    </p>
+                  </div>
+                ))}
+              </dl>
+            )}
+
+            {certifications.length > 0 && (
+              <ul className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                {certifications.map((certification) => (
+                  <li key={certification}>
+                    <Badge
+                      variant="outline"
+                      className="border-primary-foreground/25 text-primary-foreground/70"
+                    >
+                      {certification}
+                    </Badge>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
+
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
           <div className="flex max-w-sm flex-col gap-5">
             {logo}

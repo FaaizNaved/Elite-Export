@@ -14,8 +14,11 @@ import type { PublishStatus } from "../../types";
 
 export const CONTENT_ROOT = path.join(process.cwd(), "src", "content");
 
+/**
+ * Top-level content directories. Products are not listed: they live inside the
+ * category tree, which is the single expression of the business hierarchy.
+ */
 export const CONTENT_DIR = {
-  products: "products",
   categories: "categories",
   company: "company",
   machines: "machines",
@@ -84,15 +87,6 @@ export async function listMdxFiles(relativeDir: string): Promise<string[]> {
     .filter((entry) => entry.isFile() && entry.name.endsWith(".mdx") && !entry.name.startsWith("_"))
     .map((entry) => entry.name)
     .sort();
-}
-
-export async function fileExists(relativePath: string): Promise<boolean> {
-  try {
-    await fs.access(absolute(relativePath));
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 /** Reads and validates a JSON metadata file (`category.json`, `subcategory.json`). */

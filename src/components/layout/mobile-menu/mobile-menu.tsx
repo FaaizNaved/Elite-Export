@@ -64,7 +64,7 @@ export function MobileMenu({ open, onClose, items, megaMenu, cta, className }: M
         if (event.target === dialogRef.current) onClose();
       }}
       className={cn(
-        "m-0 ml-auto h-dvh max-h-none w-[min(22rem,90vw)] max-w-none bg-surface p-0 text-foreground",
+        "m-0 ml-auto h-dvh max-h-none w-drawer max-w-none bg-surface p-0 text-foreground",
         "backdrop:bg-overlay",
         // Entry only: a native dialog leaves the top layer the moment it
         // closes, so an exit animation would never be seen.

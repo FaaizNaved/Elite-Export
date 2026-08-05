@@ -6,7 +6,7 @@ import type {
   LegalPageFrontmatter,
   MachineFrontmatter,
   ProductFrontmatter,
-} from "../schemas";
+} from "../models";
 
 /**
  * Fields the content engine derives for every document, regardless of type.

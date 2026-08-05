@@ -38,6 +38,6 @@ export type {
   StatBlock,
   StepBlock,
   Testimonial,
-} from "../schemas";
+} from "../models";
 
 export type * from "./content";

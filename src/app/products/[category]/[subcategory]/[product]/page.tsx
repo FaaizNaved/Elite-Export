@@ -15,9 +15,8 @@ import { Typography } from "@/components/ui/typography";
 import { ROUTES } from "@/constants";
 import { productBreadcrumbs } from "@/lib/breadcrumbs";
 import { getProduct, getProductRoutes, getRelatedProducts } from "@/lib/content";
-import { productMetadata } from "@/lib/seo";
-import { breadcrumbJsonLd, productJsonLd } from "@/lib/structured-data";
-import { loadProductContent } from "@/mdx";
+import { breadcrumbJsonLd, productJsonLd, productMetadata } from "@/lib/seo";
+import { loadProductContent } from "@/lib/mdx";
 
 interface PageProps {
   params: Promise<{ category: string; subcategory: string; product: string }>;

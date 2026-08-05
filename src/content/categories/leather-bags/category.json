@@ -3,13 +3,13 @@
   "shortDescription": "Messenger bags, weekenders and totes cut from full-grain hides.",
   "description": "Our bag division works to the same tolerances as our tack line — saddle-stitched stress points, skived seams and hardware rated well beyond its load.",
   "hero": {
-    "src": "/images/categories/leather-bags/leather-bags-hero.webp",
+    "src": "leather-bags-hero.webp",
     "alt": "Full-grain leather messenger bag on a cutting table",
     "width": 2400,
     "height": 1200
   },
   "thumbnail": {
-    "src": "/images/categories/leather-bags/leather-bags-thumb.webp",
+    "src": "leather-bags-thumb.webp",
     "width": 1200,
     "height": 1200
   },

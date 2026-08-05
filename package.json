@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "check:content": "tsc -p tsconfig.scripts.json && node .content-check/scripts/check-content.js",
+    "check:content": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/check-content.js",
     "generate:placeholders": "node scripts/generate-placeholders.mjs"
   },
   "dependencies": {

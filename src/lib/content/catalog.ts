@@ -1,13 +1,13 @@
 import { routeTo } from "../../constants/routes";
-import { categoryMetaSchema, productFrontmatterSchema } from "../../schemas";
+import { categoryMetaSchema, productFrontmatterSchema } from "../../models";
 import type { Catalog, Category, Product, ProductRoute, Subcategory } from "../../types";
 import { once } from "../../utils/cache";
 import { withAlt, withAltAll } from "../../utils/image";
 import { slugFromFilename } from "../../utils/slug";
+import { assetScope, resolveImage, resolveImages } from "./assets";
 import {
   CONTENT_DIR,
   ContentError,
-  INCLUDE_DRAFTS,
   isPublished,
   listDirectories,
   listMdxFiles,
@@ -18,16 +18,24 @@ import {
 /**
  * Builds the product catalog from the content tree.
  *
- * Hierarchy is expressed by folders, not frontmatter:
+ * The hierarchy exists exactly once, as folders — a category owns its
+ * subcategories, and a subcategory owns its products:
  *
  *   src/content/categories/<category>/category.json
  *   src/content/categories/<category>/<subcategory>/subcategory.json
- *   src/content/products/<category>/<subcategory>/<product>.mdx
+ *   src/content/categories/<category>/<subcategory>/products/<product>.mdx
+ *
+ * Because the tree is walked top-down, a product cannot exist without the
+ * category and subcategory that contain it, and category/subcategory are never
+ * restated in frontmatter.
  *
  * ponytail: the depth is fixed at category → subcategory. If a category ever
  * needs to hold products directly, make `subcategorySlug` nullable here and in
  * `routeTo.product` — everything downstream reads those two.
  */
+
+/** Folder inside a subcategory that holds its product documents. */
+const PRODUCTS_DIR = "products";
 
 const byOrderThenName = <T extends { order: number; name: string }>(a: T, b: T) =>
   a.order - b.order || a.name.localeCompare(b.name);
@@ -35,13 +43,54 @@ const byOrderThenName = <T extends { order: number; name: string }>(a: T, b: T) 
 const byOrderThenTitle = <T extends { order: number; title: string }>(a: T, b: T) =>
   a.order - b.order || a.title.localeCompare(b.title);
 
-async function loadCategories(): Promise<Category[]> {
+async function loadProducts(
+  categorySlug: string,
+  subcategorySlug: string,
+  categoryName: string,
+  subcategoryName: string,
+): Promise<Product[]> {
+  const dir = `${CONTENT_DIR.categories}/${categorySlug}/${subcategorySlug}/${PRODUCTS_DIR}`;
+  const files = await listMdxFiles(dir);
+
+  const products = await Promise.all(
+    files.map(async (fileName): Promise<Product> => {
+      const { data, sourcePath } = await readMdxFile(
+        `${dir}/${fileName}`,
+        productFrontmatterSchema,
+      );
+
+      const slug = data.slug ?? slugFromFilename(fileName);
+      const assets = assetScope.product(categorySlug, subcategorySlug, slug);
+
+      return {
+        ...data,
+        slug,
+        href: routeTo.product(categorySlug, subcategorySlug, slug),
+        sourcePath,
+        categorySlug,
+        subcategorySlug,
+        categoryName,
+        subcategoryName,
+        gallery: {
+          thumbnail: withAlt(resolveImage(assets, data.gallery.thumbnail), data.title),
+          images: withAltAll(resolveImages(assets, data.gallery.images), data.title),
+        },
+      };
+    }),
+  );
+
+  return products.filter(isPublished).sort(byOrderThenTitle);
+}
+
+async function loadCategories(): Promise<{ categories: Category[]; products: Product[] }> {
   const categorySlugs = await listDirectories(CONTENT_DIR.categories);
+  const allProducts: Product[] = [];
 
   const categories = await Promise.all(
     categorySlugs.map(async (slug): Promise<Category> => {
       const dir = `${CONTENT_DIR.categories}/${slug}`;
       const meta = await readJsonFile(`${dir}/category.json`, categoryMetaSchema);
+      const categoryAssets = assetScope.category(slug);
       const subcategorySlugs = await listDirectories(dir);
 
       const subcategories = await Promise.all(
@@ -50,108 +99,56 @@ async function loadCategories(): Promise<Category[]> {
             `${dir}/${subSlug}/subcategory.json`,
             categoryMetaSchema,
           );
+          const subAssets = assetScope.subcategory(slug, subSlug);
+
+          const products = isPublished(subMeta)
+            ? await loadProducts(slug, subSlug, meta.name, subMeta.name)
+            : [];
+          allProducts.push(...products);
 
           return {
             ...subMeta,
-            thumbnail: withAlt(subMeta.thumbnail, subMeta.name),
+            thumbnail: withAlt(resolveImage(subAssets, subMeta.thumbnail), subMeta.name),
+            hero: subMeta.hero && resolveImage(subAssets, subMeta.hero),
             slug: subSlug,
             href: routeTo.subcategory(slug, subSlug),
             sourcePath: `${dir}/${subSlug}/subcategory.json`,
             categorySlug: slug,
-            productCount: 0,
+            productCount: products.length,
           };
         }),
       );
 
+      const visibleSubcategories = subcategories.filter(isPublished).sort(byOrderThenName);
+
       return {
         ...meta,
-        thumbnail: withAlt(meta.thumbnail, meta.name),
+        thumbnail: withAlt(resolveImage(categoryAssets, meta.thumbnail), meta.name),
+        hero: meta.hero && resolveImage(categoryAssets, meta.hero),
         slug,
         href: routeTo.category(slug),
         sourcePath: `${dir}/category.json`,
-        subcategories: subcategories.filter(isPublished).sort(byOrderThenName),
-        productCount: 0,
+        subcategories: visibleSubcategories,
+        productCount: visibleSubcategories.reduce((sum, sub) => sum + sub.productCount, 0),
       };
     }),
   );
 
-  return categories.filter(isPublished).sort(byOrderThenName);
-}
+  const visible = categories.filter(isPublished).sort(byOrderThenName);
+  const visibleSlugs = new Set(visible.map((category) => category.slug));
 
-async function loadProducts(categories: Map<string, Category>): Promise<Product[]> {
-  const categorySlugs = await listDirectories(CONTENT_DIR.products);
-  const products: Product[] = [];
-
-  for (const categorySlug of categorySlugs) {
-    const category = categories.get(categorySlug);
-    if (!category) {
-      // In production a missing category may simply be unpublished — skip its
-      // products. In development every category is loaded, so this is a typo.
-      if (!INCLUDE_DRAFTS) continue;
-      throw new ContentError(
-        `Products exist in "${CONTENT_DIR.products}/${categorySlug}" but there is no ` +
-          `"${CONTENT_DIR.categories}/${categorySlug}/category.json".`,
-      );
-    }
-
-    const categoryDir = `${CONTENT_DIR.products}/${categorySlug}`;
-
-    for (const subcategorySlug of await listDirectories(categoryDir)) {
-      const subcategory = category.subcategories.find((sub) => sub.slug === subcategorySlug);
-      if (!subcategory) {
-        if (!INCLUDE_DRAFTS) continue;
-        throw new ContentError(
-          `Products exist in "${categoryDir}/${subcategorySlug}" but there is no ` +
-            `"${CONTENT_DIR.categories}/${categorySlug}/${subcategorySlug}/subcategory.json".`,
-        );
-      }
-
-      const subcategoryDir = `${categoryDir}/${subcategorySlug}`;
-
-      for (const fileName of await listMdxFiles(subcategoryDir)) {
-        const { data, sourcePath } = await readMdxFile(
-          `${subcategoryDir}/${fileName}`,
-          productFrontmatterSchema,
-        );
-        if (!isPublished(data)) continue;
-
-        const slug = data.slug ?? slugFromFilename(fileName);
-
-        products.push({
-          ...data,
-          slug,
-          href: routeTo.product(categorySlug, subcategorySlug, slug),
-          sourcePath,
-          categorySlug,
-          subcategorySlug,
-          categoryName: category.name,
-          subcategoryName: subcategory.name,
-          gallery: {
-            thumbnail: withAlt(data.gallery.thumbnail, data.title),
-            images: withAltAll(data.gallery.images, data.title),
-          },
-        });
-      }
-    }
-  }
-
-  return products.sort(byOrderThenTitle);
+  return {
+    categories: visible,
+    // Products under an unpublished category are not part of the catalog.
+    products: allProducts
+      .filter((product) => visibleSlugs.has(product.categorySlug))
+      .sort(byOrderThenTitle),
+  };
 }
 
 /** Built once per process; content is static for the lifetime of a build. */
 export const getCatalog = once(async (): Promise<Catalog> => {
-  const categories = await loadCategories();
-  const categoryMap = new Map(categories.map((category) => [category.slug, category]));
-  const products = await loadProducts(categoryMap);
-
-  for (const product of products) {
-    const category = categoryMap.get(product.categorySlug);
-    if (!category) continue;
-    category.productCount += 1;
-
-    const subcategory = category.subcategories.find((sub) => sub.slug === product.subcategorySlug);
-    if (subcategory) subcategory.productCount += 1;
-  }
+  const { categories, products } = await loadCategories();
 
   const routes = new Set<string>();
   for (const product of products) {
@@ -184,17 +181,12 @@ export async function getSubcategory(
   return category?.subcategories.find((sub) => sub.slug === subcategorySlug) ?? null;
 }
 
-export async function getFeaturedCategories(limit?: number): Promise<Category[]> {
-  const featured = (await getCategories()).filter((category) => category.featured);
-  return typeof limit === "number" ? featured.slice(0, limit) : featured;
-}
-
 export interface ProductFilter {
   category?: string;
   subcategory?: string;
   tag?: string;
   featured?: boolean;
-  /** Product slugs to leave out — used for "related products". */
+  /** Product hrefs to leave out — used for "related products". */
   exclude?: readonly string[];
   limit?: number;
 }

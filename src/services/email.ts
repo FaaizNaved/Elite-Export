@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-import { siteConfig } from "@/config/site";
+import { company, siteConfig } from "@/config";
 
 /**
  * Outbound email.
@@ -57,7 +57,7 @@ export async function sendEnquiryEmail({ subject, fields, replyTo }: EnquiryEmai
 
   await transporter.sendMail({
     from: `"${siteConfig.name} website" <${SMTP_USER}>`,
-    to: siteConfig.company.contact.salesEmail ?? siteConfig.company.contact.email,
+    to: company.contact.salesEmail ?? company.contact.email,
     replyTo,
     subject,
     text: Object.entries(fields)

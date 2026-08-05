@@ -142,7 +142,7 @@ export function Checkbox({ label, className, ...props }: CheckboxProps) {
       <input
         type="checkbox"
         {...props}
-        className="mt-0.5 size-5 shrink-0 rounded-[4px] border-border accent-primary"
+        className="mt-0.5 size-5 shrink-0 rounded-sm border-border accent-primary"
       />
       <span className="font-sans text-small text-foreground-secondary">{label}</span>
     </label>

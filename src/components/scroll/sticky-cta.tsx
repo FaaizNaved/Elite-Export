@@ -49,7 +49,12 @@ export function StickyCta({ children, after, threshold = 800, hideAfter, classNa
   return (
     <div
       ref={barRef}
-      aria-hidden={!visible}
+      // `inert`, not `aria-hidden`. The bar is only translated and faded out, so
+      // its buttons stayed in the tab order — a keyboard user reached an
+      // invisible enquiry link, and `aria-hidden` over a focusable child is an
+      // ARIA violation in its own right. `inert` removes the subtree from the
+      // tab order and the accessibility tree together.
+      inert={!visible}
       className={cn(
         "fixed inset-x-0 bottom-0 z-sticky border-t border-border bg-surface/90 backdrop-blur-md",
         "transition-base",

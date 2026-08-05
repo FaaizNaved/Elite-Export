@@ -1,5 +1,3 @@
-"use client";
-
 import { Button, type ButtonProps } from "@/components/ui/button";
 
 export interface SubmitButtonProps extends Omit<ButtonProps, "type"> {

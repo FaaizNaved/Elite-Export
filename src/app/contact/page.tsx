@@ -9,7 +9,7 @@ import { Divider } from "@/components/ui/divider";
 import { Icon } from "@/components/ui/icon";
 import { Section } from "@/components/ui/section";
 import { Typography } from "@/components/ui/typography";
-import { siteConfig } from "@/config/site";
+import { company } from "@/config";
 import { ROUTES } from "@/constants";
 import { buildMetadata } from "@/lib/seo";
 
@@ -21,7 +21,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function ContactPage() {
-  const { contact } = siteConfig.company;
+  const { contact } = company;
   const { address } = contact;
 
   return (

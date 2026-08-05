@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { buyerEnquiryFormSchema } from "@/schemas/forms";
+import { buyerEnquiryFormSchema } from "@/models/forms";
 import { isEmailConfigured, sendEnquiryEmail } from "@/services/email";
 import { countryName } from "@/utils/country";
 

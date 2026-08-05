@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, useScroll, useSpring } from "framer-motion";
+import { spring } from "@/theme";
 import { cn } from "@/lib/cn";
 
 export interface ScrollProgressProps {
@@ -19,7 +20,7 @@ export function ScrollProgress({ className, target }: ScrollProgressProps) {
   const { scrollYProgress } = useScroll(
     target ? { target, offset: ["start start", "end end"] } : undefined,
   );
-  const scaleX = useSpring(scrollYProgress, { stiffness: 180, damping: 30, restDelta: 0.001 });
+  const scaleX = useSpring(scrollYProgress, spring.progress);
 
   return (
     <motion.div

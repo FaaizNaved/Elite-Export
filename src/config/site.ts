@@ -1,9 +1,11 @@
-import { companyProfileSchema } from "../schemas";
-import type { CompanyProfile, Image } from "../types";
+import type { Image } from "../types";
+import { company } from "./company";
 
 /**
- * The single file a non-developer edits when the business details change.
- * Everything on the site — footer, contact page, metadata, emails — reads from here.
+ * Site-level identity and SEO defaults.
+ *
+ * Deliberately does not restate company facts — names and the tagline are
+ * derived from `./company`, which stays the single source of truth for them.
  */
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://eliteexport.com").replace(
@@ -11,41 +13,13 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://eliteexpor
   "",
 );
 
-/** Parsed at module load: a typo in the company profile fails fast, at build time. */
-export const company: CompanyProfile = companyProfileSchema.parse({
-  legalName: "Elite Export Pvt. Ltd.",
-  tradingName: "Elite Export",
-  tagline: "Hand-crafted leather goods, engineered for export.",
-  foundedYear: 1998,
-  employees: "250+",
-  contact: {
-    email: "info@eliteexport.com",
-    salesEmail: "sales@eliteexport.com",
-    phone: "+91 581 000 0000",
-    whatsapp: "+91 90000 00000",
-    address: {
-      street: "Industrial Estate, Phase II",
-      city: "Kanpur",
-      state: "Uttar Pradesh",
-      postalCode: "208012",
-      country: "India",
-      countryCode: "IN",
-    },
-    businessHours: "Mon – Sat, 9:00 – 18:00 IST",
-  },
-  social: [
-    { platform: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/" },
-    { platform: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
-    { platform: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
-  ],
-  certifications: [
-    { name: "ISO 9001:2015", issuer: "Bureau Veritas", year: 2021 },
-    { name: "Leather Working Group — Gold", issuer: "LWG", year: 2023 },
-  ],
-  exportMarkets: ["US", "GB", "DE", "FR", "AU", "AE", "CA", "IT"],
-});
+/**
+ * Optional CDN origin for `public/` assets. Empty means assets are served by
+ * Next itself, which is the default. Setting it is the whole migration path.
+ */
+export const IMAGE_BASE_URL = (process.env.NEXT_PUBLIC_IMAGE_BASE_URL ?? "").replace(/\/+$/, "");
 
-export const defaultOgImage: Image = {
+const defaultOgImage: Image = {
   src: "/images/og/default.webp",
   alt: `${company.tradingName} — ${company.tagline}`,
   width: 1200,
@@ -69,7 +43,6 @@ export const siteConfig = {
   ],
   ogImage: defaultOgImage,
   twitterHandle: undefined as string | undefined,
-  company,
 } as const;
 
 export type SiteConfig = typeof siteConfig;

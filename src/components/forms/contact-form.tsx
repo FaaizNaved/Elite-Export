@@ -5,7 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { Icon } from "@/components/ui/icon";
 import { Typography } from "@/components/ui/typography";
-import { contactFormSchema, type ContactFormValues } from "@/schemas/forms";
+import { contactFormSchema, type ContactFormValues } from "@/models/forms";
 import { Checkbox, CountrySelect, Input, Select, Textarea } from "./controls";
 import { Field } from "./field";
 import { SubmitButton } from "./submit-button";

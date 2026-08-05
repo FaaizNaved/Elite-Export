@@ -18,11 +18,6 @@ export function formatCount(count: number, singular: string, plural = `${singula
   return `${formatNumber(count)} ${count === 1 ? singular : plural}`;
 }
 
-/** "A, B and C" */
-export function formatList(items: readonly string[]): string {
-  return new Intl.ListFormat(DEFAULT_LOCALE, { style: "long", type: "conjunction" }).format(items);
-}
-
 /** Rough reading time in minutes, at 200 wpm. Never returns 0. */
 export function readingTimeOf(text: string): number {
   const words = text.trim().split(/\s+/).filter(Boolean).length;

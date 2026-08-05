@@ -6,7 +6,7 @@ import { ROUTES } from "@/constants";
 import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 import { getBlogPost, getBlogRoutes } from "@/lib/content";
 import { blogPostMetadata } from "@/lib/seo";
-import { loadBlogContent } from "@/mdx";
+import { loadBlogContent } from "@/lib/mdx";
 import { formatDate } from "@/utils/format";
 
 interface PageProps {

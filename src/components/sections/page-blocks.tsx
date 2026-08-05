@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { resolveIcon } from "@/components/icons";
 import { FeatureCard, StatCard } from "@/components/cards";
 import { SlideUp, Stagger, StaggerItem } from "@/components/motion";
@@ -6,10 +5,10 @@ import { Timeline } from "@/components/timeline";
 import { Container } from "@/components/ui/container";
 import { Divider } from "@/components/ui/divider";
 import { Section } from "@/components/ui/section";
+import { ContentImage } from "@/components/ui/image";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
 import type { FeatureBlock, MilestoneBlock, PageBlocks as PageBlocksData, StatBlock } from "@/types";
-import { BLUR_DATA_URL } from "@/utils/image";
 import { SectionHeader } from "./section-header";
 
 /**
@@ -142,15 +141,7 @@ export function ProcessSteps({
                 >
                   {step.image && (
                     <figure className="relative aspect-[4/3] overflow-hidden rounded-image bg-surface-sunken">
-                      <Image
-                        src={step.image.src}
-                        alt={step.image.alt}
-                        fill
-                        sizes="(min-width: 768px) 50vw, 100vw"
-                        placeholder="blur"
-                        blurDataURL={BLUR_DATA_URL}
-                        className="object-cover"
-                      />
+                      <ContentImage image={step.image} sizes="(min-width: 768px) 50vw, 100vw" />
                     </figure>
                   )}
 

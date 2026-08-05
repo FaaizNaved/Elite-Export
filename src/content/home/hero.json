@@ -1,0 +1,13 @@
+{
+  "eyebrow": "Leather manufacturers since 1998",
+  "heading": "Cut, stitched and finished in Kanpur.",
+  "description": "Equestrian tack and leather goods, manufactured in Kanpur since 1998 for buyers in eight countries.",
+  "image": {
+    "src": "/images/hero/home-hero.webp",
+    "alt": "A craftsman burnishing the edge of a leather strap at the bench, with the workshop behind",
+    "width": 2400,
+    "height": 1350
+  },
+  "primaryCta": { "label": "See what we make", "href": "/products" },
+  "secondaryCta": { "label": "Start an enquiry", "href": "/buyer-enquiry" }
+}

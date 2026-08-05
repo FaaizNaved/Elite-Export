@@ -18,8 +18,28 @@ const sectionVariants = cva("relative w-full", {
       hero: "pt-32 pb-16 md:pt-40 md:pb-24",
       none: "",
     },
+    /**
+     * Material identity (blueprint §13). One material per section, never in two
+     * adjacent sections, never over photography. The pattern is drawn on a
+     * pseudo-element behind the content and disabled below 768px.
+     */
+    texture: {
+      none: "",
+      /** The raw material, under the story of the people. */
+      grain: "texture-grain",
+      /** The shapes products are cut from. */
+      pattern: "texture-pattern",
+      /** Process drawings under a process section. */
+      blueprint: "texture-blueprint [--texture-opacity:0.04]",
+      /** Regular, measured, repeating — the visual form of consistency. */
+      stitch: "texture-stitch",
+      /** Material, not literal freight iconography. */
+      hardware: "texture-hardware",
+      /** The most decorative motif, on the most emotional section. */
+      tooling: "texture-tooling [--texture-opacity:0.05]",
+    },
   },
-  defaultVariants: { spacing: "md" },
+  defaultVariants: { spacing: "md", texture: "none" },
 });
 
 export interface SectionProps
@@ -28,6 +48,12 @@ export interface SectionProps
   as?: ElementType;
 }
 
-export function Section({ as: Component = "section", spacing, className, ...props }: SectionProps) {
-  return <Component className={cn(sectionVariants({ spacing }), className)} {...props} />;
+export function Section({
+  as: Component = "section",
+  spacing,
+  texture,
+  className,
+  ...props
+}: SectionProps) {
+  return <Component className={cn(sectionVariants({ spacing, texture }), className)} {...props} />;
 }

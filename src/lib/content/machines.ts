@@ -1,45 +1,36 @@
 import { routeTo } from "../../constants/routes";
-import { machineFrontmatterSchema } from "../../schemas";
+import { machineFrontmatterSchema } from "../../models";
 import type { Machine, ProductionStage } from "../../types";
-import { once } from "../../utils/cache";
 import { withAlt, withAltAll } from "../../utils/image";
-import { slugFromFilename } from "../../utils/slug";
-import { CONTENT_DIR, isPublished, listMdxFiles, readMdxFile } from "./source";
+import { assetScope, resolveImage, resolveImages } from "./assets";
+import { byOrderThenTitle, defineCollection, type Collection } from "./collection";
+import { CONTENT_DIR } from "./source";
 
 /** Machinery catalogue — `src/content/machines/<slug>.mdx`. */
 
-export const getMachines = once(async (): Promise<Machine[]> => {
-  const files = await listMdxFiles(CONTENT_DIR.machines);
+const machines: Collection<Machine> = defineCollection({
+  dir: CONTENT_DIR.machines,
+  schema: machineFrontmatterSchema,
+  sort: byOrderThenTitle,
+  resolve: ({ data, sourcePath, slug }): Machine => {
+    const resolvedSlug = data.slug ?? slug;
+    const assets = assetScope.machine(resolvedSlug);
 
-  const machines = await Promise.all(
-    files.map(async (fileName): Promise<Machine> => {
-      const { data, sourcePath } = await readMdxFile(
-        `${CONTENT_DIR.machines}/${fileName}`,
-        machineFrontmatterSchema,
-      );
-      const slug = data.slug ?? slugFromFilename(fileName);
-
-      return {
-        ...data,
-        slug,
-        href: routeTo.machine(slug),
-        sourcePath,
-        gallery: {
-          thumbnail: withAlt(data.gallery.thumbnail, data.title),
-          images: withAltAll(data.gallery.images, data.title),
-        },
-      };
-    }),
-  );
-
-  return machines
-    .filter(isPublished)
-    .sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+    return {
+      ...data,
+      slug: resolvedSlug,
+      href: routeTo.machine(resolvedSlug),
+      sourcePath,
+      gallery: {
+        thumbnail: withAlt(resolveImage(assets, data.gallery.thumbnail), data.title),
+        images: withAltAll(resolveImages(assets, data.gallery.images), data.title),
+      },
+    };
+  },
 });
 
-export async function getMachine(slug: string): Promise<Machine | null> {
-  return (await getMachines()).find((machine) => machine.slug === slug) ?? null;
-}
+export const getMachines = machines.all;
+export const getMachine = machines.bySlug;
 
 export async function getFeaturedMachines(limit = 3): Promise<Machine[]> {
   return (await getMachines()).filter((machine) => machine.featured).slice(0, limit);
@@ -49,8 +40,8 @@ export async function getFeaturedMachines(limit = 3): Promise<Machine[]> {
 export async function getMachinesByStage(): Promise<
   Array<{ stage: ProductionStage; machines: Machine[] }>
 > {
-  const machines = await getMachines();
-  const order: ProductionStage[] = [
+  const all = await getMachines();
+  const order: readonly ProductionStage[] = [
     "cutting",
     "preparation",
     "stitching",
@@ -60,7 +51,7 @@ export async function getMachinesByStage(): Promise<
   ];
 
   return order
-    .map((stage) => ({ stage, machines: machines.filter((machine) => machine.stage === stage) }))
+    .map((stage) => ({ stage, machines: all.filter((machine) => machine.stage === stage) }))
     .filter((group) => group.machines.length > 0);
 }
 

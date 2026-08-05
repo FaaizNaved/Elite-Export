@@ -88,16 +88,16 @@ export function ProductCard({
         />
 
         <CardBody>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <Badge variant="neutral">{product.categoryName}</Badge>
             {product.featured && !featured && <Badge variant="secondary">Featured</Badge>}
+            <Typography variant="caption" as="span" className="ml-auto tabular-nums">
+              {product.itemCode}
+            </Typography>
           </div>
 
           <CardTitle className={featured ? "text-h3" : undefined}>{product.title}</CardTitle>
-          <CardDescription>{product.shortDescription}</CardDescription>
-          <Typography variant="caption" className="mt-1">
-            Item code {product.itemCode}
-          </Typography>
+          <CardDescription className="line-clamp-2">{product.shortDescription}</CardDescription>
         </CardBody>
 
         <CardFooter>

@@ -3,134 +3,73 @@ import {
   blogPostFrontmatterSchema,
   companyPageFrontmatterSchema,
   legalPageFrontmatterSchema,
-} from "../../schemas";
+} from "../../models";
 import type { BlogPost, CompanyPage, LegalPage } from "../../types";
-import { once } from "../../utils/cache";
 import { readingTimeOf } from "../../utils/format";
 import { withAlt } from "../../utils/image";
-import { slugFromFilename } from "../../utils/slug";
-import { CONTENT_DIR, isPublished, listMdxFiles, readMdxFile } from "./source";
+import { assetScope, resolveImage } from "./assets";
+import {
+  byNewestFirst,
+  byOrderThenTitle,
+  defineCollection,
+  type Collection,
+} from "./collection";
+import { CONTENT_DIR } from "./source";
 
-/** Editorial content: company pages, blog posts and legal documents. */
+/**
+ * Editorial content: company pages, blog posts and legal documents.
+ *
+ * Each is a registry declaration — the list/read/validate/filter/sort pipeline
+ * lives once, in `./collection`.
+ */
 
-/* -------------------------------------------------------------------------- */
-/* Company pages                                                               */
-/* -------------------------------------------------------------------------- */
-
-export const getCompanyPages = once(async (): Promise<CompanyPage[]> => {
-  const files = await listMdxFiles(CONTENT_DIR.company);
-
-  const pages = await Promise.all(
-    files.map(async (fileName): Promise<CompanyPage> => {
-      const { data, sourcePath } = await readMdxFile(
-        `${CONTENT_DIR.company}/${fileName}`,
-        companyPageFrontmatterSchema,
-      );
-      const slug = slugFromFilename(fileName);
-
-      return {
-        ...data,
-        hero: data.hero && withAlt(data.hero, data.title),
-        slug,
-        href: routeTo.companyPage(slug),
-        sourcePath,
-      };
-    }),
-  );
-
-  return pages.filter(isPublished).sort((a, b) => a.order - b.order || a.title.localeCompare(b.title));
+const companyPages: Collection<CompanyPage> = defineCollection({
+  dir: CONTENT_DIR.company,
+  schema: companyPageFrontmatterSchema,
+  sort: byOrderThenTitle,
+  resolve: ({ data, sourcePath, slug }): CompanyPage => ({
+    ...data,
+    hero: data.hero && withAlt(data.hero, data.title),
+    slug,
+    href: routeTo.companyPage(slug),
+    sourcePath,
+  }),
 });
 
-export async function getCompanyPage(slug: string): Promise<CompanyPage | null> {
-  return (await getCompanyPages()).find((page) => page.slug === slug) ?? null;
-}
-
-/* -------------------------------------------------------------------------- */
-/* Blog                                                                        */
-/* -------------------------------------------------------------------------- */
-
-export const getBlogPosts = once(async (): Promise<BlogPost[]> => {
-  const files = await listMdxFiles(CONTENT_DIR.blog);
-
-  const posts = await Promise.all(
-    files.map(async (fileName): Promise<BlogPost> => {
-      const { data, body, sourcePath } = await readMdxFile(
-        `${CONTENT_DIR.blog}/${fileName}`,
-        blogPostFrontmatterSchema,
-      );
-      const slug = data.slug ?? slugFromFilename(fileName);
-
-      return {
-        ...data,
-        cover: withAlt(data.cover, data.title),
-        readingTime: data.readingTime ?? readingTimeOf(body),
-        slug,
-        href: routeTo.blogPost(slug),
-        sourcePath,
-      };
-    }),
-  );
-
+const blogPosts: Collection<BlogPost> = defineCollection({
+  dir: CONTENT_DIR.blog,
+  schema: blogPostFrontmatterSchema,
   // Newest first — the only sensible default for a blog index.
-  return posts.filter(isPublished).sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+  sort: byNewestFirst,
+  resolve: ({ data, body, sourcePath, slug }): BlogPost => ({
+    ...data,
+    cover: withAlt(resolveImage(assetScope.blog(data.slug ?? slug), data.cover), data.title),
+    readingTime: data.readingTime ?? readingTimeOf(body),
+    slug: data.slug ?? slug,
+    href: routeTo.blogPost(data.slug ?? slug),
+    sourcePath,
+  }),
 });
 
-export async function getBlogPost(slug: string): Promise<BlogPost | null> {
-  return (await getBlogPosts()).find((post) => post.slug === slug) ?? null;
-}
-
-export async function getFeaturedBlogPosts(limit = 3): Promise<BlogPost[]> {
-  return (await getBlogPosts()).filter((post) => post.featured).slice(0, limit);
-}
-
-export async function getBlogPostsByTag(tag: string): Promise<BlogPost[]> {
-  return (await getBlogPosts()).filter((post) => post.tags.includes(tag));
-}
-
-/** Every tag in use, sorted alphabetically. */
-export async function getBlogTags(): Promise<string[]> {
-  const posts = await getBlogPosts();
-  return [...new Set(posts.flatMap((post) => post.tags))].sort();
-}
-
-/* -------------------------------------------------------------------------- */
-/* Legal                                                                       */
-/* -------------------------------------------------------------------------- */
-
-export const getLegalPages = once(async (): Promise<LegalPage[]> => {
-  const files = await listMdxFiles(CONTENT_DIR.legal);
-
-  const pages = await Promise.all(
-    files.map(async (fileName): Promise<LegalPage> => {
-      const { data, sourcePath } = await readMdxFile(
-        `${CONTENT_DIR.legal}/${fileName}`,
-        legalPageFrontmatterSchema,
-      );
-      const slug = slugFromFilename(fileName);
-
-      return { ...data, slug, href: routeTo.legalPage(slug), sourcePath };
-    }),
-  );
-
-  return pages.filter(isPublished).sort((a, b) => a.title.localeCompare(b.title));
+const legalPages: Collection<LegalPage> = defineCollection({
+  dir: CONTENT_DIR.legal,
+  schema: legalPageFrontmatterSchema,
+  sort: (a, b) => a.title.localeCompare(b.title),
+  resolve: ({ data, sourcePath, slug }): LegalPage => ({
+    ...data,
+    slug,
+    href: routeTo.legalPage(slug),
+    sourcePath,
+  }),
 });
 
-export async function getLegalPage(slug: string): Promise<LegalPage | null> {
-  return (await getLegalPages()).find((page) => page.slug === slug) ?? null;
-}
+export const getCompanyPages = companyPages.all;
+export const getCompanyPage = companyPages.bySlug;
 
-/* -------------------------------------------------------------------------- */
-/* Static params                                                               */
-/* -------------------------------------------------------------------------- */
+export const getBlogPosts = blogPosts.all;
+export const getBlogPost = blogPosts.bySlug;
+export const getBlogRoutes = blogPosts.routes;
 
-export async function getBlogRoutes(): Promise<Array<{ slug: string }>> {
-  return (await getBlogPosts()).map((post) => ({ slug: post.slug }));
-}
-
-export async function getLegalRoutes(): Promise<Array<{ slug: string }>> {
-  return (await getLegalPages()).map((page) => ({ slug: page.slug }));
-}
-
-export async function getCompanyRoutes(): Promise<Array<{ slug: string }>> {
-  return (await getCompanyPages()).map((page) => ({ slug: page.slug }));
-}
+export const getLegalPages = legalPages.all;
+export const getLegalPage = legalPages.bySlug;
+export const getLegalRoutes = legalPages.routes;

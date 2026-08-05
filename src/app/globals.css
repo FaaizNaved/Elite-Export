@@ -136,6 +136,12 @@
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --ease-premium: cubic-bezier(0.19, 1, 0.22, 1);
 
+  /* ---------------------------------------------------------------- Blur */
+  /* Restrained on purpose: the surface should read as frosted glass, not as
+     an effect. Anything heavier belongs to a different design language. */
+  --blur-glass: 12px;
+  --blur-overlay: 2px;
+
   /* ------------------------------------------------------------- Z-index */
   --z-base: 0;
   --z-raised: 10;
@@ -154,6 +160,16 @@
   --container-narrow: 45rem; /* long-form reading */
   --container-content: 64rem; /* standard page content */
   --container-wide: 90rem; /* editorial / full-bleed sections */
+
+  /* ---------------------------------------------------- Named layout sizes */
+  /* Sizes that recur across components and would otherwise be written as
+     arbitrary values at each call site. */
+  --height-hero-tall: 70vh;
+  --width-drawer: min(22rem, 90vw);
+
+  /* --------------------------------------------------- Navigation surface */
+  --height-header: 5.5rem;
+  --height-header-condensed: 4.25rem;
 }
 
 /* ==========================================================================
@@ -259,6 +275,22 @@
   transition-timing-function: var(--ease-premium);
 }
 
+@utility h-header {
+  block-size: var(--height-header);
+}
+
+@utility h-header-condensed {
+  block-size: var(--height-header-condensed);
+}
+
+@utility w-drawer {
+  inline-size: var(--width-drawer);
+}
+
+@utility min-h-hero-tall {
+  min-block-size: var(--height-hero-tall);
+}
+
 @utility z-sticky {
   z-index: var(--z-sticky);
 }
@@ -281,6 +313,47 @@
 
 @utility z-toast {
   z-index: var(--z-toast);
+}
+
+/**
+ * The stitched seam — the brand's recurring mark.
+ *
+ * A single row of machine stitching in gold, one pixel tall. It sits under the
+ * eyebrow of every section heading, under the number of every process stage and
+ * under the eyebrow of the closing banner, so the same detail recurs at every
+ * chapter opening on every page. It replaced three solid gold rules of three
+ * different widths and opacities; one mark, one measure, one weight.
+ */
+@utility rule-stitch {
+  display: block;
+  block-size: 1px;
+  inline-size: 3rem;
+  background-image: repeating-linear-gradient(
+    to right,
+    var(--color-accent) 0 5px,
+    transparent 5px 9px
+  );
+  opacity: 0.7;
+}
+
+/**
+ * Hero scrim.
+ *
+ * A flat wash over a photograph turns it into a dark panel. This holds full
+ * density across the band where the copy sits — denser than the wash it
+ * replaced, so text contrast improves — and opens up over the hero's top and
+ * bottom padding, where nothing is set. The stops are the padding values
+ * (`pt-32` / `pb-20`), so the photograph is only revealed where it is not
+ * carrying type.
+ */
+@utility scrim-hero {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--color-primary) 48%, transparent) 0,
+    color-mix(in oklab, var(--color-primary) 74%, transparent) 8rem,
+    color-mix(in oklab, var(--color-primary) 74%, transparent) calc(100% - 6rem),
+    color-mix(in oklab, var(--color-primary) 56%, transparent) 100%
+  );
 }
 
 /** Shimmer used by Skeleton. Static when the user prefers reduced motion. */
@@ -320,5 +393,147 @@
 @keyframes slide-in-right {
   from {
     transform: translateX(100%);
+  }
+}
+
+/* ==========================================================================
+   Material identity — blueprint §13
+
+   One material per section, single-colour SVG linework, never over photography,
+   never in two adjacent sections. Rendered as a background on the section
+   element, so it is decorative by construction and invisible to assistive
+   technology. Disabled below 768px, where the pattern is imperceptible and the
+   bytes are not.
+   ========================================================================== */
+
+@utility texture-grain {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%231B1B1B' stroke-width='1.2'%3E%3Cpath d='M8 22c14-9 27-3 38 4s24 11 38 5'/%3E%3Cpath d='M4 56c16 6 28 1 41-6s26-9 41-2'/%3E%3Cpath d='M10 92c12-10 26-6 39 1s25 9 37 2'/%3E%3Cpath d='M26 6c5 10 3 19-2 28'/%3E%3Cpath d='M78 68c6 11 4 21-2 31'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0;
+  }
+
+  @media (width >= 48rem) {
+    &::before {
+      opacity: var(--texture-opacity, 0.03);
+    }
+  }
+}
+
+@utility texture-pattern {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%231B1B1B' stroke-width='1.2'%3E%3Crect x='12' y='16' width='60' height='34' rx='8'/%3E%3Cpath d='M84 22h24v76H72'/%3E%3Ccircle cx='22' cy='33' r='3'/%3E%3Ccircle cx='62' cy='33' r='3'/%3E%3Cpath d='M12 74h44v34H12z'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0;
+  }
+
+  @media (width >= 48rem) {
+    &::before {
+      opacity: var(--texture-opacity, 0.03);
+    }
+  }
+}
+
+@utility texture-blueprint {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%231B1B1B' stroke-width='1'%3E%3Cpath d='M0 40h160M0 100h160M40 0v160M110 0v160'/%3E%3Cpath d='M36 36h8v8h-8zM106 96h8v8h-8z' stroke-width='1.4'/%3E%3Cpath d='M40 20h70M75 16v8'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0;
+  }
+
+  @media (width >= 48rem) {
+    &::before {
+      opacity: var(--texture-opacity, 0.03);
+    }
+  }
+}
+
+@utility texture-stitch {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg stroke='%231B1B1B' stroke-width='2' stroke-linecap='round'%3E%3Cpath stroke-dasharray='7 9' d='M0 15h120M0 45h120M0 75h120M0 105h120'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0;
+  }
+
+  @media (width >= 48rem) {
+    &::before {
+      opacity: var(--texture-opacity, 0.03);
+    }
+  }
+}
+
+@utility texture-hardware {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Cg fill='none' stroke='%23B68D40' stroke-width='1.4'%3E%3Crect x='16' y='26' width='40' height='28' rx='4'/%3E%3Cpath d='M36 22v36'/%3E%3Ccircle cx='106' cy='96' r='16'/%3E%3Ccircle cx='106' cy='96' r='6'/%3E%3Cpath d='M96 40h34'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0;
+  }
+
+  @media (width >= 48rem) {
+    &::before {
+      opacity: var(--texture-opacity, 0.03);
+    }
+  }
+}
+
+@utility texture-tooling {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23B68D40' stroke-width='1.6'%3E%3Cpath d='M20 200c0-70 40-110 90-110s90 30 90 80-40 70-70 70-50-20-50-45 18-40 38-40 30 14 30 28-10 22-20 22'/%3E%3Cpath d='M120 40c30 18 44 46 44 78'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0;
+  }
+
+  @media (width >= 48rem) {
+    &::before {
+      opacity: var(--texture-opacity, 0.03);
+    }
   }
 }

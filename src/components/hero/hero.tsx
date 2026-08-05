@@ -23,6 +23,12 @@ export interface HeroProps {
   breadcrumb?: ReactNode;
   /** `Button` elements. */
   actions?: ReactNode;
+  /**
+   * Credential rail: a single glanceable row beneath the actions, separated by
+   * a hairline. Blueprint §4 — five items maximum, because a rail is read at a
+   * glance and a spec sheet is not read at all.
+   */
+  meta?: ReactNode;
   backgroundImage?: ImageToken;
   /** Right-hand column of the `split` variant — an image, card or anything. */
   media?: ReactNode;
@@ -40,12 +46,13 @@ export interface HeroProps {
 const overlayClasses = {
   none: "",
   soft: "bg-primary/45",
-  strong: "bg-primary/70",
+  /** Shaped, not flat — see `scrim-hero` in globals.css. */
+  strong: "scrim-hero",
 } as const;
 
 const heightClasses = {
   content: "min-h-0",
-  tall: "min-h-[70vh]",
+  tall: "min-h-hero-tall",
   full: "min-h-dvh",
 } as const;
 
@@ -65,6 +72,7 @@ export function Hero({
   breadcrumb,
   actions,
   backgroundImage,
+  meta,
   media,
   videoSrc,
   videoTitle = "Background video",
@@ -104,7 +112,13 @@ export function Hero({
       {description && (
         <Typography
           variant="lead"
-          className={cn("max-w-2xl", hasBackdrop && "text-primary-foreground/75")}
+          className={cn(
+            "max-w-2xl",
+            // A centred paragraph is read across its full measure, so it wants a
+            // shorter line than a left-aligned one — roughly 64 characters here.
+            centered && "max-w-xl",
+            hasBackdrop && "text-primary-foreground/75",
+          )}
         >
           {description}
         </Typography>
@@ -118,6 +132,21 @@ export function Hero({
           )}
         >
           {actions}
+        </div>
+      )}
+
+      {meta && (
+        <div
+          className={cn(
+            "mt-10 border-t pt-6",
+            // The rule is as wide as the credentials it underlines, not as wide
+            // as the container: a hairline drawn edge to edge across a
+            // photograph reads as the top of a panel, not as a credential line.
+            centered ? "mx-auto w-fit max-w-full px-8" : "w-full",
+            hasBackdrop ? "border-primary-foreground/20" : "border-border",
+          )}
+        >
+          {meta}
         </div>
       )}
     </div>
@@ -170,12 +199,12 @@ export function Hero({
         )}
       </Container>
 
+      {/* Static. A bouncing chevron is the most template-like element a hero can
+          carry, and the motion budget for this page is spent elsewhere. Sitting
+          still at the foot of a full-height frame says the same thing. */}
       {scrollIndicator && (
-        <div
-          aria-hidden
-          className="absolute inset-x-0 bottom-8 flex justify-center motion-safe:animate-bounce"
-        >
-          <Icon icon={ChevronDown} size="md" className="opacity-60" />
+        <div aria-hidden className="absolute inset-x-0 bottom-8 flex justify-center">
+          <Icon icon={ChevronDown} size="md" className="opacity-50" />
         </div>
       )}
     </section>

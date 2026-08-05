@@ -55,7 +55,7 @@ export function CardMedia({
 }: ComponentPropsWithoutRef<"div">) {
   return (
     <div className={cn("relative overflow-hidden bg-surface-sunken", className)} {...props}>
-      <div className="size-full transition-premium group-hover:scale-[1.03] motion-reduce:group-hover:scale-100 [&>*]:size-full [&>img]:object-cover">
+      <div className="size-full transition-premium group-hover:scale-[1.02] motion-reduce:group-hover:scale-100 [&>*]:size-full [&>img]:object-cover">
         {children}
       </div>
     </div>

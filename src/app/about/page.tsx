@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { loadCompanyContent } from "@/mdx";
+import { loadCompanyContent } from "@/lib/mdx";
 import { Milestones, PageHero, Prose, StatsBand } from "@/components/sections";
 import { FeatureGrid } from "@/components/sections";
 import { CtaBanner } from "@/components/layout";

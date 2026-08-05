@@ -1,13 +1,17 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
-import { duration, easing } from "@/animations";
+import { panel } from "@/animations";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
 import type { MegaMenu as MegaMenuData } from "@/types";
-import { BLUR_DATA_URL } from "@/utils/image";
+
+export interface MegaMenuUtility {
+  label: string;
+  href: string;
+  description?: string;
+}
 
 export interface MegaMenuProps {
   /** Built by `getProductsMegaMenu()` — this component never reads content itself. */
@@ -16,6 +20,11 @@ export interface MegaMenuProps {
   id: string;
   /** Called after any link activation so the parent can close the panel. */
   onNavigate?: () => void;
+  /**
+   * Actions shown in the right-hand column instead of a promoted product
+   * (blueprint §14). An action converts; a promoted SKU does not.
+   */
+  utilities?: readonly MegaMenuUtility[];
   className?: string;
 }
 
@@ -26,29 +35,46 @@ export interface MegaMenuProps {
  * Purely presentational — columns come from props, so adding a category
  * updates the menu with no change here.
  */
-export function MegaMenuPanel({ menu, id, onNavigate, className }: MegaMenuProps) {
-  const hasFeature = Boolean(menu.feature);
+export function MegaMenuPanel({
+  menu,
+  id,
+  onNavigate,
+  utilities = [],
+  className,
+}: MegaMenuProps) {
+  const hasUtilities = utilities.length > 0;
+
+  /**
+   * Track the real number of categories rather than always reserving three
+   * columns — an empty track reads as a mistake, not as whitespace.
+   */
+  const columnTracks =
+    menu.columns.length >= 3
+      ? "sm:grid-cols-2 xl:grid-cols-3"
+      : menu.columns.length === 2
+        ? "sm:grid-cols-2"
+        : "sm:grid-cols-1";
 
   return (
     <motion.div
       id={id}
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: duration.normal, ease: [...easing.entrance] }}
+      variants={panel}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
       className={cn(
-        "absolute inset-x-0 top-full border-b border-border bg-surface shadow-lg",
+        "absolute inset-x-0 top-full border-t border-border/60 border-b bg-surface shadow-lg",
         className,
       )}
     >
       <div
         className={cn(
-          "mx-auto grid max-w-wide gap-10 px-6 py-10 md:px-8",
-          hasFeature ? "lg:grid-cols-[1fr_auto_20rem]" : "lg:grid-cols-1",
+          "group/panel mx-auto grid max-w-wide gap-12 px-6 py-12 md:px-8",
+          hasUtilities ? "lg:grid-cols-[1fr_auto_20rem]" : "lg:grid-cols-1",
         )}
       >
         <div
-          className="grid gap-8 sm:grid-cols-2 xl:grid-cols-3"
+          className={cn("grid gap-x-10 gap-y-9", columnTracks)}
           role="list"
           aria-label="Product categories"
         >
@@ -57,20 +83,33 @@ export function MegaMenuPanel({ menu, id, onNavigate, className }: MegaMenuProps
               <Link
                 href={column.href}
                 onClick={onNavigate}
-                className="font-display text-h4 font-medium transition-fast hover:text-accent"
+                className="group/column flex items-baseline justify-between gap-3 border-b border-border pb-2 font-display text-h4 font-medium transition-fast hover:text-accent"
               >
                 {column.label}
+                <span
+                  aria-hidden
+                  className="font-sans text-caption text-foreground-muted opacity-0 transition-fast group-hover/column:opacity-100"
+                >
+                  View all
+                </span>
               </Link>
 
-              <ul className="flex flex-col gap-2">
+              <ul className="flex flex-col gap-0.5">
                 {column.links.map((link) => (
                   <li key={link.href}>
                     <Link
                       href={link.href}
                       onClick={onNavigate}
-                      className="block font-sans text-small text-foreground-secondary transition-fast hover:text-accent"
+                      className="-mx-3 flex flex-col gap-0.5 rounded-button px-3 py-2 transition-fast hover:bg-surface-sunken"
                     >
-                      {link.label}
+                      <span className="font-sans text-small text-foreground-secondary transition-fast group-hover/panel:text-foreground">
+                        {link.label}
+                      </span>
+                      {link.description && (
+                        <span className="line-clamp-1 font-sans text-caption text-foreground-muted">
+                          {link.description}
+                        </span>
+                      )}
                     </Link>
                   </li>
                 ))}
@@ -79,37 +118,37 @@ export function MegaMenuPanel({ menu, id, onNavigate, className }: MegaMenuProps
           ))}
         </div>
 
-        {hasFeature && menu.feature && (
+        {hasUtilities && (
           <>
             <div aria-hidden className="hidden w-px bg-border lg:block" />
 
-            <Link
-              href={menu.feature.href}
-              onClick={onNavigate}
-              className="group/feature flex flex-col gap-4"
-            >
-              <div className="relative aspect-[4/5] overflow-hidden rounded-image bg-surface-sunken">
-                <Image
-                  src={menu.feature.image.src}
-                  alt={menu.feature.image.alt}
-                  fill
-                  sizes="320px"
-                  placeholder="blur"
-                  blurDataURL={BLUR_DATA_URL}
-                  className="object-cover transition-premium group-hover/feature:scale-[1.03] motion-reduce:group-hover/feature:scale-100"
-                />
-              </div>
+            <div className="flex flex-col gap-5">
+              <Typography variant="overline" className="text-accent">
+                Start here
+              </Typography>
 
-              <div className="flex flex-col gap-1">
-                <Typography variant="overline">Featured</Typography>
-                <Typography variant="h4" as="p" className="transition-fast group-hover/feature:text-accent">
-                  {menu.feature.label}
-                </Typography>
-                {menu.feature.description && (
-                  <Typography variant="caption">{menu.feature.description}</Typography>
-                )}
-              </div>
-            </Link>
+              <ul className="flex flex-col gap-2">
+                {utilities.map((utility) => (
+                  <li key={utility.href}>
+                    <Link
+                      href={utility.href}
+                      onClick={onNavigate}
+                      className="group/utility -mx-4 flex flex-col gap-1 rounded-card border border-transparent px-4 py-3 transition-fast hover:border-border hover:bg-surface-sunken"
+                    >
+                      <span className="flex items-center justify-between gap-3 font-display text-h4 font-medium transition-fast group-hover/utility:text-accent">
+                        {utility.label}
+                        <span aria-hidden className="transition-base group-hover/utility:translate-x-1">
+                          &rarr;
+                        </span>
+                      </span>
+                      {utility.description && (
+                        <Typography variant="caption">{utility.description}</Typography>
+                      )}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </>
         )}
       </div>

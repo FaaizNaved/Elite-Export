@@ -1,6 +1,5 @@
 import { ROUTES, routeTo } from "../constants/routes";
 import type { Breadcrumb, Category, Product, Subcategory } from "../types";
-import { titleFromSlug } from "../utils/slug";
 
 /**
  * Breadcrumb generation.
@@ -49,20 +48,3 @@ export function productBreadcrumbs(product: Product): Breadcrumb[] {
   ]);
 }
 
-/**
- * Last-resort generator for routes with no content entity behind them.
- * Pass `labels` to override any segment: `{ "buyer-enquiry": "Buyer Enquiry" }`.
- */
-export function breadcrumbsFromPath(
-  path: string,
-  labels: Readonly<Record<string, string>> = {},
-): Breadcrumb[] {
-  const segments = path.split("/").filter(Boolean);
-
-  return buildBreadcrumbs(
-    segments.map((segment, index) => ({
-      label: labels[segment] ?? titleFromSlug(segment),
-      href: `/${segments.slice(0, index + 1).join("/")}`,
-    })),
-  );
-}

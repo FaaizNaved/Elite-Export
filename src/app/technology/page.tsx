@@ -11,7 +11,7 @@ import { Section } from "@/components/ui/section";
 import { ROUTES } from "@/constants";
 import { getCompanyPage, getMachinesByStage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
-import { loadCompanyContent } from "@/mdx";
+import { loadCompanyContent } from "@/lib/mdx";
 import type { ProductionStage } from "@/types";
 
 const SLUG = "technology";

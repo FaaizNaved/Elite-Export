@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { buyerEnquiryFormSchema, type BuyerEnquiryFormValues } from "@/schemas/forms";
+import { buyerEnquiryFormSchema, type BuyerEnquiryFormValues } from "@/models/forms";
 import { FormError, SuccessPanel } from "./contact-form";
 import { Checkbox, CountrySelect, Input, Select, Textarea } from "./controls";
 import { Field } from "./field";

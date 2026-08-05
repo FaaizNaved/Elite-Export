@@ -84,7 +84,7 @@ export function Modal({
       }}
       className={cn(
         "z-modal m-auto w-[calc(100%-2rem)] rounded-card bg-surface p-0 text-foreground shadow-floating",
-        "backdrop:bg-overlay backdrop:backdrop-blur-[2px]",
+        "backdrop:bg-overlay backdrop:backdrop-blur-overlay",
         sizes[size],
         className,
       )}

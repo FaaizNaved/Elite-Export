@@ -1,11 +1,23 @@
+import { IMAGE_BASE_URL } from "../config/site";
 import type { Image } from "../types";
-import { joinPath } from "./slug";
 
-/** Shown when content is missing an image; keeps layouts from collapsing. */
-export const PLACEHOLDER_IMAGE: Image = {
-  src: "/images/placeholder.webp",
-  alt: "",
-};
+/**
+ * Image helpers.
+ *
+ * Content stores site-relative paths (`/images/products/…`). Those paths are
+ * stable identifiers, not hosting decisions: `resolveImageUrl` is the single
+ * place they become a URL, so moving assets to a CDN is one environment
+ * variable rather than a content migration.
+ */
+
+/**
+ * Turns a content image path into the URL to request.
+ * Absolute URLs and data URIs pass through untouched.
+ */
+export function resolveImageUrl(src: string): string {
+  if (!IMAGE_BASE_URL || src.startsWith("http") || src.startsWith("data:")) return src;
+  return `${IMAGE_BASE_URL}${src.startsWith("/") ? src : `/${src}`}`;
+}
 
 /**
  * Guarantees a non-empty `alt`. Authors may omit alt text in frontmatter; the
@@ -20,19 +32,6 @@ export function withAltAll(images: readonly Image[], fallbackAlt: string): Image
   return images.map((image, index) =>
     withAlt(image, images.length > 1 ? `${fallbackAlt} — view ${index + 1}` : fallbackAlt),
   );
-}
-
-/**
- * Canonical location of a product's images, mirroring the content hierarchy:
- * `/images/products/western-tack/headstall/one-ear-headstall/front.webp`
- */
-export function productImagePath(
-  categorySlug: string,
-  subcategorySlug: string,
-  productSlug: string,
-  fileName?: string,
-): string {
-  return joinPath("images", "products", categorySlug, subcategorySlug, productSlug, fileName);
 }
 
 /**

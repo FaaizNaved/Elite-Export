@@ -41,12 +41,25 @@ export function SectionHeader({
         className,
       )}
     >
-      <div className={cn("flex flex-col gap-3", centered ? "items-center" : "max-w-2xl")}>
-        {eyebrow && <Typography variant="overline">{eyebrow}</Typography>}
+      <div className={cn("flex flex-col gap-5", centered ? "items-center" : "max-w-2xl")}>
+        {/* Eyebrow and seam are one unit — the label and its mark — so they sit
+            closer to each other than the group does to the heading. */}
+        {eyebrow && (
+          <div className={cn("flex flex-col gap-3", centered && "items-center")}>
+            <Typography variant="overline">{eyebrow}</Typography>
+            <span aria-hidden className="rule-stitch" />
+          </div>
+        )}
         <Typography variant="h2" as={as}>
           {heading}
         </Typography>
-        {description && <Typography variant="lead">{description}</Typography>}
+        {/* Narrower than the heading it sits under: a section standfirst is read
+            in one pass, and 74 characters is past the point where that holds. */}
+        {description && (
+          <Typography variant="lead" className={cn("max-w-xl", centered && "mx-auto")}>
+            {description}
+          </Typography>
+        )}
       </div>
 
       {action && <div className="shrink-0">{action}</div>}

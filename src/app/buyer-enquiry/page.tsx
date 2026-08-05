@@ -7,11 +7,10 @@ import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { SkeletonText } from "@/components/ui/skeleton";
 import { Typography } from "@/components/ui/typography";
-import { siteConfig } from "@/config/site";
+import { company } from "@/config";
 import { ROUTES } from "@/constants";
-import { getFaqsByTopic } from "@/data/faqs";
-import { buildMetadata } from "@/lib/seo";
-import { faqJsonLd } from "@/lib/structured-data";
+import { getFaqsByTopic } from "@/lib/content";
+import { buildMetadata, faqJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Buyer Enquiry",
@@ -20,9 +19,9 @@ export const metadata: Metadata = buildMetadata({
   path: ROUTES.buyerEnquiry,
 });
 
-export default function BuyerEnquiryPage() {
-  const { contact } = siteConfig.company;
-  const faqs = getFaqsByTopic("ordering");
+export default async function BuyerEnquiryPage() {
+  const { contact } = company;
+  const faqs = await getFaqsByTopic("ordering");
 
   return (
     <>

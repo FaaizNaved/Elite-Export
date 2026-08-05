@@ -2,9 +2,8 @@ import Link from "next/link";
 import { Logo } from "@/components/common/logo";
 import { Navbar } from "@/components/layout/navbar";
 import { buttonVariants } from "@/components/ui/button";
-import { siteConfig } from "@/config/site";
 import { ROUTES } from "@/constants";
-import { mainNav } from "@/data/navigation/main-nav";
+import { company, mainNav, siteConfig } from "@/config";
 import { getProductsMegaMenu } from "@/lib/content";
 
 /** Routes whose hero runs under the header. */
@@ -24,6 +23,26 @@ export async function SiteHeader() {
       items={mainNav}
       megaMenu={megaMenu}
       overlayRoutes={OVERLAY_ROUTES}
+      megaMenuUtilities={[
+        {
+          label: "Request samples",
+          href: ROUTES.buyerEnquiry,
+          description: "Tell us the styles and finishes you need.",
+        },
+        {
+          label: "Talk to us",
+          href: ROUTES.contact,
+          description: "A person reads every message.",
+        },
+      ]}
+      contact={
+        <a
+          href={`tel:${company.contact.phone.replace(/s+/g, "")}`}
+          className="font-sans text-caption text-current/70 transition-fast hover:text-accent"
+        >
+          {company.contact.phone}
+        </a>
+      }
       cta={
         <Link href={ROUTES.buyerEnquiry} className={buttonVariants({ size: "sm" })}>
           Buyer enquiry
