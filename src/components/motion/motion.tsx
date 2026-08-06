@@ -7,7 +7,17 @@ import {
   type Variants,
 } from "framer-motion";
 import type { ComponentPropsWithoutRef } from "react";
-import { fade, fadeUp, reveal, scaleIn, slideIn, staggerContainer, stagger } from "@/animations";
+import { cn } from "@/lib/cn";
+import {
+  fade,
+  fadeUp,
+  imageReveal,
+  reveal,
+  scaleIn,
+  slideIn,
+  staggerContainer,
+  stagger,
+} from "@/animations";
 
 /**
  * Thin wrappers around Framer Motion so pages never write animation code.
@@ -97,6 +107,49 @@ export function ScaleIn(props: MotionProps) {
 /** Editorial masked reveal — the content wipes up from behind its own baseline. */
 export function Reveal(props: MotionProps) {
   return <Animated variants={reveal} {...props} />;
+}
+
+/**
+ * Photography reveal — the frame is uncovered rather than moved. Use on large
+ * editorial images; `SlideUp` on a 700px photograph reads as a wobble.
+ *
+ * Renders the children untouched and slides a panel off them, rather than
+ * animating the image's own `clip-path`. Framer does not animate `clip-path`
+ * reliably in this project — the first implementation left every large
+ * photograph stuck at its hidden value — and a transform is what the rest of
+ * the motion system already depends on.
+ */
+export function ImageReveal({
+  className,
+  children,
+  delay = 0,
+  once = true,
+  amount = 0.15,
+  ...props
+}: MotionProps) {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return (
+      <div className={className} {...props}>
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("relative overflow-hidden", className)} {...props}>
+      {children}
+      <motion.div
+        aria-hidden
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once, amount }}
+        variants={withDelay(imageReveal, delay)}
+        className="pointer-events-none absolute inset-0 bg-background"
+      />
+    </div>
+  );
 }
 
 export interface SlideInProps extends MotionProps {

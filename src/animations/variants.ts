@@ -43,13 +43,41 @@ export const scaleIn: Variants = {
   visible: { opacity: 1, scale: 1, transition: transition(duration.normal) },
 };
 
-/** Editorial masked reveal — the text wipes up from behind its own baseline. */
+/**
+ * Editorial masked reveal — the text wipes up from behind its own baseline.
+ *
+ * Every `inset()` value carries a unit. Framer interpolates the four numbers
+ * positionally, and a keyframe pair that mixes unitless `0` with `100%` does
+ * not parse — the element simply stays at its `hidden` value forever. Keep all
+ * four percentages here and in `imageReveal`.
+ */
 export const reveal: Variants = {
-  hidden: { opacity: 0, y: "40%", clipPath: "inset(0 0 100% 0)" },
+  hidden: { opacity: 0, y: "40%", clipPath: "inset(0% 0% 100% 0%)" },
   visible: {
     opacity: 1,
     y: "0%",
-    clipPath: "inset(0 0 0% 0)",
+    clipPath: "inset(0% 0% 0% 0%)",
+    transition: transition(duration.premium, easing.premium),
+  },
+};
+
+/**
+ * Photography reveal — the curtain that uncovers a frame, not the frame itself.
+ *
+ * Applied to a panel sitting over the image, which slides down and off. The
+ * photograph never moves: a photograph that slides in is a slide, a photograph
+ * that is uncovered is a print being laid down. On a 1000px frame a 24px drift
+ * reads as a wobble, so travel is not an option here.
+ *
+ * This was originally a `clipPath` wipe, which is the obvious way to write it.
+ * Framer never animated it — the element held its `hidden` value through the
+ * whole page and the six largest photographs on the home page never appeared.
+ * Transforms are what this codebase can rely on; see `ImageReveal`.
+ */
+export const imageReveal: Variants = {
+  hidden: { y: "0%" },
+  visible: {
+    y: "100%",
     transition: transition(duration.premium, easing.premium),
   },
 };

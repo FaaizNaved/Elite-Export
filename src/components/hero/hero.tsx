@@ -37,6 +37,12 @@ export interface HeroProps {
   videoTitle?: string;
   poster?: ImageToken;
   overlay?: "none" | "soft" | "strong";
+  /**
+   * Horizontal anchor for the copy. Media-backed heroes centre by default;
+   * `start` anchors to the left, which is the cinematic framing — a title in
+   * the corner of a frame rather than a poster centred on one.
+   */
+  align?: "center" | "start";
   /** Animated cue that there is more below. Decorative. */
   scrollIndicator?: boolean;
   height?: "content" | "tall" | "full";
@@ -78,13 +84,17 @@ export function Hero({
   videoTitle = "Background video",
   poster,
   overlay = "soft",
+  align,
   scrollIndicator = false,
   height,
   className,
 }: HeroProps) {
   const hasBackdrop = variant === "image" || variant === "video" || Boolean(backgroundImage);
   const resolvedHeight = height ?? (variant === "page" ? "content" : hasBackdrop ? "tall" : "content");
-  const centered = variant === "centered" || (hasBackdrop && variant !== "split");
+  const centered =
+    align === "start"
+      ? false
+      : align === "center" || variant === "centered" || (hasBackdrop && variant !== "split");
 
   const copy = (
     <div
@@ -139,10 +149,10 @@ export function Hero({
         <div
           className={cn(
             "mt-10 border-t pt-6",
-            // The rule is as wide as the credentials it underlines, not as wide
-            // as the container: a hairline drawn edge to edge across a
-            // photograph reads as the top of a panel, not as a credential line.
-            centered ? "mx-auto w-fit max-w-full px-8" : "w-full",
+            // The rule is as wide as the copy it sits under, never as wide as
+            // the viewport: a hairline drawn edge to edge across a photograph
+            // reads as the top of a panel, not as a credential line.
+            centered ? "mx-auto w-fit max-w-full px-4 sm:px-8" : "w-full max-w-4xl",
             hasBackdrop ? "border-primary-foreground/20" : "border-border",
           )}
         >
@@ -188,7 +198,11 @@ export function Hero({
         <div aria-hidden className={cn("absolute inset-0 -z-10", overlayClasses[overlay])} />
       )}
 
-      <Container size={variant === "split" ? "lg" : "md"}>
+      {/* A left-anchored hero shares the page's own left margin. Dropping to the
+          narrower container would set the headline 200px inside every section
+          beneath it, and the first thing a visitor sees should establish the
+          grid the rest of the page keeps to. */}
+      <Container size={variant === "split" || align === "start" ? "lg" : "md"}>
         {variant === "split" ? (
           <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
             {copy}

@@ -12,6 +12,8 @@ export type {
   ProcessStepsProps,
   StatsBandProps,
 } from "./page-blocks";
+export { EditorialSpread } from "./editorial-spread";
+export type { EditorialSpreadProps } from "./editorial-spread";
 export { FullBleedImage } from "./full-bleed-image";
 export type { FullBleedImageProps } from "./full-bleed-image";
 export { PageHero } from "./page-hero";
