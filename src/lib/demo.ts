@@ -77,11 +77,24 @@ export const isGeneratedPlaceholder = (src: string): boolean => generated.has(sr
  * caption is dropped: a caption is a specification of a photograph (VDS §12.2)
  * and there is no photograph yet.
  */
-export function reserve(image: Image, rank: EvidenceRank = "E3", shape?: [number, number]): Image {
+export function reserve(
+  image: Image,
+  rank: EvidenceRank = "E3",
+  shape?: [number, number],
+  /**
+   * What is reserved — the plate's own stamp, and it is a **shot direction**
+   * rather than a caption. §12.2 makes a caption a specification of a
+   * photograph; there is no photograph, so what is stated instead is the one
+   * thing that is true of the rectangle: what will occupy it. It states nothing
+   * about the company, carries no fact, figure or date, and is drawn inside the
+   * trim at rank C so it can never be read as a caption beneath an image.
+   */
+  subject?: string,
+): Image {
   return {
     ...image,
     src: `${RESERVED}${image.src}`,
-    caption: undefined,
+    caption: subject,
     evidenceRank: image.evidenceRank ?? rank,
     ...(shape ? { width: shape[0], height: shape[1] } : {}),
   };
@@ -108,8 +121,9 @@ export const framed = (
   image: Image,
   rank: EvidenceRank = "E3",
   shape?: [number, number],
+  subject?: string,
 ): Image =>
-  DEMO_MODE && isGeneratedPlaceholder(image.src) ? reserve(image, rank, shape) : image;
+  DEMO_MODE && isGeneratedPlaceholder(image.src) ? reserve(image, rank, shape, subject) : image;
 
 /**
  * What each chapter reserves, when the archive holds nothing for it.
@@ -118,12 +132,15 @@ export const framed = (
  * Direction §5.1 and Documentary Storyboard §10.1 read straight through:
  * Recognition is bought only with an E1, a chapter of located views alone is a
  * mood piece, and a document is an E4 record. The **ratios** are the ones the
- * archive already holds. There are no subjects, no captions and no words.
+ * archive already holds. The **subjects** are shot directions and nothing else:
+ * what has to be in the frame, phrased as an instruction to the photographer.
+ * None of them states a fact, a figure, a date or a claim about the company,
+ * and none of them is rendered as a caption — see `reserve`.
  *
  * This is a shot list expressed as space — what has to be photographed, at what
  * grade, in what order, and how much of the page each frame will take.
  */
-const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number]>> = {
+const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number, string]>> = {
   /*
    * Two frames, not three, and they are different shapes.
    *
@@ -137,12 +154,12 @@ const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number]
    * The place at bleed, then one object off the bench, bounded (§31.3).
    */
   C1: [
-    ["E5", 2400, 1200],
-    ["E6", 1200, 1200],
+    ["E5", 2400, 1200, "The workshop floor, Kanpur"],
+    ["E6", 1200, 1200, "Harness leather on the bench"],
   ],
   C2: [
-    ["E2", 2400, 1200],
-    ["E6", 1200, 1200],
+    ["E2", 2400, 1200, "A hide being graded at intake"],
+    ["E6", 1200, 1200, "Rejected section, marked"],
   ],
   /*
    * One frame. Recognition is one decision being taken.
@@ -158,35 +175,35 @@ const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number]
    * the annotation beside the frame, in the words the content layer already
    * holds, and it arrives as an E2 photograph the day the archive has one.
    */
-  C3: [["E1", 2400, 1350]],
+  C3: [["E1", 2400, 1350, "The cut being decided, along the backbone"]],
   C4: [
-    ["E2", 2400, 1200],
-    ["E6", 1200, 1200],
-    ["E2", 1600, 900],
+    ["E2", 2400, 1200, "Skiving to thickness"],
+    ["E6", 1200, 1200, "A shaped component, off the press"],
+    ["E2", 1600, 900, "The edge, being burnished"],
   ],
   C5: [
-    ["E2", 2400, 1200],
-    ["E6", 1200, 1200],
+    ["E2", 2400, 1200, "The saddle stitch, two needles"],
+    ["E6", 1200, 1200, "A finished stress point"],
   ],
   C6: [
-    ["E2", 2400, 1200],
-    ["E6", 1200, 1200],
+    ["E2", 2400, 1200, "Hand finishing, after the seam is closed"],
+    ["E6", 1200, 1200, "Hardware, set and seated"],
   ],
   C7: [
-    ["E1", 2400, 1350],
-    ["E4", 1200, 1600],
+    ["E1", 2400, 1350, "A piece being refused at the gate"],
+    ["E4", 1200, 1600, "The inspection record for that piece"],
   ],
   /* A record is never an opening (§10, grade G4), so C8 leads on the portrait
      document and follows it with the wider one. Both bounded — §31.3. */
   C8: [
-    ["E4", 1200, 1600],
-    ["E4", 1600, 1200],
+    ["E4", 1200, 1600, "The batch file, as it is kept"],
+    ["E4", 1600, 1200, "Three years of records, on the shelf"],
   ],
   C9: [
-    ["E2", 2400, 1200],
-    ["E6", 1200, 1200],
+    ["E2", 2400, 1200, "An order being packed for dispatch"],
+    ["E6", 1200, 1200, "The carton, marked and sealed"],
   ],
-  C10: [["E5", 2400, 1200]],
+  C10: [["E5", 2400, 1200, "The bench tomorrow morning"]],
 };
 
 /**
@@ -201,11 +218,14 @@ export function chapterFrames(chapter: Chapter): Image[] {
   const archive = archiveFrames(chapter);
   if (archive.length || !DEMO_MODE) return archive;
 
-  return CHAPTER_PLAN[chapter].map(([rank, width, height], index) => ({
+  return CHAPTER_PLAN[chapter].map(([rank, width, height, subject], index) => ({
     src: `${RESERVED}${chapter}/${index + 1}`,
     width,
     height,
     alt: "",
+    /* The shot direction, stamped inside the trim — see `reserve`. It is not a
+       caption and it states nothing about the company. */
+    caption: subject,
     evidenceRank: rank,
     chapter,
     /* No provenance, because there is none. It is not stubbed out. */

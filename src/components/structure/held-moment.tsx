@@ -60,7 +60,21 @@ export function HeldMoment({ photograph, statement, className }: HeldMomentProps
       )}
       {element === "statement" && (
         <div className="mx-auto w-full max-w-field px-6 reading:px-12">
-          <Statement rank="d" as="p">
+          {/*
+            One element, and it is the sentence.
+
+            The moment was empty — one viewport of ink with nothing in it, which
+            §23.4 does permit and which, on the way into Recognition, spends the
+            strongest transition in the system on a blank screen. §22.3 names
+            what this construction is for: *silence before a claim — the pause
+            that makes the next statement land.* A claim needs a sentence.
+
+            The mark above it is one hairline at the reading edge — the same
+            dateline rule the overture uses — so the statement is placed in the
+            field rather than floated in it.
+          */}
+          <span aria-hidden className="mb-s4 block h-px w-16 bg-ink-secondary-inverse" />
+          <Statement rank="d" as="p" data-reveal className="max-w-[18ch] reading:max-w-[16ch]">
             {statement}
           </Statement>
         </div>

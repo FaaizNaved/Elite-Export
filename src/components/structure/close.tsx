@@ -1,7 +1,7 @@
 import { Action } from "@/components/ui/action";
 import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
-import { Statement } from "@/components/ui/typography";
+import { Passage, Statement } from "@/components/ui/typography";
 
 /**
  * The close — where the surface's one action lives.
@@ -36,6 +36,12 @@ export interface CloseProps {
    */
   statement?: string;
   /**
+   * What happens after the ask, stated plainly. It is not a second pitch and
+   * not reassurance (Brand Bible §16.4): it is the process, so a buyer knows
+   * what they are starting. Copy is the surface's (MIB R6.4).
+   */
+  description?: string;
+  /**
    * The surface's atmosphere mark, if it spends one here. A class, not a
    * variant: §14.5's marks are a property of the *field* a surface composes,
    * not a setting this component offers, and giving it a `texture` prop is how
@@ -44,7 +50,7 @@ export interface CloseProps {
   className?: string;
 }
 
-export function Close({ statement, className }: CloseProps) {
+export function Close({ statement, description, className }: CloseProps) {
   return (
     <Section break="chapter" className={className}>
       {/*
@@ -54,13 +60,35 @@ export function Close({ statement, className }: CloseProps) {
         characters is the same failure the chapters above had, and it is worse
         here because this line is the one the visitor is meant to act on.
       */}
-      <Field type="full" className="flex flex-col gap-s4">
-        {statement && (
-          <Statement rank="t2" as="h2" className="max-w-reading">
-            {statement}
-          </Statement>
-        )}
-        <Action />
+      <Field type="full">
+        <div
+          data-reveal
+          /*
+            The invitation, composed rather than stacked.
+
+            It was a heading with a black rectangle beneath it in an otherwise
+            empty field — the one moment on the surface that looked like a form.
+            It is now a record: a hairline across the field, the ask on the
+            leading column at the peak register, and what actually happens next
+            beside it on the trailing one. The action is still one action, still
+            once, still after the argument (R39.3, §35.2) — nothing was added to
+            the ask, only to what the reader knows before making it.
+          */
+          className="grid gap-s4 border-t border-hairline pt-s5 paired:grid-cols-[5fr_3fr] paired:gap-8"
+        >
+          <div className="flex flex-col gap-s4">
+            {statement && (
+              <Statement rank="t1" as="h2" className="max-w-reading">
+                {statement}
+              </Statement>
+            )}
+            <Action />
+          </div>
+
+          {description && (
+            <Passage className="max-w-record self-end text-ink-secondary">{description}</Passage>
+          )}
+        </div>
       </Field>
     </Section>
   );

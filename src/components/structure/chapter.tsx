@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Field } from "@/components/ui/field";
+import { Field, PairedField } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
 import { Statement } from "@/components/ui/typography";
 import { EditorialImage } from "@/components/evidence";
@@ -196,7 +196,13 @@ export function Chapter({
       )}
     >
       {openingFrame && (
-        <EditorialImage image={openingFrame} sizes={imageSizes.bleed} priority={priority} bleed />
+        <EditorialImage
+          image={openingFrame}
+          sizes={imageSizes.bleed}
+          priority={priority}
+          bleed
+          stitched
+        />
       )}
 
       {(opening === "statement" || opening === "inverted") && statement && (
@@ -212,6 +218,27 @@ export function Chapter({
         const frames = index === 0 && openingFrame ? scene.frames.slice(1) : scene.frames;
         const isLast = index === scenes.length - 1;
 
+        /*
+         * The pairing — §29.2, §31.2, and the reason this chapter stopped
+         * being a column of rectangles with a paragraph underneath.
+         *
+         * §31.3 already sorts the frames into two kinds: the bleed ranks, which
+         * are the chapter's *place*, and the bounded ranks — the E4 record and
+         * the E6 object — where the frame is part of what is being shown. A
+         * bounded frame is the one that belongs *beside* the words: it is an
+         * object on a bench, held at the record column, and the annotation is
+         * what it is for.
+         *
+         * They were stacked. A 480px square followed by a paragraph left the
+         * whole trailing half of a 1440px field empty on the tallest section of
+         * the surface — which is not §16.2's silence, it is a column that was
+         * never composed. The paired field is the system's own answer and it
+         * was going unused: evidence leading at 5 + 3, the annotation beside it.
+         */
+        const bleeding = frames.filter((frame) => bleedsAtRank(frame.evidenceRank));
+        const bounded = frames.filter((frame) => !bleedsAtRank(frame.evidenceRank));
+        const words = scene.annotation || (isLast && scene.release);
+
         return (
           <div
             key={index}
@@ -223,62 +250,82 @@ export function Chapter({
              */
             className={index > 0 ? "mt-s5" : undefined}
           >
-            {frames.map((frame, position) => {
-              /*
-               * §31.3: presence follows the rank of the photograph, not the
-               * preference of the surface. Bleed for E1, E2 and E5; bounded
-               * for the E4 record and the E6 object, where the frame is part
-               * of what is being shown.
-               *
-               * §23.2: elements within one passage are separated by S4. The
-               * space is suppressed only where the frame really is the first
-               * element of the chapter — when the opening consumed frame 0,
-               * the next frame follows a photograph rather than beginning one,
-               * and two bleed frames meeting at 0px read as a single image
-               * with a caption stranded between them.
-               */
-              const bleed = bleedsAtRank(frame.evidenceRank);
-              const image = (
-                <EditorialImage
-                  key={frame.src}
-                  image={frame}
-                  bleed={bleed}
-                  sizes={bleed ? imageSizes.bleed : imageSizes.record}
-                  className={index === 0 && position === 0 && !openingFrame ? undefined : "mt-s4"}
-                />
-              );
+            {bleeding.map((frame, position) => (
+              <EditorialImage
+                key={frame.src}
+                image={frame}
+                bleed
+                sizes={imageSizes.bleed}
+                stitched
+                className={index === 0 && position === 0 && !openingFrame ? undefined : "mt-s4"}
+              />
+            ))}
 
-              /*
-               * A bounded frame needs something bounding it. Rendered loose in
-               * the section it fills the field exactly as a bleed frame does,
-               * and §31.3's *deliberate change of register* becomes no change
-               * at all — an E4 record arriving at the same presence as the E1
-               * decision that earned it.
-               *
-               * The bound is the record column: `--container-record`, 480px,
-               * which §10.1 sets and `imageSizes.record` already delivers to.
-               * It sits inside the field rather than replacing it, flush left,
-               * because §10.4 centres nothing.
-               */
-              return bleed ? (
-                image
-              ) : (
-                <Field key={frame.src} type="full">
-                  <div className="max-w-record">{image}</div>
-                </Field>
-              );
-            })}
+            {bounded.length > 0 && (
+              <Field type="paired" className="mt-s5">
+                <PairedField
+                  /*
+                   * The argument takes the 5-unit column and the object takes
+                   * the 3, which is what §31.3 means by *bounded placement is a
+                   * deliberate change of register*: the chapter's place has
+                   * already bled across the whole viewport above, and the thing
+                   * off the bench is examined rather than established. Given the
+                   * 5 it was drawn 830px square beside a 470px column of prose,
+                   * which inverts both.
+                   *
+                   * `reversed` swaps which side each takes, so consecutive
+                   * scenes give the eye somewhere new to start (§17.1) without
+                   * either changing size.
+                   */
+                  reversed={index % 2 === 1}
+                  className="items-center"
+                >
+                  {words ? (
+                    <div data-reveal className="flex flex-col gap-s3">
+                      {/* Brand Bible D1: the photograph argues, the words annotate. */}
+                      {scene.annotation}
+                      {isLast && scene.release}
+                    </div>
+                  ) : (
+                    <div />
+                  )}
 
-            {(scene.annotation || (isLast && scene.release)) && (
-              <Field type="paired" className="mt-s4 flex flex-col gap-s3">
-                {/* Brand Bible D1: the photograph argues, the words annotate. */}
-                {scene.annotation}
-                {/*
-                 * §8.4, Creative Direction Book §22.2: the chapter ends by
-                 * releasing — the last thing asked is smaller than the thing
-                 * before it, and then there is space.
-                 */}
-                {isLast && scene.release}
+                  <div className="flex flex-col gap-s4">
+                    {bounded.map((frame) => (
+                      <EditorialImage
+                        key={frame.src}
+                        image={frame}
+                        sizes={imageSizes.record}
+                        stitched
+                      />
+                    ))}
+                  </div>
+                </PairedField>
+              </Field>
+            )}
+
+            {bounded.length === 0 && words && (
+              /*
+               * A chapter whose only frame bleeds — Recognition is one of them —
+               * has no object to put the words beside, so the words carry the
+               * whole field alone. Stacked flush left they were a heading, a
+               * paragraph and a link in the leading third of a 1440px field,
+               * with the other two thirds empty: the annotation of a
+               * full-viewport photograph reading as a footnote to it.
+               *
+               * The 5 + 3 asymmetry is the answer here as everywhere else
+               * (§29.2). The argument takes the 5-unit column at its own
+               * measure; the release sits on the 3, at the foot, which is
+               * §22.2's *smaller than the thing before it* expressed as
+               * position rather than as size.
+               */
+              <Field type="paired" data-reveal className="mt-s5">
+                <PairedField className="items-end">
+                  <div className="flex flex-col gap-s3">{scene.annotation}</div>
+                  {isLast && scene.release && (
+                    <div className="flex flex-col">{scene.release}</div>
+                  )}
+                </PairedField>
               </Field>
             )}
           </div>

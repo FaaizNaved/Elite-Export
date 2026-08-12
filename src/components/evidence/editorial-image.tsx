@@ -1,6 +1,7 @@
 import { ContentImage } from "@/components/ui/image";
 import { Caption } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
+import { isReservedFrame } from "@/lib/demo";
 import type { Image as ImageToken } from "@/types";
 import { imageSizes } from "@/utils/image";
 
@@ -26,6 +27,8 @@ import { imageSizes } from "@/utils/image";
 
 export interface EditorialImageProps {
   image: ImageToken;
+  /** Demo mode only — see {@link ContentImage}. Ignored for a photograph. */
+  stitched?: boolean;
   /** How wide it will render. Use `imageSizes`, not a hand-written string. */
   sizes?: string;
   priority?: boolean;
@@ -46,6 +49,7 @@ export function EditorialImage({
   priority,
   bleed = false,
   className,
+  stitched = false,
 }: EditorialImageProps) {
   if (!image.width || !image.height) return null;
 
@@ -83,8 +87,14 @@ export function EditorialImage({
       style={ceiling}
       className={cn("flex flex-col", bleed && "w-screen max-w-none", className)}
     >
-      <ContentImage image={image} sizes={sizes} priority={priority} />
-      {image.caption && (
+      <ContentImage image={image} sizes={sizes} priority={priority} stitched={stitched} />
+      {/*
+        A reserved plate carries its own stamp inside the trim, and the stamp is
+        not a caption — it is what is reserved, not a specification of a
+        photograph that does not exist. Printing it twice, once inside the frame
+        and once beneath it, would state it as both.
+      */}
+      {image.caption && !isReservedFrame(image.src) && (
         <figcaption className="mt-s2">
           <Caption>{image.caption}</Caption>
         </figcaption>

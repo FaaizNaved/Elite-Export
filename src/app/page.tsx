@@ -1,13 +1,11 @@
 import { Fragment } from "react";
 import type { Metadata } from "next";
-import { RecordSet } from "@/components/evidence";
-import { Chapter, Close, HeldMoment, Opening } from "@/components/structure";
-import { SectionHeader } from "@/components/sections";
+import { Chapter, Close, HeldMoment, Overture } from "@/components/structure";
+import { Range } from "@/components/sections";
+import { Reveal } from "@/components/system";
 import { Continuation } from "@/components/ui/action";
-import { Field } from "@/components/ui/field";
-import { Section } from "@/components/ui/section";
 import { Passage, Statement } from "@/components/ui/typography";
-import { homeTelling, siteConfig } from "@/config";
+import { company, homeTelling, siteConfig } from "@/config";
 import { ROUTES } from "@/constants";
 import { sceneRefusal, type Scene } from "@/components/structure";
 import { getCategories, getCompanyPage, getHomeContent } from "@/lib/content";
@@ -40,40 +38,29 @@ export const metadata: Metadata = buildMetadata({
  * not a property of one. So the surface alternates demand and release (§22.5),
  * and the release before Recognition is the longest interval on the site.
  *
- * | | Demand | Why here |
- * | --- | --- | --- |
- * | Opening — the words | low | The surface is entered by reading, so the first photograph is not competing with a title (§33.1) |
- * | **C1 · The place** | rising | Established, then examined (§17.3): the room at bleed, then the frames inside it |
- * | **Silence** | **none** | §17.4 ranks silence the strongest transition available and §22.3 names it *the pause that makes the next statement land*. It is the site's one held moment (§23.4, R16.3) |
- * | **C3 · The decision** | **peak** | Recognition (§7.2, R16.2). Entered through the silence — §23.5's fourth opening — so it is entered differently in *kind* from C1, which §22.1 and §8.3 both require |
- * | The range | falling | E5: hand on plainly to the range. §16's secondary route |
- * | The close | low | One action, once, at the end (R16.5, R39.3). §16's close |
+ * | | Field | Demand | Why here |
+ * | --- | --- | --- | --- |
+ * | The overture | paper | rising | One screen. The statement, the frame and the record: what the company is, before a word of argument (§20) |
+ * | **C1 · The place** | paper | rising | Established, then examined (§17.3): the room at bleed, then the object off the bench, beside the words |
+ * | **Silence** | **ink** | **none** | §17.4 ranks silence the strongest transition available and §22.3 names it *the pause that makes the next statement land.* It is the site's one held moment and its one inverted field (§23.4, §23.6, R16.3) |
+ * | **C3 · The decision** | paper | **peak** | Recognition (§7.2, R16.2). Entered through the silence — §23.5's fourth opening — so it is entered differently in *kind* from C1, which §22.1 and §8.3 both require |
+ * | The range | recessed | falling | E5: hand on plainly to the range. §16's secondary route, and the third value on the surface |
+ * | The close | paper | low | One action, once, at the end (R16.5, R39.3) |
  *
- * Inside a chapter the order is the same argument at a smaller scale:
- * **establish → examine → annotate → release.** §17.3: a detail with no
- * established context is decoration, and a sequence should resolve. §22.2: a
- * chapter ends by releasing rather than concluding — the last thing asked of
- * the reader is smaller than the thing before it, and then there is space. So
- * the words follow the photographs (Brand Bible D1: photography carries the
- * argument, everything else annotates) and the continuation is last.
- *
- * ### What the visitor is not given
- *
- * No rule, border, label or background change marks a chapter (§17.4, §12.4).
- * The transitions are silence, density and scale, and nothing else is
- * available: the chapter break is S6 and the design system has no divider.
+ * Six fields, and no two of them adjacent are the same: paper, paper at bleed,
+ * ink, paper, recessed, paper. No rule, border, label or background change
+ * marks a chapter (§17.4, §12.4) — the transitions are silence, density, scale
+ * and tone, and nothing else is available, because the chapter break is S6 and
+ * the design system has no divider.
  *
  * ### Absence
  *
  * A chapter absent by rule is handed on; a chapter absent by dependency is
- * waiting on the archive. §16's dependency note governs the second:
- *
- *   > Requires an E1 photograph. Without one, Home cannot discharge its
- *   > obligation and **the surface is built to the extent the library permits,
- *   > with the Recognition passage absent rather than substituted (X8).**
- *
- * Nothing here renders a photograph the archive cannot prove (Photography
- * Direction §24.4, §24.5), which is why the surface currently carries none.
+ * waiting on the archive. Every frame on this surface is a **reserved plate**
+ * (`src/lib/demo.ts`): the exact space and ratio a photograph will occupy,
+ * stamped with what has to be shot for it. Nothing here renders a photograph
+ * the archive cannot prove (Photography Direction §24.4, §24.5), and nothing
+ * moves by a pixel when the photographs land.
  */
 export default async function HomePage() {
   const [categories, manufacturing, home] = await Promise.all([
@@ -101,31 +88,20 @@ export default async function HomePage() {
    */
   const mechanism = manufacturing?.steps.find((step) => step.title === "Cutting");
 
-  /*
-   * The scenes, composed once — Documentary Storyboard §9, §11. Each states
-   * what it is made of and what its pair proves; `Chapter` decides whether the
-   * archive can carry it (§10.1, `sceneRefusal`).
-   */
-  /*
-   * The measure, restored.
-   *
-   * Both annotations were set `measure={false}`, and that prop means *let the
-   * field set the width, where the field **is** the reading column.* The field
-   * they sit in is `paired`, which is `max-w-field` — 1440px. So the reading
-   * column was discarded and the argument ran at **131 characters a line**,
-   * measured, against the 66 §10.1 fixes.
-   *
-   * §10.1 states the failure exactly: past roughly 75 characters the eye loses
-   * the return sweep and the reader re-reads a line without noticing. It is the
-   * difference between prose that is read and prose that is skimmed, and on the
-   * two passages that carry this surface's whole argument it was the second.
-   */
   const placeScenes: Scene[] = [
     {
       frames: place,
       /* §11.1: place, then the detail inside it. It earns the right to close attention (N4). */
       relationship: "establish-and-examine",
-      annotation: <Passage>{intro.body}</Passage>,
+      annotation: (
+        <>
+          <Statement rank="t2" as="h2">
+            {intro.description}
+          </Statement>
+          <Passage>{intro.body}</Passage>
+        </>
+      ),
+      release: <Continuation href={ROUTES.about}>Who is in the building</Continuation>,
     },
   ];
 
@@ -135,22 +111,7 @@ export default async function HomePage() {
           frames: decision,
           annotation: (
             <>
-              {/*
-                T2, not T3.
-
-                This is the mechanism heading of the Recognition chapter — the
-                peak of the surface (§17.2, R16.2). It was set at T3, 22px,
-                while the category hand-off below it — which this file's own
-                sequence table marks *falling* — was at T2, 30px. The page
-                climaxed smaller than it released.
-
-                Both are section headings and §9.2 gives a section heading T2,
-                so the peak is not marked by being *larger* than the release —
-                it is marked by the viewport of ink the reader passes through to
-                reach it (§23.6). That is the stronger mark, and it is the one
-                the system actually reserves for this.
-              */}
-              <Statement rank="t2" as="h2">
+              <Statement rank="t1" as="h2">
                 {mechanism.title}
               </Statement>
               <Passage>{mechanism.description}</Passage>
@@ -168,43 +129,52 @@ export default async function HomePage() {
   /*
    * §23.4: the held moment exists once per surface **longer than three viewport
    * heights**. A surface on which no chapter is told is not that surface, and
-   * silence on a short page is an empty screen rather than a held moment. The
-   * test is whether a chapter will actually be told, which is the same question
-   * `Chapter` asks itself.
+   * silence on a short page is an empty screen rather than a held moment.
    */
   const holds =
     !sceneRefusal(placeScenes) || !sceneRefusal(decisionScenes, { isRecognition: true });
 
+  /*
+   * The record at the foot of the first screen. Every value is read from the
+   * company record and nothing is authored here (R7.1, Brand Bible §19.2): a
+   * figure that cannot be checked is not printed, which is why there is no
+   * headcount, no output number and no years-of-experience line.
+   */
+  const overtureRecord = [
+    { label: "Established", value: String(company.foundedYear) },
+    {
+      label: "Manufacture",
+      value: `Own facility, ${company.contact.address.city}`,
+    },
+    { label: "Capability", value: "OEM and ODM" },
+    {
+      label: "Audited by",
+      value: company.certifications.map((certification) => certification.name).join(" · "),
+    },
+  ];
+
   return (
     <>
+      {/* The one cross dissolve on the surface. It cannot hide content. */}
+      <Reveal />
+
       {/*
-        The surface opens on words, and C1 opens on the photograph. Two openings
-        carrying a frame each would spend the same evidence twice, and §33.1
-        forbids the alternative — text over a photograph — outright.
+        THE OVERTURE — one screen, and the only screen a visitor is guaranteed
+        to see. §33.1 forbids text over a photograph, so the statement and the
+        frame are placed side by side: the two things that have to arrive
+        together, arriving together.
+
+        The stitch, at 1.4%. A fine repeat rather than a silhouette — this is
+        the arrival field and it needs a tooth at the threshold §14.5 permits,
+        not a picture behind the words.
       */}
-      <Opening
+      <Overture
         title={hero.heading}
         eyebrow={hero.eyebrow}
         summary={hero.description}
-        /*
-          The arrival, compressed.
-
-          A chapter break is S6 — 192px — and above the *first* element of the
-          surface that put 272px of nothing between an 80px header and the first
-          word, which is 38% of the first screen spent before the company has
-          said anything. §23.1's S6 separates *two* chapters; there is no
-          chapter above this one, and the header has already done the
-          separating. S4 keeps §22.2's 3:1 ratio around the T1 intact (S4 above
-          against S3 below) while letting the first frame reach the first
-          screen, so a visitor arrives at a place rather than at a paragraph.
-        */
-        /*
-          The stitch, at 2%. A fine repeat rather than a silhouette, because
-          this band is 283px tall and a silhouette scaled to fit 283px is a
-          logo. The repeat gives the arrival field a tooth at the threshold
-          §14.5 permits and asks nothing of the reader.
-        */
-        className="atmosphere-stitch pt-s4 pb-s5"
+        photograph={framed(hero.image, "E5", [1200, 1500], "The workshop, Kanpur")}
+        record={overtureRecord}
+        className="atmosphere-stitch"
       />
 
       {homeTelling.map(({ chapter, role }) => {
@@ -218,10 +188,15 @@ export default async function HomePage() {
             §7.1: rooms in use, from angles only somebody who works here would
             take, and **its argument is accumulation, not information**.
 
-            §11.1, establish and examine: the place, then the detail inside it.
-            The opening frame is the first of the scene, and how each frame
-            after it is presented follows its rank (§31.3) rather than anything
-            this surface decides.
+            §11.1, establish and examine: the place at bleed, then the object off
+            the bench held beside the words on the paired field — which is the
+            system's primary editorial unit and was going unused.
+
+            No mark behind this chapter. A silhouette was tried here and
+            removed: at any opacity at which it can be seen it is a picture of a
+            horse behind a picture of a workshop, and at any opacity at which it
+            cannot it is a value nobody can defend. The chapter is two frames
+            and a paragraph — the field it needs is the paper it is printed on.
           */
           return (
             <Chapter
@@ -231,25 +206,6 @@ export default async function HomePage() {
               priority
               opensTheTelling
               scenes={placeScenes}
-              /*
-                The horse, at 1.8% ink, held at the right of the field and never
-                repeated (M15): one animal, once, on the whole site.
-
-                It belongs to *the place* rather than to the masthead. This is
-                the tallest section on the surface, so the silhouette is drawn
-                at its own scale instead of being squeezed into a band — and the
-                chapter it sits behind is the workshop that makes tack, which is
-                the one section where the mark is telling the truth rather than
-                decorating.
-
-                §14.5's threshold for simulated material is zero, and this is
-                held below the value at which anything is being simulated: at
-                1.8% it is not an image of a horse, it is the reason the field
-                does not read as a screen. L14 is satisfied the same way — a
-                mark that cannot be seen cannot carry an argument. Any frame
-                that lands here covers it completely; evidence wins (R8.7).
-              */
-              className="atmosphere-horse"
             />
           );
         }
@@ -265,129 +221,81 @@ export default async function HomePage() {
           strongest transition — so it opens in a different **kind** from C1
           (§22.1, §8.3), which is what keeps two chapters from reading as two
           items in a stack.
-
-          `isRecognition` is the chapter telling the scene layer what it is:
-          §10.1 rule 3 and Photography §5.1 both say Recognition is bought only
-          with a decision being taken, so without an E1 frame this chapter
-          refuses itself rather than standing on what it has.
         */
         return (
           <Fragment key={chapter}>
             {/*
-              The silence — §23.4, and the site's one held moment (R16.3). It
-              sits here rather than after Recognition because §22.3 names this
-              exact construction: *silence before a claim — the pause that makes
-              the next statement land.* §17.4 ranks it the strongest transition
-              available, and Recognition is what it is spent on.
+              THE CUT TO BLACK, and the sentence it was held for.
+
+              §23.6 rations the inverted field to at most once per surface with a
+              minimum extent of one viewport height, and calls it "the strongest
+              chapter marker available". §23.4 fixes the held moment at one
+              viewport height carrying **one element, or none**. The two
+              specifications describe the same rectangle, so the strongest marker
+              and the strongest transition in the system are spent together,
+              once, on the entrance to Recognition.
+
+              The element is the company's own sentence, at the peak register, in
+              paper on ink. It was `none`, and one empty black screen in the
+              middle of a document reads as a rendering fault rather than as a
+              decision — §22.3 names what this construction is for: *silence
+              before a claim — the pause that makes the next statement land.*
             */}
-            {/*
-              THE CUT TO BLACK — and this is where the surface's one inverted
-              field is spent.
+            {holds && <HeldMoment statement={intro.heading} className="bg-ink text-paper" />}
 
-              §23.6 rations the inverted field to **at most once per surface,
-              with a minimum extent of one viewport height**, and calls it "the
-              strongest chapter marker available". §23.4 fixes the held moment
-              at exactly one viewport height, carrying one element or none. The
-              two specifications describe the same rectangle, so the strongest
-              marker in the system and the strongest transition in the system
-              are spent together, once, on the entrance to Recognition.
-
-              It was paper before, and that was the single largest failure on
-              the surface: 720px of white — a whole empty screen on a phone — in
-              the middle of a document that is white from top to bottom.
-              §17.4 ranks silence the strongest transition available, but
-              silence is only legible against something. White silence on a
-              white page is not a pause, it is a gap, and a gap reads as a
-              rendering fault rather than as a decision.
-
-              Ink makes it a decision. The room goes dark before the one thing
-              this surface exists to show, which is §22.3's construction stated
-              in the only material the palette has: *silence before a claim —
-              the pause that makes the next statement land.*
-            */}
-            {holds && <HeldMoment className="bg-ink" />}
-
-            <Chapter id="C3" opening="held" isRecognition scenes={decisionScenes} className="atmosphere-tooling" />
+            <Chapter
+              id="C3"
+              opening="held"
+              isRecognition
+              scenes={decisionScenes}
+              className="atmosphere-tooling"
+            />
           </Fragment>
         );
       })}
 
       {/*
-        The hand-on — E5: hand on, plainly, to the range. §16's secondary route,
+        THE RANGE — E5: hand on, plainly, to the range. §16's secondary route,
         and the demand falls here by design (§17.2: quiet passages are what make
         the good parts good).
 
-        No photograph: a category thumbnail the archive cannot prove is a
-        placeholder, and §24.5 has no exception.
-      */}
-      {/*
-        The range, on Recessed.
-
-        §36.3 names Recessed as **the one permitted container in the system**,
-        and states what it is for: *it exists to bind a specification into one
+        On Recessed, which §36.3 names the one permitted container in the system
+        and states the use for: *it exists to bind a specification into one
         object.* A list of what the company makes is a specification of the
-        range, so this is the row the tone was written for — and it is the third
-        value on a surface that had one. Paper, then ink, then paper, then this:
-        the eye now has somewhere to travel.
+        range. It is the third value on a surface that had two — paper, ink,
+        then this — so the eye now has somewhere to travel.
 
-        It is not decoration and it is not a card. §16.3 leaves no border, no
-        shadow and no radius expressible, so what changes is the ground and
-        nothing else — the difference between a section and an object is 9
-        points of luminance, which is all this system has ever needed.
+        Each row reserves a 3:2 frame on the 5-unit column: the shape a shot
+        list should be giving, rather than the square the placeholder generator
+        happened to emit.
       */}
-      <Section break="chapter" tone="recessed">
-        <Field type="full" className="flex flex-col gap-s4">
-          <SectionHeader
-            heading={sections.categories?.heading ?? "What we make"}
-            description={sections.categories?.description}
-          />
-          {/*
-            The record row, with its frame — VDS §36.2, *what replaces the
-            card*: "a full-width row: an image at or above threshold on the
-            5-unit column, a specification beside it on the 3-unit column."
-
-            It was a text list. This is the one section on the surface whose
-            subject is the product, and it was the only one carrying no image
-            mass at all — two paragraphs where the range should be. `RecordSet`
-            has always known how to do this; it was being handed items with no
-            frame, so it fell back to passages and the pairing never engaged.
-
-            The frames are reserved, not invented: a 3:2 field on the 5-unit
-            column, which is the shape the shoot should deliver for a category
-            record. Nothing is claimed about either category that the content
-            layer does not already say.
-          */}
-          <RecordSet
-            items={categories.map((category) => ({
-              href: category.href,
-              title: category.name,
-              summary: category.shortDescription,
-              image: category.thumbnail
-                ? framed(category.thumbnail, "E6", RECORD_ROW_SHAPE)
-                : undefined,
-            }))}
-          />
-          <Continuation href={ROUTES.products}>All products</Continuation>
-        </Field>
-      </Section>
+      <Range
+        eyebrow={sections.categories?.eyebrow}
+        heading={sections.categories?.heading ?? "What we make"}
+        description={sections.categories?.description}
+        items={categories.map((category) => ({
+          href: category.href,
+          name: category.name,
+          summary: category.shortDescription,
+          image: category.thumbnail
+            ? framed(category.thumbnail, "E6", RECORD_ROW_SHAPE, `${category.name}, finished`)
+            : undefined,
+        }))}
+        continuation={<Continuation href={ROUTES.products}>Every product we make</Continuation>}
+      />
 
       {/*
         THE CLOSE — and it is the only invitation on the whole surface.
 
-        R39.3, R16.5: Home carries the action once, after Recognition. The
-        Presentation package removed it from six other surfaces, so this is now
-        one of three places on the entire site where the company asks for
-        anything, and the only one a visitor reaches by reading rather than by
-        deciding. It is not repeated above, it is not in the bar, it is not in
-        the footer, and there is no second door beside it (§35.2).
+        R39.3, R16.5: Home carries the action once, after Recognition. It is not
+        repeated above, it is not in the bar, it is not in the footer, and there
+        is no second door beside it (§35.2). The description states what happens
+        after the ask rather than asking again.
 
-        The saddle, at 2%. It is the last field before the record, the eye has
-        just come off a Recessed object, and a bare white rectangle with a black
-        button in it was the weakest thing on the page — the one moment that
-        looked like a form rather than a document. The mark gives the field
-        something to be without giving it anything to read (L14).
+        The saddle, at 2%: the last field before the record, and the mark gives
+        it something to be without giving it anything to read (L14).
       */}
-      <Close statement={cta.heading} className="atmosphere-saddle" />
+      <Close statement={cta.heading} description={cta.description} className="atmosphere-saddle" />
     </>
   );
 }

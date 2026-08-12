@@ -1,58 +1,60 @@
 import Link from "next/link";
+import { HeaderShell } from "@/components/layout/header-shell";
 import { SurfaceLink } from "@/components/layout/surface-link";
 import { company } from "@/config";
 import { primaryNav } from "@/config/navigation";
 import { ROUTES } from "@/constants";
 
 /**
- * The navigation shell — VDS §37.1, UX Blueprint §37.
+ * The masthead — VDS §37.1, UX Blueprint §37.
  *
- * - Static, never sticky: it leaves with the field (VDS §37.1, §42.6). A bar
- *   that follows the visitor turns a held moment into an advertisement
- *   (CDB §22.4), and it may never overlay a photograph.
- * - No border, no shadow, no background change on scroll (VDS §37.1).
- * - Five destinations in chapter order (UX R37.2, R37.4). Home is the company
- *   name; Enquiry is absent, because the ask does not precede Confidence (X5).
- * - No dropdown, no hover panel (R37.7).
- * - Below the reading breakpoint the *same* five open from one labelled
- *   control (R38.6), on native disclosure — no state, no script.
+ * Five destinations in chapter order (R37.2, R37.4). Home is the company name;
+ * Enquiry is absent, because the ask does not precede Confidence (X5). No
+ * dropdown, no hover panel (R37.7). Below the reading breakpoint the same five
+ * open from one labelled control (R38.6), on native disclosure.
  *
- * Height is 48px of control plus S2 above and below on a large field, S1 on a
- * small one, which is how VDS §37.1 derives 80/64.
+ * ### What changed, and why
  *
- * ### The margin, corrected
+ * **The name is set as a masthead rather than as a link.** §37.1 had it at
+ * rank R in the sans — the same size and the same voice as the five
+ * destinations beside it, distinguished only by weight, which is a difference a
+ * reader has to be told about. It is now the serif, at T3, with the trade
+ * stated beneath it at rank C: two lines that say who is speaking and what they
+ * make, in the two voices §8.4 assigns those jobs. That is a masthead. The
+ * previous treatment was a menu item that happened to be first.
  *
- * The bar was inset by S2 — 16px — while every field beneath it is inset by
- * §24.1's margins: 24 below 720px, 48 above. The company name therefore did not
- * line up with the first word of the surface it sits over, on any screen. §24.1
- * is not a per-element decision, and a masthead 8px to the left of its own page
- * is the first thing a reader sees and the last thing anybody reports. The
- * padding is now the field's own, so the name and the surface title share an
- * edge.
+ * **The destinations are set as a record.** Rank C, tracked, uppercase — the
+ * register §12.3 gives a location in a structure, which is exactly what a
+ * navigation label is. At rank R in sentence case they read as prose competing
+ * with the surface title below them.
+ *
+ * **The bar returns.** `HeaderShell` holds the behaviour and the reason.
  */
 export function SiteHeader() {
   return (
-    <header className="px-6 py-s1 reading:px-12 reading:py-s2">
-      {/* min-h-12 is the 48px control height VDS §37.1 derives 80/64 from. */}
-      <div className="mx-auto flex min-h-12 max-w-field items-center justify-between gap-s4">
+    <HeaderShell>
+      <div className="mx-auto flex max-w-field items-end justify-between gap-s4 px-6 py-s3 reading:px-12">
         {/*
-          Identity, not a destination — UX R37.2, and §37.1 fixes the treatment:
-          the company name, set as text, sans at rank R. Medium rather than
-          regular is the one difference from a destination beside it, because
-          identity and navigation are two kinds of thing and the bar has no
-          other way to say so. §8.5 makes medium available; there is no bold.
+          Identity, not a destination — R37.2. The trade beneath the name is the
+          one descriptor on the site and it is a fact, not a claim: it says what
+          the company makes and where, which is what a masthead is for.
         */}
         <Link
           href={ROUTES.home}
-          className="motion-mark inline-flex min-h-11 items-center text-r font-medium text-ink hover:text-ink-secondary"
+          className="group -my-s1 flex min-h-11 flex-col justify-center py-s1"
         >
-          {company.tradingName}
+          <span className="motion-mark font-serif text-t3 leading-none text-ink group-hover:text-ink-secondary">
+            {company.tradingName}
+          </span>
+          <span className="mt-1.5 hidden text-c tracking-mark text-ink-secondary uppercase reading:block">
+            Leather manufacturers · Kanpur, India
+          </span>
         </Link>
 
         {/* One Primary landmark at every field size: the wide list and the
             small-field disclosure are two presentations of the same five. */}
         <nav aria-label="Primary">
-          <ul className="hidden items-center gap-s3 reading:flex">
+          <ul className="hidden items-center gap-s4 reading:flex">
             {primaryNav.map((item) => (
               <li key={item.href}>
                 <SurfaceLink label={item.label} href={item.href} />
@@ -62,10 +64,10 @@ export function SiteHeader() {
 
           <details className="reading:hidden">
             {/* A word, not a glyph (VDS §43.2), on a 48px target (§47.5). */}
-            <summary className="motion-mark -mr-s1 flex min-h-12 list-none items-center px-s1 text-r hover:text-ink-secondary">
+            <summary className="motion-mark -mr-s1 flex min-h-12 list-none items-center px-s1 text-c tracking-mark uppercase hover:text-ink-secondary">
               Index
             </summary>
-            <ul className="mt-s3 flex flex-col gap-s3">
+            <ul className="mt-s3 flex flex-col gap-s2">
               {primaryNav.map((item) => (
                 <li key={item.href}>
                   <SurfaceLink label={item.label} href={item.href} />
@@ -75,6 +77,6 @@ export function SiteHeader() {
           </details>
         </nav>
       </div>
-    </header>
+    </HeaderShell>
   );
 }

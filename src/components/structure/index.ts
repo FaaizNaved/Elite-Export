@@ -8,5 +8,7 @@ export { SiblingIndex } from "./sibling-index";
 export type { SiblingIndexItem, SiblingIndexProps } from "./sibling-index";
 export { Opening } from "./opening";
 export type { OpeningProps } from "./opening";
+export { Overture } from "./overture";
+export type { OvertureProps } from "./overture";
 export { Close } from "./close";
 export type { CloseProps } from "./close";

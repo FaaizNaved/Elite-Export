@@ -38,8 +38,18 @@ export function SurfaceLink({ label, href }: { label: string; href: string }) {
       href={href}
       aria-current={current ? "page" : undefined}
       className={cn(
-        "text-r underline decoration-1 underline-offset-4",
-        "motion-mark transition-[text-decoration-color]",
+        /*
+          Rank C, tracked, uppercase — §12.3's register for a location in a
+          structure, which is what a navigation label is. The mark beneath it is
+          the `rule-grow` utility: one hairline, drawn from the leading edge in
+          band 1, and nothing else changes (§42.5). It replaces a transparent
+          underline whose colour was animated — the same one property, but the
+          rule now arrives from somewhere, which is what makes it read as drawn
+          rather than as switched on.
+        */
+        "group text-c tracking-mark uppercase",
+        "motion-mark",
+        current ? "text-ink" : "text-ink-secondary hover:text-ink",
         /*
           §47.5: the minimum interactive target is 44 × 44px, because below
           roughly that the error rate rises sharply for anyone whose hands are
@@ -49,10 +59,10 @@ export function SurfaceLink({ label, href }: { label: string; href: string }) {
           the site is reached by thumb.
         */
         "inline-flex min-h-11 items-center",
-        current ? "decoration-ink" : "decoration-transparent hover:decoration-ink-secondary",
       )}
     >
-      {label}
+      {/* The rule belongs to the word, not to the 44px target it sits in. */}
+      <span className="rule-grow">{label}</span>
     </Link>
   );
 }

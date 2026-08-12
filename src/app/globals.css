@@ -81,6 +81,14 @@
   --text-d--line-height: 1.05;
   --text-d--letter-spacing: -0.01em;
 
+  /* H — the overture. The arrival statement, and the one rank above D.
+     It exists once, on the first screen of Home, and nowhere else: a company
+     that makes one thing well says its name at one size. 44px on a phone,
+     112px on the 1440 field. */
+  --text-h: clamp(2.75rem, 1.199rem + 6.362vw, 7rem);
+  --text-h--line-height: 0.98;
+  --text-h--letter-spacing: -0.022em;
+
   /* T1 — surface title, chapter opening. */
   --text-t1: clamp(1.875rem, 1.457rem + 1.714vw, 3rem);
   --text-t1--line-height: 1.1;
@@ -111,6 +119,10 @@
   /* §12.3 — the eyebrow is the one place tracking is opened up. */
   --tracking-*: initial;
   --tracking-eyebrow: 0.08em;
+  /* The mark: a rail label, a plate stamp, a masthead descriptor. Set at rank
+     C and never longer than four words, so the tracking is legible rather than
+     decorative. */
+  --tracking-mark: 0.16em;
 
   /* §8.5 — four weights. There is no bold serif: a bold statement is a raised
      voice, and this company does not raise its voice. */
@@ -371,10 +383,13 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    /* The saddle stitch: two needles, one hole, the slant that proves it. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M3 18 L11 10 M17 18 L25 10' stroke='%231c1a17' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+    /* The saddle stitch: two needles, one hole, the slant that proves it.
+       Drawn at a 52px repeat rather than 28 — at the tighter interval it
+       resolved into visible hatching, which is a pattern a reader can read,
+       and §14.5's whole point is that they should not be able to. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='52' height='52'%3E%3Cpath d='M6 32 L18 20 M32 32 L44 20' stroke='%231c1a17' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
     background-repeat: repeat;
-    opacity: 0.02;
+    opacity: 0.01;
   }
 }
 
@@ -387,28 +402,12 @@
     inset: 0;
     z-index: -1;
     pointer-events: none;
-    /* Basketweave — the stamp, reduced to the lattice it leaves. */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg stroke='%231c1a17' stroke-width='1.5' fill='none'%3E%3Cpath d='M0 12 L12 0 M0 36 L36 0 M12 48 L48 12 M36 48 L48 36'/%3E%3Cpath d='M0 36 L12 48 M0 12 L36 48 M12 0 L48 36 M36 0 L48 12'/%3E%3C/g%3E%3C/svg%3E");
+    /* Basketweave — the stamp, reduced to the lattice it leaves. Drawn at a
+       96px repeat on a hairline: at 48px and 1.5px it resolved into visible
+       cross-hatching, which is a pattern a reader can read. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Cg stroke='%231c1a17' stroke-width='1' fill='none'%3E%3Cpath d='M0 24 L24 0 M0 72 L72 0 M24 96 L96 24 M72 96 L96 72'/%3E%3Cpath d='M0 72 L24 96 M0 24 L72 96 M24 0 L96 72 M72 0 L96 24'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: repeat;
-    opacity: 0.015;
-  }
-}
-
-@utility atmosphere-horse {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    /* One horse, once, held at the right of the field. Never repeated (M15). */
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 160'%3E%3Cpath fill='%231c1a17' d='M18 44 L36 30 L40 12 L48 28 L56 12 L60 32 L74 50 L100 60 L152 58 L178 50 L192 64 L198 96 L188 98 L182 72 L178 106 L176 142 L180 152 L166 152 L164 142 L162 106 L148 98 L138 102 L136 142 L140 152 L126 152 L124 142 L124 100 L106 94 L96 142 L100 152 L86 152 L84 142 L84 94 L72 90 L68 142 L72 152 L58 152 L56 142 L58 88 L50 72 L36 60 L20 54 Z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right -4rem bottom -2rem;
-    background-size: min(52rem, 70%) auto;
-    opacity: 0.018;
+    opacity: 0.01;
   }
 }
 
@@ -424,9 +423,9 @@
     /* A western tree in outline: horn, swell, seat, cantle, skirt. */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 160'%3E%3Cg fill='none' stroke='%231c1a17' stroke-width='3'%3E%3Cpath d='M72 44 C72 32 92 32 92 44 C92 54 84 56 84 66 C84 78 100 84 118 84 C142 84 160 74 168 52 C172 40 186 40 190 54 C196 76 190 100 172 112 C150 126 106 128 78 116 C56 106 44 86 46 66 C47 54 56 44 72 44 Z'/%3E%3Cpath d='M50 96 C40 116 44 134 62 140 C92 150 156 150 186 138 C202 132 204 114 196 98'/%3E%3C/g%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: left -6rem top 50%;
-    background-size: min(46rem, 62%) auto;
-    opacity: 0.02;
+    background-position: left -8rem top 50%;
+    background-size: min(40rem, 54%) auto;
+    opacity: 0.012;
   }
 }
 
@@ -441,25 +440,181 @@
    ========================================================================== */
 
 .reserved-frame {
-  /* The tooth again, a little further up, so the block reads as stock rather
-     than as a filled rectangle. Still under the §14.5 threshold. */
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.07'/%3E%3C/svg%3E");
-  background-repeat: repeat;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  /*
+   * The tone. Paper in shade is `--color-recessed` and it is 9 points of
+   * luminance below paper — enough to bind a specification into an object, and
+   * nowhere near enough to hold a page. A plate is standing in for a
+   * photograph, and a photograph has **mass**: at recessed the frames read as
+   * gaps in the paper, which is the single reason the surface looked
+   * unfinished rather than unphotographed.
+   *
+   * So the plate is ink at 26% over paper — the tone of undyed harness leather
+   * in shade, and the value a monochrome frame from this workshop will
+   * actually average out at. It sits outside the closed eight (§15.3)
+   * deliberately and temporarily: it exists only while the archive is empty and
+   * every one of these rectangles is replaced by a photograph, not by a colour.
+   */
+  background-color: #bcb4a8;
+  background-image:
+    /* The tooth — the fine one, over everything. */
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.92' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.2'/%3E%3C/svg%3E"),
+    /* The grain — the coarse one. A hide has a pebble to it that a sheet of
+       paper does not, and the difference between the two is the difference
+       between a plate and a blank rectangle. */
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.42' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23p)' opacity='0.13'/%3E%3C/svg%3E"),
+    /* The light. One source, raking across the frame from the top left, and it
+       is a rake rather than a bloom: a centred radial highlight is the look of
+       a gradient, not of a lit object. */
+      linear-gradient(
+        108deg,
+        rgba(242, 239, 233, 0.5) 0%,
+        rgba(242, 239, 233, 0.1) 30%,
+        rgba(28, 26, 23, 0.06) 62%,
+        rgba(28, 26, 23, 0.2) 100%
+      ),
+    /* The fall. Corners go last, as they do in every frame ever exposed. */
+      radial-gradient(150% 128% at 40% 34%, rgba(28, 26, 23, 0) 42%, rgba(28, 26, 23, 0.24) 100%);
+  background-repeat: repeat, repeat, no-repeat, no-repeat;
+}
+
+/*
+ * The trim — the hairline a plate is cut to, held one field margin inside the
+ * frame, with the four crop marks a printer aligns against. It is drawn rather
+ * than bordered so nothing is enclosed on four sides (§16.4): the rule is a
+ * hairline at 9% ink and the marks overrun it at the corners, which is how a
+ * register sheet is actually made.
+ */
+.reserved-frame::before {
+  content: "";
+  position: absolute;
+  inset: clamp(0.75rem, 2.2%, 1.75rem);
+  pointer-events: none;
+  border: 1px solid rgba(242, 239, 233, 0.3);
+}
+
+.reserved-frame::after {
+  content: "";
+  position: absolute;
+  inset: clamp(0.75rem, 2.2%, 1.75rem);
+  pointer-events: none;
+  --crop: rgba(242, 239, 233, 0.55);
+  background-image:
+    linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop)),
+    linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop)),
+    linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop)),
+    linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop));
+  background-repeat: no-repeat;
+  background-size:
+    1px 14px,
+    14px 1px,
+    1px 14px,
+    14px 1px,
+    1px 14px,
+    14px 1px,
+    1px 14px,
+    14px 1px;
+  background-position:
+    left top -7px,
+    left top -0.5px,
+    right top -7px,
+    right top -0.5px,
+    left bottom -7px,
+    left bottom -0.5px,
+    right bottom -7px,
+    right bottom -0.5px;
+}
+
+/*
+ * The stitched plate — the hero and the range rows. A dashed hairline inside
+ * the trim: the saddle stitch reduced to the interval it leaves, which is the
+ * one thing about this company a rectangle can honestly say.
+ */
+.reserved-frame--stitched::before {
+  inset: clamp(0.75rem, 2.2%, 1.75rem);
+  border: 1px dashed rgba(242, 239, 233, 0.3);
 }
 
 /*
  * The registration mark — what a plate is aligned to before it is printed,
  * which is precisely what this frame is waiting for. A cross and a circle in
- * hairline, at 8% ink: found when looked for, unnoticed when read past.
+ * hairline, at 9% ink: found when looked for, unnoticed when read past.
  */
 .reserved-mark {
   display: block;
-  width: 2.5rem;
-  height: 2.5rem;
-  opacity: 0.08;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg stroke='%231c1a17' stroke-width='1' fill='none'%3E%3Ccircle cx='20' cy='20' r='11'/%3E%3Cpath d='M20 0 V14 M20 26 V40 M0 20 H14 M26 20 H40'/%3E%3C/g%3E%3C/svg%3E");
+  width: 2.75rem;
+  height: 2.75rem;
+  opacity: 0.3;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg stroke='%23f2efe9' stroke-width='1' fill='none'%3E%3Ccircle cx='20' cy='20' r='11'/%3E%3Ccircle cx='20' cy='20' r='4'/%3E%3Cpath d='M20 0 V14 M20 26 V40 M0 20 H14 M26 20 H40'/%3E%3C/g%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-size: contain;
+}
+
+/* ==========================================================================
+   THE REVEAL
+
+   A cross dissolve, once per element, on arrival into the field. It is the
+   only thing on this site that reacts to the scroll position, and it reacts by
+   dissolving rather than by moving: nothing slides, nothing scales, nothing
+   parallaxes, and the frame itself never moves (M7).
+
+   The hidden state is gated on `html[data-reveal="on"]`, which only the
+   observer sets. A visitor whose script never runs receives the whole surface
+   painted, and `prefers-reduced-motion` collapses the transition to nothing
+   through the global rule above.
+   ========================================================================== */
+
+@layer base {
+  [data-reveal] {
+    transition:
+      opacity var(--duration-band-panel) var(--ease-placed),
+      translate var(--duration-band-panel) var(--ease-placed);
+  }
+
+  html[data-reveal="on"] [data-reveal]:not([data-revealed]) {
+    opacity: 0;
+    translate: 0 0.75rem;
+  }
+
+  /* A frame dissolves in place. It is already occupying its space — the ratio
+     was reserved before the pixels arrived — so it may not also move (§32.1). */
+  html[data-reveal="on"] [data-reveal="frame"]:not([data-revealed]) {
+    translate: none;
+    transition-duration: var(--duration-band-field);
+  }
+}
+
+/* ==========================================================================
+   THE RULE THAT GROWS
+
+   The one motion permitted on a navigation destination: a hairline drawn from
+   the leading edge to the trailing one, in band 1. Nothing else changes —
+   no colour, no weight, no lift (§42.5).
+   ========================================================================== */
+
+@utility rule-grow {
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    bottom: -0.35em;
+    height: 1px;
+    background-color: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--duration-band-mark) var(--ease-placed);
+  }
+
+  &:hover::after,
+  .group:hover &::after,
+  &[aria-current="page"]::after,
+  [aria-current="page"] &::after {
+    transform: scaleX(1);
+  }
 }
 
 /* ==========================================================================

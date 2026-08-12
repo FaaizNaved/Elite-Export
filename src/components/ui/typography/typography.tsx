@@ -46,6 +46,16 @@ const statementVariants = cva(
     variants: {
       rank: {
         /**
+         * H — the overture, and the one rank above D.
+         *
+         * It exists on the first screen of Home and nowhere else. §10.1's cap
+         * on a statement is *three lines, ≤75% of the field*, and at this size
+         * the second half of that would break the arrival line into fragments
+         * — so the width is set by the column the overture is composed in and
+         * the three-line limit is what holds.
+         */
+        h: "font-serif text-h",
+        /**
          * D is a register, not a level (§9.3). At most once per surface, never
          * on a surface whose purpose is a record. Nothing in code can check
          * "once per surface"; the Action gate in `check:publication` is the
@@ -75,6 +85,7 @@ const statementVariants = cva(
 type StatementRank = NonNullable<VariantProps<typeof statementVariants>["rank"]>;
 
 const statementElement: Record<StatementRank, ElementType> = {
+  h: "h1",
   d: "h1",
   t1: "h1",
   t2: "h2",
