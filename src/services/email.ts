@@ -4,10 +4,13 @@ import { company, siteConfig } from "@/config";
 /**
  * Outbound email.
  *
- * Phase 8 owns the full email feature — HTML templates and the customer
- * acknowledgement. This module exists so the enquiry forms are honest today:
- * when SMTP is configured the message is delivered, and when it is not the
- * caller is told so rather than being shown a false success.
+ * This module exists so the enquiry form is honest: when SMTP is configured the
+ * message is delivered, and when it is not the caller is told so rather than
+ * being shown a false success.
+ *
+ * The customer acknowledgement is deliberately absent. Dependency 20 — a named
+ * person who answers — is outstanding, and an automated reply from a mailbox
+ * nobody reads is the state R25.4 refuses.
  */
 
 const SMTP_HOST = process.env.SMTP_HOST;

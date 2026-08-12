@@ -23,7 +23,7 @@ export const CONTENT_DIR = {
   company: "company",
   machines: "machines",
   gallery: "gallery",
-  blog: "blog",
+  journal: "journal",
   legal: "legal",
 } as const;
 

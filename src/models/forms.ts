@@ -8,18 +8,15 @@ import { z } from "zod";
 /** Rejects submissions where the hidden honeypot field was filled in. */
 const honeypot = z.string().max(0, "Rejected").optional();
 
-export const contactFormSchema = z.object({
-  name: z.string().min(2, "Please enter your name").max(120),
-  email: z.email("Please enter a valid email address"),
-  phone: z.string().max(40).optional(),
-  country: z.string().length(2, "Please select a country"),
-  reason: z.enum(["general", "products", "samples", "partnership", "careers"]),
-  message: z.string().min(20, "Please give us a little more detail").max(4000),
-  consent: z.literal(true, { message: "Please confirm we may contact you" }),
-  website: honeypot,
-});
-
-export const buyerEnquiryFormSchema = z.object({
+/*
+ * There is no second form.
+ *
+ * UX Blueprint R25.2: "there is one enquiry surface, not two. A 'contact'
+ * surface and an 'enquiry' surface are two doors, and Brand Bible §3.4 permits
+ * one." R39.5 removes "request a quote" for the same reason — two names for one
+ * door is two doors. The contact form and its schema went with the surface.
+ */
+export const enquiryFormSchema = z.object({
   companyName: z.string().min(2, "Please enter your company name").max(160),
   contactPerson: z.string().min(2, "Please enter a contact name").max(120),
   email: z.email("Please enter a valid email address"),
@@ -34,5 +31,4 @@ export const buyerEnquiryFormSchema = z.object({
   website: honeypot,
 });
 
-export type ContactFormValues = z.infer<typeof contactFormSchema>;
-export type BuyerEnquiryFormValues = z.infer<typeof buyerEnquiryFormSchema>;
+export type EnquiryFormValues = z.infer<typeof enquiryFormSchema>;

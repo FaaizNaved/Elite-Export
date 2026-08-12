@@ -32,7 +32,6 @@ export const machineFrontmatterSchema = z.strictObject({
   /** What this machine is used to produce. */
   applications: z.array(z.string()).default([]),
   gallery: productGallerySchema,
-  featured: z.boolean().default(false),
   order: orderSchema,
   status: publishStatusSchema,
   updatedAt: z.coerce.date().optional(),

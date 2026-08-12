@@ -1,6 +1,6 @@
 export { mdxComponents } from "./components";
 export {
-  loadBlogContent,
+  loadArticleContent,
   loadCompanyContent,
   loadLegalContent,
   loadMachineContent,

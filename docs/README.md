@@ -5,6 +5,7 @@ The site exists to showcase capability and generate buyer enquiries.
 
 | Folder | What lives there |
 | --- | --- |
+| [`brand/`](./brand) | Who the company is, what that looks like, how it tells stories, how it photographs them and why — the Brand Bible (voice, principles, Facts Register), the Creative Direction Book (visual philosophy), the Documentary Storyboard (narrative language), Photography Direction (the photography operating manual) the Visual Language Atlas (the philosophy of seeing, and the ten tests) and Motion Direction (how the brand moves, and why it mostly does not). The source of truth every other document answers to, in that order of authority. |
 | [`architecture/`](./architecture) | How the system is put together — stack, content model, assets, site structure |
 | [`design-system/`](./design-system) | Visual and motion language, component inventory |
 | [`content/`](./content) | How to author and publish content |

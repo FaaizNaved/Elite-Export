@@ -1,6 +1,5 @@
-import { Plus } from "lucide-react";
 import type { ReactNode } from "react";
-import { Icon } from "@/components/ui/icon";
+import { Mark } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
 
 export interface AccordionItem {
@@ -36,7 +35,7 @@ export function Accordion({ items, type = "multiple", name, className }: Accordi
   const groupName = type === "single" ? (name ?? "accordion") : undefined;
 
   return (
-    <div className={cn("divide-y divide-border border-y border-border", className)}>
+    <div className={cn("divide-y divide-hairline border-y border-hairline", className)}>
       {items.map((item) => (
         <details
           key={item.value}
@@ -45,16 +44,18 @@ export function Accordion({ items, type = "multiple", name, className }: Accordi
           className="group/item accordion-item"
         >
           <summary className="flex cursor-pointer list-none items-center justify-between gap-6 py-5 marker:hidden">
-            <span className="font-display text-h4 font-medium text-pretty">{item.title}</span>
-            <Icon
-              icon={Plus}
-              size="sm"
-              tone="muted"
-              className="shrink-0 transition-base group-open/item:rotate-45"
-            />
+            <span className="font-sans text-r font-medium text-pretty">{item.title}</span>
+            {/*
+              The accordion state marker — one of the four marks §43.3 permits.
+              It states open or closed positionally, and the word would repeat
+              the row's own label. Plus becomes minus rather than rotating: a
+              rotation is a movement with no cause the reader can see (M6).
+            */}
+            <Mark name="plus" className="shrink-0 text-ink-secondary group-open/item:hidden" />
+            <Mark name="minus" className="hidden shrink-0 text-ink-secondary group-open/item:block" />
           </summary>
 
-          <div className="pb-5 font-sans text-body text-foreground-secondary text-pretty">
+          <div className="pb-5 font-sans text-b text-ink-secondary text-pretty">
             {item.content}
           </div>
         </details>

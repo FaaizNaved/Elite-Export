@@ -35,8 +35,25 @@ export function withAltAll(images: readonly Image[], fallbackAlt: string): Image
 }
 
 /**
- * Flat warm-ivory data URL for `next/image` `placeholder="blur"` on local assets.
- * Inlined rather than computed so it is safe to import from client components.
+ * How wide an image renders, per container.
+ *
+ * Visual Design System §27.2 fixes five containers, and a `sizes` string is
+ * simply that container expressed for the browser. They live here rather than
+ * at each call site because a wrong `sizes` silently breaks §32.3 — the
+ * browser fetches a source below 2× the rendered size, and the grain a buyer
+ * is meant to examine is gone before the page is even laid out.
+ *
+ * The breakpoints quoted are the ones in §27.1: 720, 1024 and 1280.
  */
-export const BLUR_DATA_URL =
-  "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA4IDgiPjxyZWN0IHdpZHRoPSI4IiBoZWlnaHQ9IjgiIGZpbGw9IiNFQUU2REYiLz48L3N2Zz4=";
+export const imageSizes = {
+  /** Edge to edge of the viewport — VDS §31.3, the default for E1, E2 and E5. */
+  bleed: "100vw",
+  /** The 5-unit column of the paired field; full width below 1280 (§45.3). */
+  evidence: "(min-width: 1280px) 62vw, 100vw",
+  /** The 3-unit column beside evidence. */
+  annotation: "(min-width: 1280px) 36vw, (min-width: 1024px) 50vw, 100vw",
+  /** Inside the reading column — 640px, capped (§10.1). */
+  reading: "(min-width: 720px) 640px, 100vw",
+  /** A record: specification imagery inside the 480px column. */
+  record: "(min-width: 720px) 480px, 100vw",
+} as const;

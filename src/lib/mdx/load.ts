@@ -35,8 +35,8 @@ export async function loadMachineContent(slug: string): Promise<MdxContent> {
   return mod.default;
 }
 
-export async function loadBlogContent(slug: string): Promise<MdxContent> {
-  const mod = (await import(`../../content/blog/${slug}.mdx`)) as MdxModule;
+export async function loadArticleContent(slug: string): Promise<MdxContent> {
+  const mod = (await import(`../../content/journal/${slug}.mdx`)) as MdxModule;
   return mod.default;
 }
 

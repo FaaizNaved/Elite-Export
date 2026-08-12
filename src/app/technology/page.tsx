@@ -1,14 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MachineCard } from "@/components/cards";
-import { CtaBanner } from "@/components/layout";
-import { Stagger, StaggerItem } from "@/components/motion";
-import { FeatureGrid, PageHero, Prose, SectionHeader, StatsBand } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
+import { Opening } from "@/components/structure";
+import { Prose, SectionHeader } from "@/components/sections";
+import { TextLink } from "@/components/ui/action";
+import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
-import { ROUTES } from "@/constants";
+import { Record, Statement } from "@/components/ui/typography";
 import { getCompanyPage, getMachinesByStage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
 import { loadCompanyContent } from "@/lib/mdx";
@@ -39,62 +36,45 @@ export default async function TechnologyPage() {
 
   return (
     <>
-      <PageHero
+      <Opening
         title={page.title}
         eyebrow={page.eyebrow}
         summary={page.summary}
-        image={page.hero}
-        href={page.href}
+        photograph={page.hero}
       />
 
       <Prose>
         <Content />
       </Prose>
 
-      <StatsBand stats={page.stats} tone="dark" />
-
       {/* Machinery, grouped by where it sits in the production line. */}
-      {stages.map((group, index) => (
-        <Section
-          key={group.stage}
-          spacing="lg"
-          className={index % 2 === 1 ? "bg-surface-sunken" : undefined}
-        >
-          <Container size="lg" className="flex flex-col gap-12">
+      {stages.map((group) => (
+        <Section key={group.stage}>
+          <Field type="reading" className="flex flex-col gap-s4">
             <SectionHeader eyebrow="Production stage" heading={STAGE_LABELS[group.stage]} />
 
-            <Stagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {/*
+              A list of machine records, not a card grid (Master Implementation
+              Blueprint §14.1, Visual Design System §36.1). Each record states
+              what the machine does; its specification attributes are withheld
+              until the Facts Register confirms them (§20.2 item 9).
+            */}
+            <ul className="flex flex-col gap-8">
               {group.machines.map((machine) => (
-                <StaggerItem key={machine.href} className="h-full">
-                  <MachineCard
-                    name={machine.title}
-                    description={machine.shortDescription}
-                    image={machine.gallery.thumbnail}
-                    href={machine.href}
-                    capacity={machine.capacity}
-                    className="h-full"
-                  />
-                </StaggerItem>
+                <li key={machine.href} className="flex flex-col gap-2">
+                  <Statement rank="t3" as="h3">
+                    <TextLink href={machine.href}>{machine.title}</TextLink>
+                  </Statement>
+                  <Record tone="secondary">{machine.shortDescription}</Record>
+                </li>
               ))}
-            </Stagger>
-          </Container>
+            </ul>
+          </Field>
         </Section>
       ))}
 
-      <FeatureGrid features={page.features} eyebrow="How we run it" heading="Equipment discipline" />
-
-      <CtaBanner
-        heading="Need a process we have not listed?"
-        description="Tell us what the piece requires and we will confirm whether we can produce it in-house."
-        primaryAction={
-          <Link
-            href={ROUTES.buyerEnquiry}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Ask about capability
-          </Link>
-        }
-      />
+      {/* No action. R39.3: Technology, never — a machine is not a reason to
+          make contact. */}
     </>
   );
 }

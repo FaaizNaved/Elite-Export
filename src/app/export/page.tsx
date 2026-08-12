@@ -1,18 +1,11 @@
+import { Fragment } from "react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CountryCard } from "@/components/cards";
-import { CtaBanner } from "@/components/layout";
-import { Stagger, StaggerItem } from "@/components/motion";
-import { FeatureGrid, PageHero, ProcessSteps, Prose, SectionHeader, StatsBand } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import { Section } from "@/components/ui/section";
-import { company } from "@/config";
-import { ROUTES } from "@/constants";
-import { getCompanyPage } from "@/lib/content";
+import { Chapter, Close, HeldMoment, Opening, sceneRefusal, type Scene } from "@/components/structure";
+import { exportTelling } from "@/config";
+import { chapterFrames, getCompanyPage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
-import { loadCompanyContent } from "@/lib/mdx";
+import type { Chapter as ChapterId } from "@/types";
 
 const SLUG = "export";
 
@@ -21,73 +14,136 @@ export async function generateMetadata(): Promise<Metadata> {
   return page ? companyPageMetadata(page) : {};
 }
 
+/**
+ * Export — the surface that answers *can you ship to me*.
+ *
+ * UX Blueprint §21: *to show that goods leave correctly, documented, to markets
+ * already served — presented as **logistics competence rather than as reach***.
+ * Creative Direction Book §20: *competent logistics, calmly handled*, and
+ * **unglamorous by design — logistics competence should look like logistics
+ * competence.**
+ *
+ * It is **one chapter**, C9, and nothing else. MIB R19.1: *dispatch as an
+ * operation is the whole argument of the surface.* `exportTelling` carries why
+ * the other nine are handed on — C8 among them, because the documents that
+ * leave with the goods are inside C9 (§7 gives it the grade *process and
+ * records*) and telling the record chapter twice is one fact stated twice
+ * (L10). §25.1 rule 4 names this shape rather than treating it as a shortfall:
+ * the shortest telling is one chapter, and below that make nothing.
+ *
+ * Four things the previous implementation offered are gone, each by name:
+ *
+ * - **The four-step order ladder** (`ProcessSteps`, *"From enquiry to
+ *   dispatch"*). §7.4 is explicit that **the offer is not a chapter** — *there
+ *   is no chapter that sells* — and R5.2 refuses the shape as well: the level
+ *   between a surface and a component is a chapter, not a numbered sequence.
+ *   Three of its four steps stated a lead time and the fourth stated an AQL
+ *   band and an incoterm, all Brand Bible §19.4, and its first sentence was
+ *   Quality's final inspection restated.
+ * - **The hero photograph.** A generated placeholder; Photography Direction
+ *   §24.5 has no exception.
+ * - **The prose body.** MIB R5.3: a surface is chapters, and prose that belongs
+ *   to no chapter has no level to live at. It also named eight countries, which
+ *   is the whole of dependency 8 — *Export states process; no markets are
+ *   named.*
+ * - **"Ready to place an enquiry?"** — the close's sentence, authored in this
+ *   file, which R6.4 does not permit. R39.8 fixes the action's wording
+ *   site-wide.
+ *
+ * What is **absent** is as much the argument as what is here, and none of it is
+ * substituted (X8):
+ *
+ * - **No market is named, and no reach is drawn.** R21.1: *no maps, globes,
+ *   arcs, aircraft or animated route lines. Markets are a record.* R21.4: a
+ *   country is a record on this surface, never a surface of its own. Dependency
+ *   8 holds the record, so the surface states process instead — which is the
+ *   instruction the register already carries.
+ * - **No incoterm and no lead time.** R21.3: they are not published until
+ *   confirmed (dependency 3); the surface states that terms are agreed per
+ *   order and what is needed to agree them, which is copy and is dependency 12.
+ * - **No failure path.** R21.5 puts it here — *what happens if a shipment is
+ *   held or documentation is queried*, rank 6, *the reason an importer believes
+ *   the rest* — and no document states it. Inventing one would be the failure
+ *   the surface exists to refuse.
+ * - **No named person.** §21's rank-7 row waits on dependency 20.
+ */
 export default async function ExportPage() {
   const page = await getCompanyPage(SLUG);
   if (!page) notFound();
 
-  const Content = await loadCompanyContent(SLUG);
-  const { exportMarkets } = company;
+  /*
+   * One scene per chapter: the frames the archive holds for it (R8.7 — the
+   * library governs what can be told, and the library wins).
+   *
+   * No annotation. §11.1's relationship is absent for the same reason it is on
+   * Manufacturing and Quality — a relationship is what a *pair* proves (§11.4)
+   * — and C9's own pair is already named: §11.1's `act-and-record`, *an
+   * operation, then the document it produced. Trust, without a word.* That is
+   * §21's second evidence row, and it arrives as C9's second scene rather than
+   * as a chapter of its own.
+   */
+  const scenesFor = (id: ChapterId): Scene[] => [{ frames: chapterFrames(id) }];
+
+  const chapters = exportTelling
+    .filter((plan) => plan.role === "tells")
+    .map((plan) => ({ ...plan, scenes: scenesFor(plan.chapter) }));
+
+  /*
+   * N6 governs the telling's opening: no claim arrives before the work that
+   * justifies it. Which chapter opens is a fact about the archive, so it is
+   * derived rather than assumed — and on a one-chapter surface it is also the
+   * rule that decides whether the surface may lead on a record. §10.1 rule 5
+   * refuses a telling whose first frame is one.
+   */
+  const opensTheTelling = chapters.find((chapter) => chapter.scenes.some((scene) => scene.frames.length))
+    ?.chapter;
 
   return (
     <>
-      <PageHero
-        title={page.title}
-        eyebrow={page.eyebrow}
-        summary={page.summary}
-        image={page.hero}
-        href={page.href}
-      />
+      <Opening title={page.title} eyebrow={page.eyebrow} summary={page.summary} />
 
-      <StatsBand stats={page.stats} tone="dark" />
+      {chapters.map(({ chapter, scenes }) => {
+        const opensHere = chapter === opensTheTelling;
 
-      <FeatureGrid
-        features={page.features}
-        eyebrow="What we offer"
-        heading="Export capability"
-        columns={3}
-      />
+        /*
+         * §23.4 and MIB R11.1: exactly one held moment per surface longer than
+         * three viewport heights. There is no Recognition chapter here to
+         * precede — §7.2 spends C3 on Manufacturing and C7 on Quality — so it
+         * stands before the chapter that carries the surface's whole argument
+         * (R19.1), which is §22.3's *silence before a claim, the pause that
+         * makes the next statement land.*
+         *
+         * It is asked of the chapter, not of the surface: silence held before a
+         * chapter that refused itself is §23.5's fourth opening standing where
+         * the chapter is not. Found while composing Quality and fixed on three
+         * surfaces now.
+         */
+        const tellable = !sceneRefusal(scenes, { opensTheTelling: opensHere });
 
-      {exportMarkets.length > 0 && (
-        <Section spacing="lg" className="bg-surface-sunken">
-          <Container size="lg" className="flex flex-col gap-12">
-            <SectionHeader
-              eyebrow="Countries served"
-              heading="Where our containers go"
-              description="Buyers in adjacent markets are welcome to enquire — nothing about our process is market-specific."
-            />
-            <Stagger className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {exportMarkets.map((code) => (
-                <StaggerItem key={code} className="h-full">
-                  <CountryCard code={code} className="h-full" />
-                </StaggerItem>
-              ))}
-            </Stagger>
-          </Container>
-        </Section>
-      )}
+        return (
+          <Fragment key={chapter}>
+            {tellable && <HeldMoment />}
+            {/*
+              §23.5's fourth opening — a held moment immediately preceding. It
+              is the manner this chapter opens in, so the frames are not also
+              spent as a bleed opening above it (§6.4 is about *kind*, and one
+              chapter cannot open in two).
+            */}
+            <Chapter id={chapter} opening="held" opensTheTelling={opensHere} priority={opensHere} scenes={scenes} />
+          </Fragment>
+        );
+      })}
 
-      <ProcessSteps
-        steps={page.steps}
-        eyebrow="How an order runs"
-        heading="From enquiry to dispatch"
-      />
+      {/*
+        R39.3: once, at the close, after the argument — and §21 hands to Enquiry
+        *with the destination and terms as the opening subject*, which is the
+        one action the site has (R39.1).
 
-      <Prose>
-        <Content />
-      </Prose>
-
-      <CtaBanner
-        heading="Ready to place an enquiry?"
-        description="Tell us the styles, quantities and incoterm you need and we will come back within three working days."
-        primaryAction={
-          <Link
-            href={ROUTES.buyerEnquiry}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Buyer enquiry
-          </Link>
-        }
-      />
+        It carries no statement. The one that stood here was authored in this
+        file, and copy is Brand Bible §11–§12's and the copywriter's (R6.4,
+        dependency 12).
+      */}
+      <Close />
     </>
   );
 }

@@ -7,7 +7,7 @@ import { slugFromFilename } from "../../utils/slug";
 /**
  * The content registry.
  *
- * Every flat MDX collection — company pages, machines, blog posts, legal
+ * Every flat MDX collection — company pages, machines, journal articles, legal
  * documents — follows the same pipeline:
  *
  *   registry (this file) → parser (`source.ts`) → resolver (`resolve`) → renderer (`src/mdx`)
@@ -48,9 +48,9 @@ export interface CollectionConfig<Schema extends z.ZodType, Doc extends Collecti
   /**
    * Applied after unpublished documents are filtered out.
    *
-   * `NoInfer` keeps this out of inference: a generic comparator like
-   * `byNewestFirst` would otherwise widen `Doc` to its own constraint and
-   * every resolved document would collapse to `CollectionDocument`.
+   * `NoInfer` keeps this out of inference: a generic comparator would
+   * otherwise widen `Doc` to its own constraint and every resolved document
+   * would collapse to `CollectionDocument`.
    */
   sort?: (a: NoInfer<Doc>, b: NoInfer<Doc>) => number;
 }
@@ -106,5 +106,3 @@ export const byOrderThenTitle = <T extends { order: number; title: string }>(a: 
 export const byOrderThenName = <T extends { order: number; name: string }>(a: T, b: T) =>
   a.order - b.order || a.name.localeCompare(b.name);
 
-export const byNewestFirst = <T extends { publishedAt: Date }>(a: T, b: T) =>
-  b.publishedAt.getTime() - a.publishedAt.getTime();

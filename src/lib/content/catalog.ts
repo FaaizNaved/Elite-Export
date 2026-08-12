@@ -5,6 +5,9 @@ import { once } from "../../utils/cache";
 import { withAlt, withAltAll } from "../../utils/image";
 import { slugFromFilename } from "../../utils/slug";
 import { assetScope, resolveImage, resolveImages } from "./assets";
+/* R7.1: the shared comparators live once, in `./collection`. Both were declared
+   again here, which is how two orderings of the same thing eventually differ. */
+import { byOrderThenName, byOrderThenTitle } from "./collection";
 import {
   CONTENT_DIR,
   ContentError,
@@ -36,12 +39,6 @@ import {
 
 /** Folder inside a subcategory that holds its product documents. */
 const PRODUCTS_DIR = "products";
-
-const byOrderThenName = <T extends { order: number; name: string }>(a: T, b: T) =>
-  a.order - b.order || a.name.localeCompare(b.name);
-
-const byOrderThenTitle = <T extends { order: number; title: string }>(a: T, b: T) =>
-  a.order - b.order || a.title.localeCompare(b.title);
 
 async function loadProducts(
   categorySlug: string,
@@ -181,64 +178,32 @@ export async function getSubcategory(
   return category?.subcategories.find((sub) => sub.slug === subcategorySlug) ?? null;
 }
 
+/**
+ * The two filters a surface actually asks for — the hierarchy it is standing
+ * in. Four more were declared and none had a caller: `featured` and `limit`
+ * promoted a subset, `tag` filtered by a field no surface reads, and `exclude`
+ * documented itself as *"used for related products"*, which is the
+ * recommendation UX Blueprint §24 and R19.3 keep off this site.
+ */
 export interface ProductFilter {
   category?: string;
   subcategory?: string;
-  tag?: string;
-  featured?: boolean;
-  /** Product hrefs to leave out — used for "related products". */
-  exclude?: readonly string[];
-  limit?: number;
 }
 
 export async function getProducts(filter: ProductFilter = {}): Promise<Product[]> {
   const { products } = await getCatalog();
 
-  const matched = products.filter((product) => {
+  return products.filter((product) => {
     if (filter.category && product.categorySlug !== filter.category) return false;
     if (filter.subcategory && product.subcategorySlug !== filter.subcategory) return false;
-    if (filter.tag && !product.tags.includes(filter.tag)) return false;
-    if (filter.featured !== undefined && product.featured !== filter.featured) return false;
-    if (filter.exclude?.includes(product.href)) return false;
     return true;
   });
-
-  return typeof filter.limit === "number" ? matched.slice(0, filter.limit) : matched;
 }
 
 export async function getProduct(route: ProductRoute): Promise<Product | null> {
   const href = routeTo.product(route.category, route.subcategory, route.product);
   const { products } = await getCatalog();
   return products.find((product) => product.href === href) ?? null;
-}
-
-export async function getFeaturedProducts(limit = 6): Promise<Product[]> {
-  return getProducts({ featured: true, limit });
-}
-
-/**
- * Related products, widening the net until `limit` is reached:
- * same subcategory → same category → featured elsewhere.
- * Nothing is hand-maintained, so a new product appears in related lists on its own.
- */
-export async function getRelatedProducts(product: Product, limit = 4): Promise<Product[]> {
-  const related: Product[] = [];
-  const seen = new Set<string>([product.href]);
-
-  const add = (candidates: Product[]) => {
-    for (const candidate of candidates) {
-      if (related.length >= limit) return;
-      if (seen.has(candidate.href)) continue;
-      seen.add(candidate.href);
-      related.push(candidate);
-    }
-  };
-
-  add(await getProducts({ category: product.categorySlug, subcategory: product.subcategorySlug }));
-  if (related.length < limit) add(await getProducts({ category: product.categorySlug }));
-  if (related.length < limit) add(await getProducts({ featured: true }));
-
-  return related;
 }
 
 /* -------------------------------------------------------------------------- */

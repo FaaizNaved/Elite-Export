@@ -1,9 +1,7 @@
 "use client";
 
-import { Paperclip, Upload, X } from "lucide-react";
 import { useId, useRef, useState, type ChangeEvent, type DragEvent } from "react";
-import { Icon } from "@/components/ui/icon";
-import { Typography } from "@/components/ui/typography";
+import { Record } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
 import { useFieldProps } from "./field";
 
@@ -86,18 +84,17 @@ export function FileUpload({
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-input border border-dashed px-6 py-10 text-center transition-fast",
-          dragging ? "border-accent bg-accent-subtle" : "border-border hover:border-border-strong",
+          "flex cursor-pointer flex-col gap-s1 border-0 border-b border-hairline py-s3 motion-mark",
+          dragging ? "border-ink" : "hover:border-ink-secondary",
           disabled && "pointer-events-none opacity-60",
         )}
       >
-        <Icon icon={Upload} size="lg" tone="muted" />
-        <Typography variant="small" as="span">
-          Drag a file here, or <span className="text-accent underline">browse</span>
-        </Typography>
-        <Typography variant="caption" as="span">
+        <Record as="span">
+          Drag a file here, or <span className="underline decoration-1 underline-offset-1">browse</span>
+        </Record>
+        <Record rank="c" tone="secondary" as="span">
           Up to {maxSizeMb} MB{accept_ ? ` · ${accept_}` : ""}
-        </Typography>
+        </Record>
 
         <input
           ref={inputRef}
@@ -114,7 +111,7 @@ export function FileUpload({
       </label>
 
       {error && (
-        <p role="alert" className="font-sans text-caption text-error">
+        <p role="alert" className="font-sans text-c text-oxide">
           {error}
         </p>
       )}
@@ -124,20 +121,19 @@ export function FileUpload({
           {files.map((file, index) => (
             <li
               key={`${file.name}-${index}`}
-              className="flex items-center justify-between gap-3 rounded-input border border-border bg-surface px-4 py-2.5"
+              className="flex items-center justify-between gap-s2 border-b border-hairline py-s1"
             >
               <span className="flex min-w-0 items-center gap-2">
-                <Icon icon={Paperclip} size="xs" tone="muted" />
-                <span className="truncate font-sans text-small">{file.name}</span>
+                <span className="truncate font-sans text-r">{file.name}</span>
               </span>
 
               <button
                 type="button"
                 onClick={() => remove(index)}
                 aria-label={`Remove ${file.name}`}
-                className="shrink-0 rounded-button p-1 text-foreground-muted transition-fast hover:text-foreground"
+                className="shrink-0 font-sans text-c text-ink-secondary underline decoration-1 underline-offset-1 motion-mark hover:decoration-2"
               >
-                <Icon icon={X} size="xs" />
+                Remove
               </button>
             </li>
           ))}

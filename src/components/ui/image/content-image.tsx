@@ -1,36 +1,83 @@
-import NextImage, { type ImageProps } from "next/image";
+import NextImage from "next/image";
 import type { Image as ImageToken } from "@/types";
-import { BLUR_DATA_URL, resolveImageUrl } from "@/utils/image";
+import { resolveImageUrl } from "@/utils/image";
 
-export interface ContentImageProps
-  extends Omit<ImageProps, "src" | "alt" | "placeholder" | "blurDataURL"> {
-  /** An image from the content layer — carries its own `src` and `alt`. */
+/**
+ * The one way a photograph reaches a page.
+ *
+ * Visual Design System §32.1 is the rule this component exists to make
+ * impossible to break:
+ *
+ *   > Containers are defined by width. Height follows from the image's own
+ *   > ratio. No image in this system is cropped by its container.
+ *
+ * Photography Direction §22.4 supplies the reason: an image has one canonical
+ * crop, decided when it enters the library, and **two crops of one frame in
+ * circulation are two different statements**. `object-fit: cover` is a second
+ * crop, performed by a machine, on every viewport independently — which is why
+ * neither `fill` nor any object-fit is available here. They are not
+ * discouraged; they are not in the API.
+ *
+ * The layout adapts to the photograph. Where a surface needs a shape the
+ * library does not hold, the answer is a different photograph (§32.1), not a
+ * different crop of this one.
+ */
+
+export interface ContentImageProps {
+  /** An image from the content layer — carries its own src, alt and record. */
   image: ImageToken;
+  /**
+   * How wide the image will render, so the browser can choose a source.
+   * Use {@link imageSizes} rather than writing one by hand — the strings there
+   * are derived from the containers in Visual Design System §27.2.
+   */
+  sizes: string;
+  /** Above the fold on this surface. */
+  priority?: boolean;
+  /** Layout classes for the image itself. Width only — height follows. */
+  className?: string;
 }
 
 /**
- * Renders an image from the content layer.
+ * Delivery quality.
  *
- * Every content image goes through here, which means the blur placeholder, the
- * cover fit and the URL resolution are defined once instead of being repeated
- * at each `next/image` call site. It is also the single seam a CDN migration
- * has to pass through.
- *
- * Defaults to `fill`, since content images are almost always laid into a sized
- * container; pass explicit `width`/`height` to opt out.
+ * VDS §32.3: delivered at not less than 2× the largest rendered size, and
+ * judged on grain and shadow detail rather than on file size alone. Creative
+ * Direction Book §14.3: a shadow that loses its detail is a place where
+ * information has been discarded, and this brand's position is that nothing is
+ * discarded.
  */
-export function ContentImage({ image, className, ...props }: ContentImageProps) {
-  const sized = props.width !== undefined || props.height !== undefined || props.fill === false;
+const DELIVERY_QUALITY = 90;
+
+export function ContentImage({ image, sizes, priority, className }: ContentImageProps) {
+  /**
+   * An image whose intrinsic size is unknown cannot be shown to reach the
+   * evidence threshold (VDS §30.2), so it is not published.
+   *
+   * UX Blueprint X8: where the evidence does not exist, the section does not
+   * exist — the absence is designed around, never filled with a stand-in. The
+   * Threshold gate at `npm run check:publication` names every image in this
+   * state, so it is reported rather than silently missing.
+   */
+  if (!image.width || !image.height) return null;
 
   return (
     <NextImage
       src={resolveImageUrl(image.src)}
       alt={image.alt}
-      {...(sized ? {} : { fill: true })}
-      placeholder="blur"
-      blurDataURL={BLUR_DATA_URL}
-      className={className ?? "object-cover"}
-      {...props}
+      width={image.width}
+      height={image.height}
+      sizes={sizes}
+      quality={DELIVERY_QUALITY}
+      priority={priority}
+      /*
+       * The container gives the width; the height is the photograph's own.
+       * This pair is the whole of §32.1, and it is why no aspect-ratio token
+       * exists in this system: a list of approved ratios would become a set of
+       * boxes, and boxes crop.
+       */
+      style={{ width: "100%", height: "auto" }}
+      className={className}
     />
   );
 }

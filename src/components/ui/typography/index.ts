@@ -1,2 +1,2 @@
-export { Typography, typographyVariants } from "./typography";
-export type { TypographyProps } from "./typography";
+export { Statement, Passage, Record, Eyebrow, Caption } from "./typography";
+export type { StatementProps, PassageProps, RecordProps } from "./typography";

@@ -3,57 +3,66 @@ import type { ComponentPropsWithoutRef, ElementType } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * Vertical rhythm for every page section.
+ * Vertical rhythm, expressed as the three break sizes — Visual Design System
+ * §23.1. There are three, and they mean different things:
  *
- * All values are steps on the 4px spacing scale — the generous whitespace is
- * what makes the layout read as premium, so resist tightening it per-page.
+ *   section  96 / 64    two passages of one argument       → S5
+ *   chapter  192 / 96   two chapters, a change of subject  → S6
+ *   held     ≥ 1vh      nothing. It is the moment itself   → S7
+ *
+ * The chapter break is exactly twice the section break, which is the minimum
+ * at which a reader distinguishes "new part of this" from "new thing" without
+ * counting. The three ranks already carry those numbers in the token source,
+ * so nothing here is typed.
+ *
+ * Two things this component used to offer are gone:
+ *
+ * - **Textures.** §14.5 sets the threshold at zero: no paper grain, no leather
+ *   emboss, no noise layer. A simulated material is a false claim about matter
+ *   from a company that makes the real one.
+ * - **A `hero` spacing that cleared a fixed header.** The header has not been
+ *   fixed since the navigation package; §37.1 says it leaves with the field.
  */
 const sectionVariants = cva("relative w-full", {
   variants: {
-    spacing: {
-      sm: "py-12 md:py-16",
-      md: "py-16 md:py-24",
-      lg: "py-24 md:py-32",
-      /** First section on a page — clears the fixed header. */
-      hero: "pt-32 pb-16 md:pt-40 md:pb-24",
+    break: {
+      /** Two passages of one argument. */
+      section: "py-s5",
+      /** Two chapters — a change of subject. */
+      chapter: "py-s6",
+      /** The section sets its own space, or inherits its parent's. */
       none: "",
     },
     /**
-     * Material identity (blueprint §13). One material per section, never in two
-     * adjacent sections, never over photography. The pattern is drawn on a
-     * pseudo-element behind the content and disabled below 768px.
+     * §16.1: the inverted field is the strongest chapter marker available and
+     * is therefore rationed to **at most once per surface**, with a minimum
+     * extent of one viewport height (§23.6). A short inverted band is a
+     * decorative stripe.
      */
-    texture: {
-      none: "",
-      /** The raw material, under the story of the people. */
-      grain: "texture-grain",
-      /** The shapes products are cut from. */
-      pattern: "texture-pattern",
-      /** Process drawings under a process section. */
-      blueprint: "texture-blueprint [--texture-opacity:0.04]",
-      /** Regular, measured, repeating — the visual form of consistency. */
-      stitch: "texture-stitch",
-      /** Material, not literal freight iconography. */
-      hardware: "texture-hardware",
-      /** The most decorative motif, on the most emotional section. */
-      tooling: "texture-tooling [--texture-opacity:0.05]",
+    tone: {
+      paper: "",
+      ink: "bg-ink text-paper",
+      /** §36.3, the one permitted container: binds a specification into one object. */
+      recessed: "bg-recessed",
     },
   },
-  defaultVariants: { spacing: "md", texture: "none" },
+  defaultVariants: { break: "section", tone: "paper" },
 });
 
 export interface SectionProps
-  extends ComponentPropsWithoutRef<"section">,
+  extends Omit<ComponentPropsWithoutRef<"section">, "color">,
     VariantProps<typeof sectionVariants> {
   as?: ElementType;
 }
 
 export function Section({
   as: Component = "section",
-  spacing,
-  texture,
+  break: breakSize,
+  tone,
   className,
   ...props
 }: SectionProps) {
-  return <Component className={cn(sectionVariants({ spacing, texture }), className)} {...props} />;
+  return (
+    <Component className={cn(sectionVariants({ break: breakSize, tone }), className)} {...props} />
+  );
 }

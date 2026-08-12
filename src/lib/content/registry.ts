@@ -1,9 +1,8 @@
 import type {
-  BlogPost,
+  Article,
   Category,
   CompanyPage,
   Faq,
-  GalleryAlbum,
   LegalPage,
   Machine,
   Product,
@@ -19,11 +18,10 @@ import {
   getProducts,
   getSubcategory,
 } from "./catalog";
-import { getGalleryAlbums } from "./gallery";
 import { getMachine, getMachines } from "./machines";
 import {
-  getBlogPost,
-  getBlogPosts,
+  getArticle,
+  getArticles,
   getCompanyPage,
   getCompanyPages,
   getLegalPage,
@@ -42,7 +40,7 @@ import { getFaqs, getHomeContent, getTestimonials } from "./singletons";
  *
  *   contentRegistry.products.list()
  *   contentRegistry.machines.find("clicking-press")
- *   contentRegistry.blog.exists("choosing-full-grain-leather")
+ *   contentRegistry.journal.exists("choosing-full-grain-leather")
  *   contentRegistry.home.get()
  *
  * Registering a new content type is one entry pointing at its loader.
@@ -84,8 +82,7 @@ export interface ContentRegistry {
     subcategory: (category: string, subcategory: string) => Promise<Subcategory | null>;
   };
   machines: ContentCollection<Machine>;
-  gallery: ContentCollection<GalleryAlbum>;
-  blog: ContentCollection<BlogPost>;
+  journal: ContentCollection<Article>;
   legal: ContentCollection<LegalPage>;
   /** Editorial company pages: about, manufacturing, technology, quality, export. */
   pages: ContentCollection<CompanyPage>;
@@ -94,10 +91,6 @@ export interface ContentRegistry {
   testimonials: ContentSingleton<Testimonial[]>;
 }
 
-const findIn = <Doc extends { slug: string }>(list: () => Promise<Doc[]>) =>
-  async (slug: string): Promise<Doc | null> =>
-    (await list()).find((doc) => doc.slug === slug) ?? null;
-
 export const contentRegistry: ContentRegistry = {
   products: collection(() => getProducts(), getProduct),
   categories: {
@@ -105,8 +98,7 @@ export const contentRegistry: ContentRegistry = {
     subcategory: getSubcategory,
   },
   machines: collection(getMachines, getMachine),
-  gallery: collection(getGalleryAlbums, findIn(getGalleryAlbums)),
-  blog: collection(getBlogPosts, getBlogPost),
+  journal: collection(getArticles, getArticle),
   legal: collection(getLegalPages, getLegalPage),
   pages: collection(getCompanyPages, getCompanyPage),
   home: { get: getHomeContent },

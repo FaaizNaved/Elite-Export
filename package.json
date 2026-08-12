@@ -9,6 +9,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "check:content": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/check-content.js",
+    "check:publication": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/check-publication.js",
+    "images:record": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/record-images.js",
     "generate:placeholders": "node scripts/generate-placeholders.mjs"
   },
   "dependencies": {
@@ -19,10 +21,7 @@
     "@types/mdx": "^2.0.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.43.0",
     "gray-matter": "^4.0.3",
-    "lenis": "^1.3.25",
-    "lucide-react": "^1.28.0",
     "next": "16.2.12",
     "nodemailer": "^9.0.3",
     "react": "19.2.4",

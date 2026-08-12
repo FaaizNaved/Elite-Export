@@ -9,6 +9,7 @@ import {
 import type { HomeContent } from "../../models/home";
 import type { Faq, FaqTopic, Testimonial } from "../../types";
 import { once } from "../../utils/cache";
+import { resolveDocumentImages } from "./assets";
 import { readJsonFile } from "./source";
 
 /**
@@ -61,7 +62,9 @@ export const getHomeContent = once(async (): Promise<HomeContent> => {
     sectionKeys.map((key, index) => [key, sectionValues[index]]),
   ) as HomeContent["sections"];
 
-  return { hero, intro, pause, sections, cta };
+  // Home names shared assets absolutely; the walk attaches each frame's record
+  // from the library (MIB R15.2).
+  return resolveDocumentImages("", { hero, intro, pause, sections, cta });
 });
 
 /* -------------------------------------------------------------------------- */
@@ -81,7 +84,3 @@ export const getTestimonials = once(async (): Promise<Testimonial[]> => {
   const testimonials = await readJsonFile("testimonials.json", testimonialCollectionSchema);
   return [...testimonials].sort((a, b) => a.order - b.order);
 });
-
-export async function getFeaturedTestimonials(limit = 3): Promise<Testimonial[]> {
-  return (await getTestimonials()).filter((testimonial) => testimonial.featured).slice(0, limit);
-}

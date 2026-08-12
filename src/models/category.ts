@@ -16,7 +16,6 @@ export const categoryMetaSchema = z.strictObject({
   hero: imageSchema.optional(),
   /** Square-ish image for category cards and the mega menu. */
   thumbnail: imageSchema,
-  featured: z.boolean().default(false),
   order: orderSchema,
   status: publishStatusSchema,
   seo: seoSchema.optional(),

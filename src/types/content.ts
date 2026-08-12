@@ -1,8 +1,7 @@
 import type {
-  BlogPostFrontmatter,
+  ArticleFrontmatter,
   CategoryMeta,
   CompanyPageFrontmatter,
-  GalleryAlbumMeta,
   LegalPageFrontmatter,
   MachineFrontmatter,
   ProductFrontmatter,
@@ -43,11 +42,7 @@ export interface CompanyPage extends CompanyPageFrontmatter, ContentRef {}
 
 export interface Machine extends Omit<MachineFrontmatter, "slug">, ContentRef {}
 
-export interface GalleryAlbum extends GalleryAlbumMeta, ContentRef {}
-
-export interface BlogPost extends Omit<BlogPostFrontmatter, "slug" | "readingTime">, ContentRef {
-  readingTime: number;
-}
+export interface Article extends Omit<ArticleFrontmatter, "slug">, ContentRef {}
 
 export interface LegalPage extends LegalPageFrontmatter, ContentRef {}
 

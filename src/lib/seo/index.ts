@@ -10,7 +10,7 @@
  */
 export { absoluteUrl } from "./url";
 export {
-  blogPostMetadata,
+  articleMetadata,
   buildMetadata,
   buildRootMetadata,
   categoryMetadata,

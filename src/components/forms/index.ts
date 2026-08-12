@@ -1,7 +1,6 @@
-export { BuyerEnquiryForm } from "./buyer-enquiry-form";
-export type { BuyerEnquiryFormProps } from "./buyer-enquiry-form";
-export { ContactForm, FormError, SuccessPanel } from "./contact-form";
-export type { ContactFormProps } from "./contact-form";
+export { EnquiryForm } from "./enquiry-form";
+export type { EnquiryFormProps } from "./enquiry-form";
+export { FormError, SuccessPanel } from "./confirmation";
 export {
   Checkbox,
   CountrySelect,

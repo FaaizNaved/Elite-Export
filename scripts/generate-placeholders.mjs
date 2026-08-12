@@ -135,8 +135,8 @@ const IMAGES = [
   ["images/export/packing-line", "wide"],
   ["images/export/container-loading", "wide"],
 
-  // Blog
-  ["images/blog/choosing-full-grain-leather/cover", "wide"],
+  // Journal
+  ["images/journal/choosing-full-grain-leather/cover", "wide"],
 
   // Shared
   ["images/og/default", "og"],
@@ -180,6 +180,8 @@ const title = (name) =>
     .toUpperCase();
 
 let written = 0;
+/** Exact record of what this script produced — the publication gate reads it. */
+const manifest = [];
 
 for (const [name, ratio] of IMAGES) {
   const [width, height] = RATIO[ratio];
@@ -190,6 +192,7 @@ for (const [name, ratio] of IMAGES) {
     .webp({ quality: 72 })
     .toFile(target);
 
+  manifest.push(`public/images/${name.replace(/^images\//, "")}.webp`);
   written += 1;
 }
 
@@ -199,7 +202,17 @@ await mkdir(path.dirname(logoPath), { recursive: true });
 await sharp(Buffer.from(svg(512, 512, "EE", TONES[0])))
   .png()
   .toFile(logoPath);
+manifest.push("public/images/logos/logo.png");
 written += 1;
+
+// Photography Direction §24.5 forbids placeholder imagery. The gate at
+// `npm run check:publication` refuses anything on this list.
+await writeFile(
+  path.join(PUBLIC_DIR, "images/.placeholders.json"),
+  `${JSON.stringify(manifest.sort(), null, 2)}
+`,
+  "utf8",
+);
 
 await writeFile(
   path.join(PUBLIC_DIR, "images/README.md"),

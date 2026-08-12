@@ -7,7 +7,8 @@ export type SubmitState = "idle" | "success" | "error";
 interface SubmitResult {
   state: SubmitState;
   error: string | null;
-  submit: (endpoint: string, values: unknown) => Promise<void>;
+  /** Resolves true only when the payload was received (UX R47.3). */
+  submit: (endpoint: string, values: unknown) => Promise<boolean>;
   reset: () => void;
 }
 
@@ -22,7 +23,7 @@ export function useFormSubmit(): SubmitResult {
   const [state, setState] = useState<SubmitState>("idle");
   const [error, setError] = useState<string | null>(null);
 
-  const submit = async (endpoint: string, values: unknown) => {
+  const submit = async (endpoint: string, values: unknown): Promise<boolean> => {
     setError(null);
 
     try {
@@ -40,13 +41,15 @@ export function useFormSubmit(): SubmitResult {
             : "Something went wrong. Please try again.";
         setError(message);
         setState("error");
-        return;
+        return false;
       }
 
       setState("success");
+      return true;
     } catch {
       setError("We could not reach the server. Please check your connection and try again.");
       setState("error");
+      return false;
     }
   };
 

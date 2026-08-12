@@ -13,7 +13,8 @@ const withMDX = createMDX({
 
 Turbopack passes plugin configuration to a Rust process, so a JavaScript function cannot be
 handed to it — only a package name plus serializable options. That rules out local plugin
-modules for now, which is why this folder holds no code.
+modules for now, which is why this folder holds no plugin code — only `components.tsx`
+(the element mappings) and `load.ts` (the compiled-body loaders).
 
 If a custom transform becomes necessary, publish it (or add it as a workspace package) and
 reference it by name here. Until then, prefer doing the work in the content loaders

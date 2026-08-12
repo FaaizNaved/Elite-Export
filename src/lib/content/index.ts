@@ -10,15 +10,15 @@
  *
  * Layering: registry (`./registry`) → declarations (`./collection`) →
  * parser (`./source`) → resolvers (`./catalog`, `./pages`, `./machines`,
- * `./gallery`, `./singletons`) → renderer (`src/lib/mdx`).
+ * `./singletons`) → renderer (`src/lib/mdx`).
  */
 export { contentRegistry } from "./registry";
 export type { ContentCollection, ContentRegistry, ContentSingleton } from "./registry";
-export { assetScope, resolveAsset, resolveImage, resolveImages } from "./assets";
+export { assetScope, resolveAsset, resolveDocumentImages, resolveImage, resolveImages } from "./assets";
+export { chapterFrames, isEvidence } from "./evidence";
+export { imageLibrary, imageRecord, withImageRecord } from "./images";
 export * from "./catalog";
-export * from "./gallery";
 export * from "./machines";
-export * from "./navigation";
 export * from "./pages";
 export * from "./singletons";
 export { CONTENT_ROOT, ContentError, INCLUDE_DRAFTS } from "./source";

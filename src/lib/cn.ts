@@ -2,44 +2,28 @@ import { clsx, type ClassValue } from "clsx";
 import { extendTailwindMerge } from "tailwind-merge";
 
 /**
- * tailwind-merge has to be told about our custom theme scale names.
+ * tailwind-merge has to be told about this system's scale names.
  *
- * Without this it cannot tell `text-caption` (a font size) from
- * `text-primary-foreground` (a colour) — it treats them as conflicting `text-*`
- * utilities and silently drops the one declared first, which makes button and
- * badge labels inherit the body colour instead of their variant colour.
+ * Without it, `text-r` (a rank from Visual Design System §9.2) and `text-ink`
+ * (a value from §15.1) look like two conflicting `text-*` utilities, and the
+ * one declared first is silently dropped. The symptom is a record rendering at
+ * body size — which is not a styling slip but a hierarchy error: §9.2 says R
+ * "is a different job, not a lower rank", and losing it collapses the record
+ * voice into the argument.
  *
- * Every custom scale that shares a utility prefix with a built-in Tailwind
- * group is registered here.
+ * Every group below is a scale declared in `globals.css` that shares a utility
+ * prefix with a built-in Tailwind group. Scales the token source sets to
+ * `initial` — radius, shadow, blur, z — need no entry, because there is nothing
+ * left in them to conflict with (§16.3, §16.5), and the four duration bands are
+ * reached through the `motion-*` utilities rather than through `duration-*`.
  */
 const twMerge = extendTailwindMerge({
   extend: {
     classGroups: {
-      "font-size": [
-        {
-          text: [
-            "display",
-            "hero",
-            "h1",
-            "h2",
-            "h3",
-            "h4",
-            "body-lg",
-            "body",
-            "small",
-            "caption",
-            "overline",
-            "button",
-          ],
-        },
-      ],
-      rounded: [{ rounded: ["button", "input", "card", "image", "badge"] }],
-      shadow: [{ shadow: ["floating"] }],
-      "max-w": [{ "max-w": ["narrow", "content", "wide"] }],
-      // The transition-*property* group — not `transition-behavior`, which is
-      // where Tailwind's own `transition-normal`/`transition-discrete` live.
-      transition: [{ transition: ["fast", "base", "slow", "premium"] }],
-      z: [{ z: ["base", "raised", "sticky", "dropdown", "overlay", "modal", "tooltip", "toast"] }],
+      /** §9.2 — the seven ranks. */
+      "font-size": [{ text: ["d", "t1", "t2", "t3", "b", "r", "c"] }],
+      /** §27.2 — five containers, each the output of a measurement. */
+      "max-w": [{ "max-w": ["reading", "record", "annotation", "field"] }],
     },
   },
 });

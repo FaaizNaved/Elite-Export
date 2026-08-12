@@ -13,13 +13,17 @@ export const ROUTES = {
   quality: "/quality",
   gallery: "/gallery",
   exportCapabilities: "/export",
-  blog: "/blog",
-  buyerEnquiry: "/buyer-enquiry",
-  contact: "/contact",
+  journal: "/journal",
+  /**
+   * One door. UX Blueprint R25.2: a "contact" surface and an "enquiry" surface
+   * are two doors, and Brand Bible §3.4 permits one. `/contact` and
+   * `/buyer-enquiry` both continue to resolve here — R29.2: addresses are
+   * permanent, and a broken link sent to a colleague is a failure of
+   * Repeatability in the only place the buyer can see it.
+   */
+  enquiry: "/enquiry",
   legal: "/legal",
 } as const;
-
-export type StaticRoute = (typeof ROUTES)[keyof typeof ROUTES];
 
 /** Builders for content-driven routes. Segments are already slugs. */
 export const routeTo = {
@@ -29,7 +33,7 @@ export const routeTo = {
   product: (category: string, subcategory: string, product: string) =>
     joinPath(ROUTES.products, category, subcategory, product),
   machine: (slug: string) => joinPath(ROUTES.technology, slug),
-  blogPost: (slug: string) => joinPath(ROUTES.blog, slug),
+  article: (slug: string) => joinPath(ROUTES.journal, slug),
   legalPage: (slug: string) => joinPath(ROUTES.legal, slug),
   /** Company pages are top-level: `about.mdx` → `/about`. */
   companyPage: (slug: string) => joinPath(slug),

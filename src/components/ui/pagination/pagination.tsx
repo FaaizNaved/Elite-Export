@@ -1,7 +1,6 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/cn";
-import { Icon } from "../icon/icon";
+import { Mark } from "../icon";
 
 export interface PaginationProps {
   page: number;
@@ -39,8 +38,25 @@ export function getPageRange(page: number, totalPages: number, siblings = 1): Ar
   return range;
 }
 
-const itemClasses =
-  "inline-flex size-10 items-center justify-center rounded-button font-sans text-small transition-fast";
+/**
+ * Pagination — Master Implementation Blueprint §13.1, Visual Design System
+ * §40.5: "to state where a reader is in a finite set. Where a record set
+ * exceeds what one surface can carry at threshold." Never as infinite scroll.
+ *
+ * Two rules changed this component:
+ *
+ * - **§43.3** scopes the arrow to "pagination direction only, **always beside a
+ *   word or a numeral**." An arrow alone in a 40px box is an icon carrying a
+ *   control's entire meaning, which §43.2 forbids. Previous and next are now
+ *   words with the mark beside them.
+ * - **§38.5** removes the dimmed control: "a control the visitor cannot use is
+ *   not shown dimmed. It is not shown." On the first page there is no previous.
+ *
+ * The current page is stated, not filled: §16.2 has no surface for a control
+ * and §16.5 has no radius, so what marks it is the one instrument left —
+ * weight, plus `aria-current`.
+ */
+const itemClasses = "inline-flex min-h-11 items-center justify-center px-2 font-sans text-r";
 
 export function Pagination({
   page,
@@ -52,38 +68,37 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   const range = getPageRange(page, totalPages, siblings);
-  const hasPrevious = page > 1;
-  const hasNext = page < totalPages;
 
   return (
-    <nav aria-label="Pagination" className={cn("flex items-center justify-center gap-1", className)}>
-      <PaginationArrow
-        href={createHref(page - 1)}
-        label="Previous page"
-        disabled={!hasPrevious}
-        icon="previous"
-      />
+    <nav
+      aria-label="Pagination"
+      className={cn("flex flex-wrap items-center gap-x-s2 gap-y-s1", className)}
+    >
+      {page > 1 && (
+        <Link href={createHref(page - 1)} className={cn(itemClasses, "gap-1 text-ink-secondary")}>
+          <Mark name="arrow" direction="left" />
+          Previous
+        </Link>
+      )}
 
       {range.map((entry, index) =>
         entry === ELLIPSIS ? (
-          <span
-            key={`gap-${index}`}
-            aria-hidden
-            className={cn(itemClasses, "text-foreground-muted")}
-          >
+          <span key={`gap-${index}`} aria-hidden className={cn(itemClasses, "text-ink-secondary")}>
             {ELLIPSIS}
+          </span>
+        ) : entry === page ? (
+          <span key={entry} aria-current="page" className={cn(itemClasses, "font-medium text-ink")}>
+            {entry}
           </span>
         ) : (
           <Link
             key={entry}
             href={createHref(entry)}
             aria-label={`Page ${entry}`}
-            aria-current={entry === page ? "page" : undefined}
             className={cn(
               itemClasses,
-              entry === page
-                ? "bg-primary text-primary-foreground"
-                : "text-foreground-secondary hover:bg-surface-sunken hover:text-foreground",
+              "text-ink-secondary underline decoration-1 underline-offset-1",
+              "motion-mark hover:decoration-2",
             )}
           >
             {entry}
@@ -91,46 +106,12 @@ export function Pagination({
         ),
       )}
 
-      <PaginationArrow
-        href={createHref(page + 1)}
-        label="Next page"
-        disabled={!hasNext}
-        icon="next"
-      />
+      {page < totalPages && (
+        <Link href={createHref(page + 1)} className={cn(itemClasses, "gap-1 text-ink-secondary")}>
+          Next
+          <Mark name="arrow" />
+        </Link>
+      )}
     </nav>
-  );
-}
-
-function PaginationArrow({
-  href,
-  label,
-  disabled,
-  icon,
-}: {
-  href: string;
-  label: string;
-  disabled: boolean;
-  icon: "previous" | "next";
-}) {
-  const content = <Icon icon={icon === "previous" ? ChevronLeft : ChevronRight} size="sm" />;
-
-  // A disabled control must not be a link — screen readers and crawlers would
-  // both follow it. Render inert markup instead.
-  if (disabled) {
-    return (
-      <span aria-hidden className={cn(itemClasses, "text-foreground-muted opacity-40")}>
-        {content}
-      </span>
-    );
-  }
-
-  return (
-    <Link
-      href={href}
-      aria-label={label}
-      className={cn(itemClasses, "text-foreground-secondary hover:bg-surface-sunken hover:text-foreground")}
-    >
-      {content}
-    </Link>
   );
 }

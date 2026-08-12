@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { PageHero, Prose } from "@/components/sections";
-import { ROUTES } from "@/constants";
-import { buildBreadcrumbs } from "@/lib/breadcrumbs";
+import { Opening } from "@/components/structure";
+import { Prose } from "@/components/sections";
 import { getLegalPage, getLegalRoutes } from "@/lib/content";
 import { legalPageMetadata } from "@/lib/seo";
 import { loadLegalContent } from "@/lib/mdx";
@@ -33,14 +32,10 @@ export default async function LegalPage({ params }: PageProps) {
 
   return (
     <>
-      <PageHero
+      <Opening
         title={page.title}
         eyebrow={`Last updated ${formatDate(page.updatedAt)}`}
         summary={page.summary}
-        breadcrumbs={buildBreadcrumbs([
-          { label: "Legal", href: ROUTES.legal },
-          { label: page.title, href: page.href },
-        ])}
       />
 
       <Prose>

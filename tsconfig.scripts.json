@@ -1,5 +1,5 @@
 {
-  "//": "Used only by `npm run check:content` — compiles the content engine to CJS so it can run outside Next.",
+  "//": "Used by `npm run check:content`, `check:publication` and `images:record` — compiles the content engine to CJS so it can run outside Next.",
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
@@ -19,8 +19,6 @@
     "src/app/**",
     "src/lib/mdx/**",
     "src/components/**",
-    "src/animations/**",
-    "src/providers/**",
     "src/services/**",
     "src/lib/cn.ts"
   ]

@@ -1,175 +1,216 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   Design tokens — the single source of truth for the whole application.
+   THE DESIGN VALUE SOURCE
 
-   Nothing outside this file should contain a raw hex value, a font stack, a
-   radius, a shadow or an easing curve. Components reference these tokens
-   through Tailwind utilities (`bg-primary`, `rounded-card`, `shadow-md`,
-   `text-h2`, `ease-premium`) or through the `@utility` helpers at the bottom.
+   Every value this brand uses, and nothing else. It is the single source
+   Master Implementation Blueprint R7.1 requires: a value that exists once can
+   be changed once.
+
+   Nothing here was chosen. Every value is quoted from the Visual Design System
+   with the section that fixed it, and every section of the VDS derived it from
+   a locked constraint. If a value looks arbitrary, the citation beside it is
+   where to argue.
+
+   The namespace resets below are not tidiness. Visual Design System §49 states
+   that a radius, a shadow, a gradient or a blur is "not expressible: the values
+   do not exist" — so they are removed from the theme rather than merely
+   discouraged. A rule enforced by absence needs no reviewer.
    ========================================================================== */
 
 @theme {
-  /* ---------------------------------------------------------------- Fonts */
-  /* Wired to next/font in src/app/layout.tsx. */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-playfair), ui-serif, Georgia, "Times New Roman", serif;
+  /* ---------------------------------------------------------------- FONTS
+     VDS §8: two voices, two jobs. The serif is the company speaking; the sans
+     is the record. There is no third face, and there is no bold serif.
 
-  /* --------------------------------------------------------------- Colors */
-  /* Surfaces — Warm Ivory instead of pure white so leather photography reads richer. */
-  --color-background: #f8f5f0;
-  --color-surface: #ffffff;
-  --color-surface-sunken: #f2eee7;
+     INTEGRATION PENDING (MIB §20 item 13): the specified faces are named first
+     and are not yet licensed. Until the licence exists the stack falls through
+     to a system face, which is honest — shipping a substitute face would state
+     something about the company that is not true. No web font is loaded here
+     on purpose; the licensed files are dropped in at Integration and nothing
+     else changes. */
+  --font-*: initial;
+  --font-serif: Plantin, "Plantin MT Pro", Granjon, ui-serif, Georgia, serif;
+  --font-sans: Univers, "Neue Haas Grotesk", "Akzidenz-Grotesk", ui-sans-serif, system-ui, sans-serif;
 
-  /* Text */
-  --color-foreground: #202020;
-  --color-foreground-secondary: #666666;
-  --color-foreground-muted: #8c8c8c;
+  /* --------------------------------------------------------------- COLOUR
+     VDS §15.3: the list is closed at eight values. There is no accent, no
+     ramp, no tint, no state variant, and no dark mode (§19).
 
-  /* Lines */
-  --color-border: #eaeaea;
-  --color-border-strong: #d8d4cd;
+     Every value is a substance that occurs on the floor (§14.2). Neither
+     endpoint is pure: a shadow that falls to pure black has discarded
+     information (Creative Direction Book §14.3), and pure white exists nowhere
+     in a building lit by daylight. */
+  --color-*: initial;
 
-  /* Brand — Deep Charcoal, Warm Ivory, Antique Gold */
-  --color-primary: #1b1b1b;
-  --color-primary-foreground: #f8f5f0;
-  --color-secondary: #f8f5f0;
-  --color-secondary-foreground: #1b1b1b;
-  --color-accent: #b68d40;
-  --color-accent-foreground: #ffffff;
-  --color-accent-subtle: #f3ead9;
+  /* Keywords, not colours — kept so `bg-transparent` and `border-current` work. */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
 
-  /* Status */
-  --color-success: #2e7d32;
-  --color-success-subtle: #e6f0e6;
-  --color-error: #c62828;
-  --color-error-subtle: #f9e7e7;
-  /* Extends the documented palette: the Badge component needs a warning tone
-     that reads as a warmer, deeper gold than the accent. */
-  --color-warning: #8a6a1f;
-  --color-warning-subtle: #f5edda;
+  /* Structural values — §15.1 */
+  --color-paper: #f2efe9; /* unbleached paper; undyed vegetable-tanned hide */
+  --color-recessed: #e9e5dd; /* the same paper, in shade. Records only — §16.2 */
+  --color-ink: #1c1a17; /* printers' ink; harness leather in shadow */
+  --color-ink-secondary: #4f4a44; /* the same ink, thinned. 7.6:1 on paper */
+  --color-ink-secondary-inverse: #ada79f; /* secondary on an inverted field. 7.3:1 on ink */
 
-  /* Interaction */
-  --color-focus: #b68d40;
-  --color-overlay: color-mix(in oklab, #1b1b1b 62%, transparent);
+  /* Marks — §16.4. Ink at 12% over paper, computed once and quoted. */
+  --color-hairline: #d9d5cd;
 
-  /* ----------------------------------------------------------- Typography */
-  /* Fluid by design — sizes scale with the viewport instead of stepping at
-     breakpoints, which keeps the editorial rhythm on ultra-wide screens. */
-  --text-display: clamp(3rem, 1.6rem + 5.6vw, 5.5rem);
-  --text-display--line-height: 1.02;
-  --text-display--letter-spacing: -0.03em;
+  /* The veil that lets a dialog read as in front, because nothing rises — §16.3 */
+  --color-veil: color-mix(in oklab, #1c1a17 80%, transparent);
 
-  --text-hero: clamp(2.5rem, 1.5rem + 4vw, 4rem);
-  --text-hero--line-height: 1.06;
-  --text-hero--letter-spacing: -0.025em;
+  /* Functional hues — §15.2. One job each, never decorative, never the only
+     carrier of a state. Contrasts on paper: 7.1, 8.0, 5.5. */
+  --color-oxide: #8a3324; /* red oxide primer — failure only */
+  --color-enamel: #2f4f3a; /* machine enamel green — confirmation only */
+  --color-brass: #7a5b1e; /* oxidised brass — caution only */
 
-  --text-h1: clamp(2.125rem, 1.5rem + 2.4vw, 3rem);
-  --text-h1--line-height: 1.12;
-  --text-h1--letter-spacing: -0.02em;
+  /* ----------------------------------------------------------- TYPOGRAPHY
+     VDS §9.2. Seven ranks. Sizes interpolate linearly between a 390px field
+     and a 1440px field and stop growing above it (§3.2), which is what each
+     clamp() below expresses — the middle term is the line through the two
+     anchor values, not a value in its own right.
 
-  --text-h2: clamp(1.75rem, 1.35rem + 1.5vw, 2.25rem);
-  --text-h2--line-height: 1.18;
-  --text-h2--letter-spacing: -0.015em;
+     D  72/40   T1 48/30   T2 32/22   T3 22   B 18/17   R 15   C 13 */
+  --text-*: initial;
 
-  --text-h3: clamp(1.375rem, 1.2rem + 0.7vw, 1.625rem);
-  --text-h3--line-height: 1.25;
-  --text-h3--letter-spacing: -0.01em;
+  /* D — the statement, peak register. One per surface, only where there is a peak. */
+  --text-d: clamp(2.5rem, 1.757rem + 3.048vw, 4.5rem);
+  --text-d--line-height: 1.05;
+  --text-d--letter-spacing: -0.01em;
 
-  --text-h4: 1.25rem;
-  --text-h4--line-height: 1.35;
-  --text-h4--letter-spacing: -0.005em;
+  /* T1 — surface title, chapter opening. */
+  --text-t1: clamp(1.875rem, 1.457rem + 1.714vw, 3rem);
+  --text-t1--line-height: 1.1;
+  --text-t1--letter-spacing: -0.005em;
 
-  --text-body-lg: 1.125rem;
-  --text-body-lg--line-height: 1.7;
+  /* T2 — section heading. */
+  --text-t2: clamp(1.375rem, 1.143rem + 0.952vw, 2rem);
+  --text-t2--line-height: 1.2;
 
-  --text-body: 1rem;
-  --text-body--line-height: 1.7;
+  /* T3 — passage heading. Not available below 720px (§9.4): a smaller field
+     carries fewer levels, more steeply separated. */
+  --text-t3: 1.375rem;
+  --text-t3--line-height: 1.3;
 
-  --text-small: 0.875rem;
-  --text-small--line-height: 1.6;
+  /* B — body. The sans, because body is a record (Brand Bible §16.3). */
+  --text-b: clamp(1.0625rem, 1.039rem + 0.095vw, 1.125rem);
+  --text-b--line-height: 1.55;
 
-  --text-caption: 0.8125rem;
-  --text-caption--line-height: 1.5;
+  /* R — the record: specifications, tables, meta, interface. */
+  --text-r: 0.9375rem;
+  --text-r--line-height: 1.5;
 
-  --text-overline: 0.75rem;
-  --text-overline--line-height: 1.4;
-  --text-overline--letter-spacing: 0.18em;
+  /* C — caption, eyebrow, legal. The floor: the smallest size at which a
+     grotesque holds its counters at reading distance (§9.1). */
+  --text-c: 0.8125rem;
+  --text-c--line-height: 1.45;
 
-  --text-button: 0.875rem;
-  --text-button--line-height: 1;
-  --text-button--letter-spacing: 0.02em;
+  /* §12.3 — the eyebrow is the one place tracking is opened up. */
+  --tracking-*: initial;
+  --tracking-eyebrow: 0.08em;
 
-  /* -------------------------------------------------------------- Spacing */
-  /* 4px base. The approved scale is 4 8 12 16 24 32 48 64 96 128, i.e. the
-     Tailwind steps 1 2 3 4 6 8 12 16 24 32. Never use arbitrary spacing. */
+  /* §8.5 — four weights. There is no bold serif: a bold statement is a raised
+     voice, and this company does not raise its voice. */
+  --font-weight-*: initial;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+
+  --leading-*: initial;
+
+  /* --------------------------------------------------------------- SPACE
+     VDS §21.2: the base unit is 4px, because it divides the body line (18 ×
+     1.55 = 28 = 7 × 4) and is a whole device pixel at every density.
+
+     §21.3 fixes the twelve legal steps: 4 8 12 16 24 32 48 64 96 128 192 256.
+     With a 4px base those are the Tailwind steps 1 2 3 4 6 8 12 16 24 32 48 64.
+     No other value is legal. */
   --spacing: 0.25rem;
 
-  /* --------------------------------------------------------- Border radius */
-  --radius-button: 14px;
-  --radius-input: 14px;
-  --radius-card: 20px;
-  --radius-image: 24px;
-  --radius-badge: 999px;
+  /* The seven space ranks — §4.2. These carry the meaning; the raw steps are
+     only the set of legal values. A designer names the relationship first and
+     the value follows.
 
-  /* -------------------------------------------------------------- Shadows */
-  /* Soft and low-contrast — depth comes from spacing, not from heavy shadows. */
-  --shadow-sm: 0 1px 2px color-mix(in oklab, #1b1b1b 5%, transparent);
-  --shadow-md:
-    0 2px 4px color-mix(in oklab, #1b1b1b 4%, transparent),
-    0 8px 20px color-mix(in oklab, #1b1b1b 6%, transparent);
-  --shadow-lg:
-    0 4px 8px color-mix(in oklab, #1b1b1b 4%, transparent),
-    0 16px 40px color-mix(in oklab, #1b1b1b 8%, transparent);
-  --shadow-floating:
-    0 8px 16px color-mix(in oklab, #1b1b1b 5%, transparent),
-    0 32px 64px color-mix(in oklab, #1b1b1b 12%, transparent);
+     Small spaces are set by the type and do not change; large spaces are set
+     by the field and halve on a small one (§25.1). */
+  --spacing-s1: 0.5rem; /* inside one thing */
+  --spacing-s2: 1rem; /* a thing and its annotation — never scales (§33.3) */
+  --spacing-s3: clamp(1.5rem, 1.314rem + 0.762vw, 2rem);
+  --spacing-s4: clamp(2rem, 1.629rem + 1.524vw, 3rem);
+  --spacing-s5: clamp(4rem, 3.257rem + 3.048vw, 6rem);
+  --spacing-s6: clamp(6rem, 3.771rem + 9.143vw, 12rem);
+  /* S7, the held moment: not less than one viewport height (§23.4). */
+  --spacing-s7: max(100svh, 30rem);
 
-  /* ------------------------------------------------------------- Motion */
-  --duration-fast: 150ms;
-  --duration-normal: 250ms;
-  --duration-slow: 400ms;
-  --duration-premium: 700ms;
+  /* ---------------------------------------------------------- CONTAINERS
+     VDS §27.2. Five, each the output of a measurement. */
+  --container-*: initial;
+  --container-reading: 40rem; /* 640px — 66 characters at 18px (§10.1) */
+  --container-record: 30rem; /* 480px — 45–65 characters at 15px */
+  --container-annotation: 16rem; /* 256px — the 3-unit column's floor */
+  --container-field: 90rem; /* 1440px — the field cap (§3.2) */
 
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
-  --ease-premium: cubic-bezier(0.19, 1, 0.22, 1);
+  /* --------------------------------------------------------- BREAKPOINTS
+     VDS §27.1. Read off the content, never off devices. Each is arithmetic:
 
-  /* ---------------------------------------------------------------- Blur */
-  /* Restrained on purpose: the surface should read as frosted glass, not as
-     an effect. Anything heavier belongs to a different design language. */
-  --blur-glass: 12px;
-  --blur-overlay: 2px;
+     720  = 640 reading column + 2 × 24 minimum margin, plus tolerance
+     1024 = 640 + 32 gutter + 256 annotation column + 2 × 48 margin, exactly
+     1280 = the first width at which the 5-unit column reaches 728px, so a
+            3:2 photograph in it clears the 480px evidence threshold */
+  --breakpoint-*: initial;
+  --breakpoint-reading: 45rem;
+  --breakpoint-paired: 64rem;
+  --breakpoint-field: 80rem;
 
-  /* ------------------------------------------------------------- Z-index */
-  --z-base: 0;
-  --z-raised: 10;
-  --z-sticky: 20;
-  --z-dropdown: 30;
-  --z-overlay: 40;
-  --z-modal: 50;
-  --z-tooltip: 60;
-  --z-toast: 70;
+  /* ---------------------------------------------------------------- MARKS
+     VDS §16.4: two marks exist. Nothing is enclosed on four sides except a
+     dialog, so there is no border scale — only a hairline that separates
+     records, and a focus ring that must never be mistaken for one. */
+  --radius-*: initial; /* §16.5 — zero, everywhere, on everything */
+  --shadow-*: initial; /* §16.3 — there are no shadows. None. */
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+  --text-shadow-*: initial;
+  --blur-*: initial; /* §14.5 — no glass, no frost, no simulated material */
+  --perspective-*: initial;
 
-  /* --------------------------------------------------------- Breakpoints */
-  /* Tailwind's sm–2xl are kept; 3xl covers the ultra-wide layouts. */
-  --breakpoint-3xl: 120rem;
+  /* --------------------------------------------------------------- MOTION
+     VDS §42. Four duration bands set by the size of the thing moving, because
+     rate is proportional to the thing (Motion Direction §9.4). One curve, for
+     one behaviour per class of event (§19.3).
 
-  /* ----------------------------------------------------- Container widths */
-  --container-narrow: 45rem; /* long-form reading */
-  --container-content: 64rem; /* standard page content */
-  --container-wide: 90rem; /* editorial / full-bleed sections */
+     The bands step by roughly 1.5×, the same steepness rule the type and space
+     scales use. The 600ms ceiling is where a movement starts to be perceived
+     as an event in itself; the 120ms floor is where it stops being perceived
+     as motion at all. */
+  --duration-band-mark: 140ms; /* ≤48px: an underline, a caret, a focus ring */
+  --duration-band-element: 230ms; /* ≤320px: a field message, a disclosure row */
+  --duration-band-panel: 360ms; /* ≤800px: a dialog, an index */
+  --duration-band-field: 540ms; /* the whole viewport */
 
-  /* ---------------------------------------------------- Named layout sizes */
-  /* Sizes that recur across components and would otherwise be written as
-     arbitrary values at each call site. */
-  --height-hero-tall: 70vh;
-  --width-drawer: min(22rem, 90vw);
+  /* The one curve. Acceleration peaks at t=0.28 — inside the first third — and
+     the final quarter of the distance takes 55% of the time: things are placed,
+     not thrown (Motion Direction M8, §14.2). No control point leaves 0–1, so
+     overshoot is not representable and M5 is enforced by the curve's shape
+     rather than by a reviewer noticing. */
+  --ease-*: initial;
+  --ease-placed: cubic-bezier(0.4, 0.05, 0.15, 1);
 
-  /* --------------------------------------------------- Navigation surface */
-  --height-header: 5.5rem;
-  --height-header-condensed: 4.25rem;
+  --default-transition-duration: var(--duration-band-element);
+  --default-transition-timing-function: var(--ease-placed);
+
+  /* No perpetual motion — Motion Direction M15. */
+  --animate-*: initial;
+
+  /* --------------------------------------------------------------- DEPTH
+     VDS §16.2: there is no elevation system. Depth in this brand is
+     photographic. Two levels exist, and only because a dialog must be in
+     front of a field that has receded. */
+  --z-veil: 40;
+  --z-dialog: 50;
 }
 
 /* ==========================================================================
@@ -178,7 +219,7 @@
 
 @layer base {
   :root {
-    /* Lets height animate to and from `auto` — used by the accordion. */
+    /* Lets block-size animate to and from `auto` — used by native disclosure. */
     interpolate-size: allow-keywords;
   }
 
@@ -186,45 +227,42 @@
     -webkit-tap-highlight-color: transparent;
   }
 
-  /**
-   * Native `<details>` animation. Browsers without `::details-content`
-   * ignore this and toggle instantly, which is an acceptable fallback.
-   */
-  .accordion-item::details-content {
-    block-size: 0;
-    overflow: hidden;
-    transition:
-      block-size var(--duration-normal) var(--ease-entrance),
-      content-visibility var(--duration-normal) allow-discrete;
-  }
-
-  .accordion-item[open]::details-content {
-    block-size: auto;
-  }
-
   body {
-    background-color: var(--color-background);
-    color: var(--color-foreground);
+    background-color: var(--color-paper);
+    color: var(--color-ink);
     font-family: var(--font-sans);
-    font-size: var(--text-body);
-    line-height: var(--text-body--line-height);
+    font-size: var(--text-b);
+    line-height: var(--text-b--line-height);
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
   }
 
-  ::selection {
-    background-color: var(--color-accent);
-    color: var(--color-accent-foreground);
+  /**
+   * Figures are always tabular (Brand Bible §16.3): a number set as a record
+   * can be checked, and a column of them aligns on the digit. This is the
+   * default for the whole document rather than a class somebody must remember.
+   */
+  body {
+    font-variant-numeric: tabular-nums;
   }
 
-  /* One focus treatment for the entire application. */
+  /**
+   * One focus treatment for the entire application — VDS §16.4, §47.3.
+   * 2px so it can never be mistaken for the 1px hairline, and never removed:
+   * a visitor who cannot see where they are is being asked to take our word
+   * for it, which is the position this brand exists to avoid.
+   */
   :focus-visible {
-    outline: 2px solid var(--color-focus);
+    outline: 2px solid var(--color-ink);
     outline-offset: 2px;
-    border-radius: 2px;
   }
 
-  /* Honour the OS setting everywhere, including third-party components. */
+  /**
+   * Motion Direction M13, second half, and VDS §42.7: where reduced motion is
+   * requested every movement becomes an instantaneous state change, and
+   * nothing is substituted for it. If a surface breaks under this, the surface
+   * was carrying meaning in a layer not every visitor receives.
+   */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -235,305 +273,45 @@
       scroll-behavior: auto !important;
     }
   }
-}
 
-/* ==========================================================================
-   Utilities — token-backed helpers for values Tailwind has no namespace for
-   (transition durations and z-index).
-   ========================================================================== */
-
-@utility transition-fast {
-  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
-    transform;
-  transition-duration: var(--duration-fast);
-  transition-timing-function: var(--ease-standard);
-}
-
-/**
- * Named `base` rather than `normal`: Tailwind v4 already ships
- * `transition-normal` for the `transition-behavior` property.
- */
-@utility transition-base {
-  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
-    transform;
-  transition-duration: var(--duration-normal);
-  transition-timing-function: var(--ease-standard);
-}
-
-@utility transition-slow {
-  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
-    transform;
-  transition-duration: var(--duration-slow);
-  transition-timing-function: var(--ease-entrance);
-}
-
-/** The signature easing: long, slow-settling, used for reveals and hero motion. */
-@utility transition-premium {
-  transition-property: color, background-color, border-color, fill, stroke, opacity, box-shadow,
-    transform;
-  transition-duration: var(--duration-premium);
-  transition-timing-function: var(--ease-premium);
-}
-
-@utility h-header {
-  block-size: var(--height-header);
-}
-
-@utility h-header-condensed {
-  block-size: var(--height-header-condensed);
-}
-
-@utility w-drawer {
-  inline-size: var(--width-drawer);
-}
-
-@utility min-h-hero-tall {
-  min-block-size: var(--height-hero-tall);
-}
-
-@utility z-sticky {
-  z-index: var(--z-sticky);
-}
-
-@utility z-dropdown {
-  z-index: var(--z-dropdown);
-}
-
-@utility z-overlay {
-  z-index: var(--z-overlay);
-}
-
-@utility z-modal {
-  z-index: var(--z-modal);
-}
-
-@utility z-tooltip {
-  z-index: var(--z-tooltip);
-}
-
-@utility z-toast {
-  z-index: var(--z-toast);
-}
-
-/**
- * The stitched seam — the brand's recurring mark.
- *
- * A single row of machine stitching in gold, one pixel tall. It sits under the
- * eyebrow of every section heading, under the number of every process stage and
- * under the eyebrow of the closing banner, so the same detail recurs at every
- * chapter opening on every page. It replaced three solid gold rules of three
- * different widths and opacities; one mark, one measure, one weight.
- */
-@utility rule-stitch {
-  display: block;
-  block-size: 1px;
-  inline-size: 3rem;
-  background-image: repeating-linear-gradient(
-    to right,
-    var(--color-accent) 0 5px,
-    transparent 5px 9px
-  );
-  opacity: 0.7;
-}
-
-/**
- * Hero scrim.
- *
- * A flat wash over a photograph turns it into a dark panel. This holds full
- * density across the band where the copy sits — denser than the wash it
- * replaced, so text contrast improves — and opens up over the hero's top and
- * bottom padding, where nothing is set. The stops are the padding values
- * (`pt-32` / `pb-20`), so the photograph is only revealed where it is not
- * carrying type.
- */
-@utility scrim-hero {
-  background-image: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--color-primary) 48%, transparent) 0,
-    color-mix(in oklab, var(--color-primary) 74%, transparent) 8rem,
-    color-mix(in oklab, var(--color-primary) 74%, transparent) calc(100% - 6rem),
-    color-mix(in oklab, var(--color-primary) 56%, transparent) 100%
-  );
-}
-
-/** Shimmer used by Skeleton. Static when the user prefers reduced motion. */
-@utility shimmer {
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    transform: translateX(-100%);
-    background-image: linear-gradient(
-      90deg,
-      transparent,
-      color-mix(in oklab, #ffffff 55%, transparent),
-      transparent
-    );
-    animation: shimmer 1.8s var(--ease-standard) infinite;
-  }
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/** Marquee track: the content is duplicated once, so -50% is one seamless pass. */
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-/** Drawer entry (mobile navigation). */
-@keyframes slide-in-right {
-  from {
-    transform: translateX(100%);
+  /**
+   * VDS §19.2: `prefers-contrast: more` is honoured by promoting secondary
+   * text and raising the hairline. `prefers-color-scheme: dark` is not
+   * honoured, and §19.1 states why: a second rendering is a second statement,
+   * and it would re-grade every photograph in the library.
+   */
+  @media (prefers-contrast: more) {
+    :root {
+      --color-ink-secondary: var(--color-ink);
+      --color-hairline: #bdb9b0; /* ink at 25% over paper */
+    }
   }
 }
 
 /* ==========================================================================
-   Material identity — blueprint §13
+   Utilities
 
-   One material per section, single-colour SVG linework, never over photography,
-   never in two adjacent sections. Rendered as a background on the section
-   element, so it is decorative by construction and invisible to assistive
-   technology. Disabled below 768px, where the pattern is imperceptible and the
-   bytes are not.
+   Four, and each exists because a value would otherwise be typed at a call
+   site. Motion Direction §19.3 requires one behaviour per class of event, so a
+   component chooses the *class* of the thing moving and never the timing.
    ========================================================================== */
 
-@utility texture-grain {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%231B1B1B' stroke-width='1.2'%3E%3Cpath d='M8 22c14-9 27-3 38 4s24 11 38 5'/%3E%3Cpath d='M4 56c16 6 28 1 41-6s26-9 41-2'/%3E%3Cpath d='M10 92c12-10 26-6 39 1s25 9 37 2'/%3E%3Cpath d='M26 6c5 10 3 19-2 28'/%3E%3Cpath d='M78 68c6 11 4 21-2 31'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0;
-  }
-
-  @media (width >= 48rem) {
-    &::before {
-      opacity: var(--texture-opacity, 0.03);
-    }
-  }
+@utility motion-mark {
+  transition-duration: var(--duration-band-mark);
+  transition-timing-function: var(--ease-placed);
 }
 
-@utility texture-pattern {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%231B1B1B' stroke-width='1.2'%3E%3Crect x='12' y='16' width='60' height='34' rx='8'/%3E%3Cpath d='M84 22h24v76H72'/%3E%3Ccircle cx='22' cy='33' r='3'/%3E%3Ccircle cx='62' cy='33' r='3'/%3E%3Cpath d='M12 74h44v34H12z'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0;
-  }
-
-  @media (width >= 48rem) {
-    &::before {
-      opacity: var(--texture-opacity, 0.03);
-    }
-  }
+@utility motion-element {
+  transition-duration: var(--duration-band-element);
+  transition-timing-function: var(--ease-placed);
 }
 
-@utility texture-blueprint {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' stroke='%231B1B1B' stroke-width='1'%3E%3Cpath d='M0 40h160M0 100h160M40 0v160M110 0v160'/%3E%3Cpath d='M36 36h8v8h-8zM106 96h8v8h-8z' stroke-width='1.4'/%3E%3Cpath d='M40 20h70M75 16v8'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0;
-  }
-
-  @media (width >= 48rem) {
-    &::before {
-      opacity: var(--texture-opacity, 0.03);
-    }
-  }
+@utility motion-panel {
+  transition-duration: var(--duration-band-panel);
+  transition-timing-function: var(--ease-placed);
 }
 
-@utility texture-stitch {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg stroke='%231B1B1B' stroke-width='2' stroke-linecap='round'%3E%3Cpath stroke-dasharray='7 9' d='M0 15h120M0 45h120M0 75h120M0 105h120'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0;
-  }
-
-  @media (width >= 48rem) {
-    &::before {
-      opacity: var(--texture-opacity, 0.03);
-    }
-  }
-}
-
-@utility texture-hardware {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150' viewBox='0 0 150 150'%3E%3Cg fill='none' stroke='%23B68D40' stroke-width='1.4'%3E%3Crect x='16' y='26' width='40' height='28' rx='4'/%3E%3Cpath d='M36 22v36'/%3E%3Ccircle cx='106' cy='96' r='16'/%3E%3Ccircle cx='106' cy='96' r='6'/%3E%3Cpath d='M96 40h34'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0;
-  }
-
-  @media (width >= 48rem) {
-    &::before {
-      opacity: var(--texture-opacity, 0.03);
-    }
-  }
-}
-
-@utility texture-tooling {
-  position: relative;
-  isolation: isolate;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='%23B68D40' stroke-width='1.6'%3E%3Cpath d='M20 200c0-70 40-110 90-110s90 30 90 80-40 70-70 70-50-20-50-45 18-40 38-40 30 14 30 28-10 22-20 22'/%3E%3Cpath d='M120 40c30 18 44 46 44 78'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0;
-  }
-
-  @media (width >= 48rem) {
-    &::before {
-      opacity: var(--texture-opacity, 0.03);
-    }
-  }
+@utility motion-field {
+  transition-duration: var(--duration-band-field);
+  transition-timing-function: var(--ease-placed);
 }

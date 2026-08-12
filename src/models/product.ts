@@ -14,17 +14,15 @@ export const productSpecificationSchema = z.object({
  * Strings are widened to the object form so consumers only handle one shape.
  */
 export const productFeatureSchema = z.union([
-  z.string().min(1).transform((title) => ({ title, description: undefined, icon: undefined })),
+  z.string().min(1).transform((title) => ({ title, description: undefined })),
   z.object({
     title: z.string().min(1),
     description: z.string().optional(),
-    /** lucide-react icon name, resolved by the UI layer. */
-    icon: z.string().optional(),
   }),
 ]);
 
 export const productGallerySchema = z.object({
-  /** Used in cards, grids and mega-menu previews. */
+  /** The frame that stands for the product wherever it is listed. */
   thumbnail: imageSchema,
   /** Detail-page gallery. The thumbnail is not implicitly included. */
   images: z.array(imageSchema).default([]),
@@ -50,7 +48,6 @@ export const productFrontmatterSchema = z.strictObject({
   specifications: z.array(productSpecificationSchema).default([]),
   gallery: productGallerySchema,
   tags: z.array(z.string()).default([]),
-  featured: z.boolean().default(false),
   order: orderSchema,
   status: publishStatusSchema,
   updatedAt: z.coerce.date().optional(),

@@ -1,45 +1,22 @@
 import { z } from "zod";
-import { imageSchema } from "./primitives";
-
-export const navLinkSchema = z.object({
-  label: z.string().min(1),
-  href: z.string().min(1),
-  description: z.string().optional(),
-  /** Renders with target=_blank + rel=noopener. */
-  external: z.boolean().default(false),
-});
 
 /**
- * A top-level navbar entry.
+ * Navigation models.
  *
- * `megaMenu` marks the entry as a slot the navigation builder fills from the
- * product catalog at runtime — so adding a category never requires editing
- * navigation data. `children` covers simple hand-authored dropdowns.
+ * What is left here is one object, and the reason is Master Implementation
+ * Blueprint R10.3 — **the inventory is closed** — read against §11's structural
+ * set: the navigation is *five destinations* declared in `src/config/navigation.ts`,
+ * and the footer's index carries the rest (UX Blueprint R37.2, R37.3).
+ *
+ * The mega menu went with that. `navLinkSchema`, `navItemSchema`,
+ * `megaMenuColumnSchema` and `megaMenuSchema` modelled a dropdown built from
+ * the catalogue at runtime; the component was removed in the navigation
+ * package, `getProductsMegaMenu` was recorded as *having no consumer* in three
+ * successive debt tables, and the schemas outlived both. A model with no object
+ * in R15.1's map and no consumer in the build is not a model, it is a shape
+ * somebody may fill in later — which R15.6 refuses: **structure is not created
+ * in advance of content.**
  */
-export const navItemSchema = navLinkSchema.extend({
-  megaMenu: z.enum(["products"]).optional(),
-  children: z.array(navLinkSchema).default([]),
-});
-
-/** A resolved mega-menu column: one product category and its subcategories. */
-export const megaMenuColumnSchema = z.object({
-  label: z.string().min(1),
-  href: z.string().min(1),
-  links: z.array(navLinkSchema),
-});
-
-export const megaMenuSchema = z.object({
-  columns: z.array(megaMenuColumnSchema),
-  /** Optional promoted item rendered alongside the columns. */
-  feature: z
-    .object({
-      label: z.string().min(1),
-      href: z.string().min(1),
-      description: z.string().optional(),
-      image: imageSchema,
-    })
-    .optional(),
-});
 
 export const breadcrumbSchema = z.object({
   label: z.string().min(1),
@@ -48,8 +25,4 @@ export const breadcrumbSchema = z.object({
   current: z.boolean().default(false),
 });
 
-export type NavLink = z.infer<typeof navLinkSchema>;
-export type NavItem = z.infer<typeof navItemSchema>;
-export type MegaMenuColumn = z.infer<typeof megaMenuColumnSchema>;
-export type MegaMenu = z.infer<typeof megaMenuSchema>;
 export type Breadcrumb = z.infer<typeof breadcrumbSchema>;

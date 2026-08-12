@@ -16,19 +16,21 @@ import { imageSchema } from "./primitives";
  * content edit.
  */
 
-const ctaSchema = z.object({
-  label: z.string().min(1),
-  href: z.string().min(1),
-});
-
+/*
+ * There is no CTA shape in this model.
+ *
+ * MIB R13.2: "a component that renders the action must not accept a
+ * per-surface label; making that configurable is how five variants appear by
+ * launch." Content is a per-surface store, so a label authored here is the same
+ * configurability one layer down. UX Blueprint R39.1 fixes one action for the
+ * entire site and R39.8 fixes its wording; `Action` carries both.
+ */
 /** `home/hero.json` */
 export const homeHeroSchema = z.object({
   eyebrow: z.string().optional(),
   heading: z.string().min(1),
   description: z.string().min(1),
   image: imageSchema,
-  primaryCta: ctaSchema,
-  secondaryCta: ctaSchema.optional(),
 });
 
 /** `home/company.json` — §2, the house. */
@@ -45,11 +47,7 @@ export const homePauseSchema = z.object({
 
 /** `home/cta.json` — §9. */
 export const homeCtaSchema = sectionIntroSchema.extend({
-  primaryCta: ctaSchema,
-  secondaryCta: ctaSchema.optional(),
   image: imageSchema.optional(),
-  /** Operationally checkable commitments. Three at most; each one is a promise. */
-  reassurances: z.array(z.string()).default([]),
 });
 
 /** Section files that carry only a heading group. */

@@ -1,0 +1,492 @@
+{
+  "/images/about/about-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Craftsman cutting a strap on the factory floor"
+  },
+  "/images/about/craftsman.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": ""
+  },
+  "/images/about/infrastructure.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": ""
+  },
+  "/images/about/workshop.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "The Elite Export workshop floor during a shift"
+  },
+  "/images/categories/leather-bags/leather-bags-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Full-grain leather messenger bag on a cutting table"
+  },
+  "/images/categories/leather-bags/leather-bags-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Leather Bags"
+  },
+  "/images/categories/leather-bags/messenger-bags/messenger-bags-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Messenger Bags"
+  },
+  "/images/categories/western-tack/breast-collar/breast-collar-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Breast Collars"
+  },
+  "/images/categories/western-tack/headstall/headstall-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Headstalls"
+  },
+  "/images/categories/western-tack/western-tack-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Hand-tooled western headstall on a workbench"
+  },
+  "/images/categories/western-tack/western-tack-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Western Tack"
+  },
+  "/images/certificates/iso-9001.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": ""
+  },
+  "/images/certificates/lwg-gold.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": ""
+  },
+  "/images/certificates/sedex.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": ""
+  },
+  "/images/export/container-loading.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": ""
+  },
+  "/images/export/packing-line.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": ""
+  },
+  "/images/gallery/events/events-1.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Trade fair stand"
+  },
+  "/images/gallery/events/events-2.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Buyer visiting the factory floor"
+  },
+  "/images/gallery/events/events-3.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Audit in progress"
+  },
+  "/images/gallery/events/events-4.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Product presentation"
+  },
+  "/images/gallery/events/events-5.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Team at an export fair"
+  },
+  "/images/gallery/events/events-6.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Factory tour"
+  },
+  "/images/gallery/events/events-cover.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Events — Elite Export"
+  },
+  "/images/gallery/factory/factory-1.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Cutting tables on the factory floor"
+  },
+  "/images/gallery/factory/factory-2.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Craftsman at the assembly bench"
+  },
+  "/images/gallery/factory/factory-3.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Leather store with graded hides"
+  },
+  "/images/gallery/factory/factory-4.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Finishing hall"
+  },
+  "/images/gallery/factory/factory-5.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Pattern studio"
+  },
+  "/images/gallery/factory/factory-6.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Production line overview"
+  },
+  "/images/gallery/factory/factory-cover.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Factory — Elite Export"
+  },
+  "/images/gallery/machinery/machinery-1.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Clicking press in operation"
+  },
+  "/images/gallery/machinery/machinery-2.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Computerised stitching head"
+  },
+  "/images/gallery/machinery/machinery-3.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Skiving machine"
+  },
+  "/images/gallery/machinery/machinery-4.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Edge painting line"
+  },
+  "/images/gallery/machinery/machinery-5.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Embossing press"
+  },
+  "/images/gallery/machinery/machinery-6.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Strap cutting machine"
+  },
+  "/images/gallery/machinery/machinery-cover.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Machinery — Elite Export"
+  },
+  "/images/gallery/packaging/packaging-1.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Individual poly bagging"
+  },
+  "/images/gallery/packaging/packaging-2.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Export cartons being marked"
+  },
+  "/images/gallery/packaging/packaging-3.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Packing list preparation"
+  },
+  "/images/gallery/packaging/packaging-4.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Palletised cartons"
+  },
+  "/images/gallery/packaging/packaging-5.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Carton sealing"
+  },
+  "/images/gallery/packaging/packaging-6.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Container loading"
+  },
+  "/images/gallery/packaging/packaging-cover.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Packaging — Elite Export"
+  },
+  "/images/gallery/products/products-1.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Hand-tooled headstall"
+  },
+  "/images/gallery/products/products-2.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Breast collar detail"
+  },
+  "/images/gallery/products/products-3.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Messenger bag front"
+  },
+  "/images/gallery/products/products-4.webp": {
+    "width": 1200,
+    "height": 1600,
+    "alt": "Stitching detail on a strap"
+  },
+  "/images/gallery/products/products-5.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Brass hardware close-up"
+  },
+  "/images/gallery/products/products-6.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Finished pieces laid out"
+  },
+  "/images/gallery/products/products-cover.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Products — Elite Export"
+  },
+  "/images/hero/about-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": ""
+  },
+  "/images/hero/contact-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": ""
+  },
+  "/images/hero/cta-workshop.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "A finished one ear headstall in dark oil, photographed outdoors"
+  },
+  "/images/hero/enquiry-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": ""
+  },
+  "/images/hero/export-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Export cartons being loaded for shipment"
+  },
+  "/images/hero/gallery-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": ""
+  },
+  "/images/hero/home-hero.webp": {
+    "width": 2400,
+    "height": 1350,
+    "alt": "A craftsman burnishing the edge of a leather strap at the bench, with the workshop behind"
+  },
+  "/images/hero/manufacturing-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Leather workshop floor with cutting tables"
+  },
+  "/images/hero/products-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": ""
+  },
+  "/images/hero/quality-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Inspector examining a finished leather piece under bench lighting"
+  },
+  "/images/hero/technology-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Row of industrial stitching machines on the factory floor"
+  },
+  "/images/journal/choosing-full-grain-leather/cover.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Stack of full-grain hides in a tannery warehouse"
+  },
+  "/images/logos/logo.png": {
+    "width": 512,
+    "height": 512,
+    "alt": ""
+  },
+  "/images/machinery/clicking-press/clicking-press-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Hydraulic clicking press on the cutting floor"
+  },
+  "/images/machinery/clicking-press/clicking-press-thumb.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Hydraulic Clicking Press"
+  },
+  "/images/machinery/computerised-stitching/computerised-stitching-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Computerised stitching head running a strap"
+  },
+  "/images/machinery/computerised-stitching/computerised-stitching-thumb.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Computerised Stitching Head"
+  },
+  "/images/machinery/edge-painting-line/edge-painting-line-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Edge painting and burnishing line"
+  },
+  "/images/machinery/edge-painting-line/edge-painting-line-thumb.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Edge Painting and Burnishing Line"
+  },
+  "/images/machinery/embossing-press/embossing-press-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Heat embossing press with a branding plate"
+  },
+  "/images/machinery/embossing-press/embossing-press-thumb.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Heat Embossing Press"
+  },
+  "/images/machinery/skiving-machine/skiving-machine-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Bell knife skiving machine"
+  },
+  "/images/machinery/skiving-machine/skiving-machine-thumb.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Bell Knife Skiving Machine"
+  },
+  "/images/machinery/strap-cutting-machine/strap-cutting-machine-hero.webp": {
+    "width": 2400,
+    "height": 1200,
+    "alt": "Strap cutting machine drawing a long strap"
+  },
+  "/images/machinery/strap-cutting-machine/strap-cutting-machine-thumb.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Strap Cutting Machine"
+  },
+  "/images/manufacturing/assembly.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Craftsman assembling a leather component"
+  },
+  "/images/manufacturing/cutting.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Clicking press cutting leather components"
+  },
+  "/images/manufacturing/finishing.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Edge burnishing at the finishing bench"
+  },
+  "/images/manufacturing/hide-selection.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Hides being graded on a sorting table"
+  },
+  "/images/manufacturing/inspection.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Inspector checking a finished piece"
+  },
+  "/images/manufacturing/machine-processing.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Skiving machine reducing leather thickness"
+  },
+  "/images/manufacturing/packaging.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Finished goods being packed into export cartons"
+  },
+  "/images/manufacturing/pattern-making.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": "Pattern being drawn in the design studio"
+  },
+  "/images/og/default.webp": {
+    "width": 1200,
+    "height": 630,
+    "alt": ""
+  },
+  "/images/placeholder.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": ""
+  },
+  "/images/products/leather-bags/messenger-bags/heritage-messenger-bag/heritage-messenger-bag-front.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "Heritage messenger bag photographed from the front with the flap closed"
+  },
+  "/images/products/leather-bags/messenger-bags/heritage-messenger-bag/heritage-messenger-bag-interior.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "Interior of the messenger bag showing the padded laptop sleeve"
+  },
+  "/images/products/leather-bags/messenger-bags/heritage-messenger-bag/heritage-messenger-bag-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Heritage Messenger Bag"
+  },
+  "/images/products/western-tack/headstall/browband-headstall/browband-headstall-detail.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "Detail of the buckstitched browband"
+  },
+  "/images/products/western-tack/headstall/browband-headstall/browband-headstall-front.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "Browband headstall laid flat with throatlatch attached"
+  },
+  "/images/products/western-tack/headstall/browband-headstall/browband-headstall-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "Browband Headstall"
+  },
+  "/images/products/western-tack/headstall/one-ear-headstall/one-ear-headstall-detail.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "Close detail of the hand-tooled floral border"
+  },
+  "/images/products/western-tack/headstall/one-ear-headstall/one-ear-headstall-front.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "One ear headstall photographed flat, front face"
+  },
+  "/images/products/western-tack/headstall/one-ear-headstall/one-ear-headstall-hardware.webp": {
+    "width": 2000,
+    "height": 2000,
+    "alt": "One Ear Headstall — view 3"
+  },
+  "/images/products/western-tack/headstall/one-ear-headstall/one-ear-headstall-thumb.webp": {
+    "width": 1200,
+    "height": 1200,
+    "alt": "One Ear Headstall"
+  },
+  "/images/quality/inspection-bench.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": ""
+  },
+  "/images/quality/testing-lab.webp": {
+    "width": 1600,
+    "height": 900,
+    "alt": ""
+  }
+}

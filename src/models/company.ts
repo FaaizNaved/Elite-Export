@@ -27,10 +27,32 @@ export const socialLinkSchema = z.object({
   href: z.url(),
 });
 
+/**
+ * A third-party finding a stranger can check without asking us.
+ *
+ * MIB R15.1's publication requirement is five fields, not two: ***issuer,
+ * reference and date, or it is not published**; plus what it does **not**
+ * cover.* UX R44.1's gate asks for exactly those five and reported three of
+ * them missing on every certificate — because **the model could not hold
+ * them.** A gate asking for a field the schema does not have is a question
+ * with nowhere to put the answer, which is the one thing integration cannot
+ * afford: the certificate arrives, and there is no field to type it into.
+ *
+ * The three are optional here and mandatory at the gate, which is the same
+ * arrangement every governed fact has. Nothing is published by adding them —
+ * dependency 7 is gating and R20.1 stands: *Quality states mechanism; no marks
+ * appear.* This is the structure that already holds the answer, waiting.
+ */
 export const certificationSchema = z.object({
   name: z.string().min(1),
   issuer: z.string().optional(),
   year: z.int().optional(),
+  /** The certificate's own reference number — what makes it checkable. */
+  reference: z.string().optional(),
+  /** Scope: what the certificate covers. */
+  covers: z.string().optional(),
+  /** R44.1, and the half most certificates omit: what it does **not** cover. */
+  excludes: z.string().optional(),
   image: imageSchema.optional(),
   /** Downloadable copy of the certificate, if the client supplies one. */
   fileUrl: z.string().optional(),

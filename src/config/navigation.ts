@@ -1,57 +1,57 @@
 import { ROUTES } from "../constants/routes";
-import { navItemSchema } from "../models";
-import type { NavItem } from "../types";
 
 /**
- * The primary navigation bar.
+ * The site's navigation architecture.
  *
- * The Products entry is a mega-menu slot: its contents are generated from the
- * catalog by `getProductsMegaMenu()`, so new categories never require an edit here.
+ * Two structures, and they are not variants of each other: the bar states
+ * *where you are and what else exists* (UX Blueprint R37.1), the index is the
+ * company's own record of every surface it has (R37.9).
  */
-export const mainNav: NavItem[] = navItemSchema.array().parse([
-  { label: "Home", href: ROUTES.home },
-  {
-    label: "Company",
-    href: ROUTES.about,
-    children: [
-      { label: "About Us", href: ROUTES.about, description: "Our story, values and infrastructure" },
-      {
-        label: "Manufacturing",
-        href: ROUTES.manufacturing,
-        description: "From hide selection to packaging",
-      },
-      {
-        label: "Technology & Machinery",
-        href: ROUTES.technology,
-        description: "The equipment behind the craft",
-      },
-    ],
-  },
-  { label: "Products", href: ROUTES.products, megaMenu: "products" },
+
+export interface NavDestination {
+  readonly label: string;
+  readonly href: string;
+}
+
+/**
+ * Primary navigation — UX Blueprint R37.2 assigns these five and no others.
+ *
+ * The order is the canonical chapter order, not a ranking of importance
+ * (R37.4, X2). Home is reached by the company name, which is identity rather
+ * than a destination; Enquiry is absent deliberately, because putting the ask
+ * in the bar offers Conversation before Confidence (X5, Brand Bible §8.2).
+ *
+ * A sixth entry is not a design decision. VDS §37.1: a structure that needs
+ * six is a structure that needs an index, and the index is the footer.
+ */
+export const primaryNav: readonly NavDestination[] = [
+  { label: "Manufacturing", href: ROUTES.manufacturing },
+  { label: "Products", href: ROUTES.products },
+  { label: "Quality", href: ROUTES.quality },
+  { label: "Export", href: ROUTES.exportCapabilities },
+  { label: "About", href: ROUTES.about },
+] as const;
+
+/**
+ * The footer index — UX Blueprint R37.9.
+ *
+ * Every surface, including the ones the bar does not carry: Technology,
+ * Gallery and Journal are reached from the surfaces they belong to and from
+ * here (R37.3). A flat list rather than marketing groupings, because this is a
+ * record and a record is complete rather than arranged.
+ *
+ * Legal surfaces are appended at render time from the content layer, so a new
+ * one appears here without an edit (MIB R7.1).
+ */
+export const surfaceIndex: readonly NavDestination[] = [
+  { label: "Manufacturing", href: ROUTES.manufacturing },
+  { label: "Technology", href: ROUTES.technology },
+  { label: "Products", href: ROUTES.products },
   { label: "Quality", href: ROUTES.quality },
   { label: "Export", href: ROUTES.exportCapabilities },
   { label: "Gallery", href: ROUTES.gallery },
-  { label: "Contact", href: ROUTES.contact },
-]);
-
-/** Grouped footer links. Product columns are appended from the catalog at render time. */
-export const footerNav: Array<{ heading: string; links: NavItem[] }> = [
-  {
-    heading: "Company",
-    links: navItemSchema.array().parse([
-      { label: "About Us", href: ROUTES.about },
-      { label: "Manufacturing", href: ROUTES.manufacturing },
-      { label: "Technology", href: ROUTES.technology },
-      { label: "Quality Assurance", href: ROUTES.quality },
-    ]),
-  },
-  {
-    heading: "Business",
-    links: navItemSchema.array().parse([
-      { label: "Export Capabilities", href: ROUTES.exportCapabilities },
-      { label: "Buyer Enquiry", href: ROUTES.buyerEnquiry },
-      { label: "Gallery", href: ROUTES.gallery },
-      { label: "Journal", href: ROUTES.blog },
-    ]),
-  },
-];
+  { label: "Journal", href: ROUTES.journal },
+  { label: "About", href: ROUTES.about },
+  { label: "Enquiry", href: ROUTES.enquiry },
+  { label: "Legal", href: ROUTES.legal },
+] as const;

@@ -62,7 +62,7 @@ export function PhoneInput({
         value={current.country}
         disabled={disabled}
         onChange={(event) => update(compose(event.target.value, current.number))}
-        className={cn(controlClasses, "w-32 shrink-0 appearance-none px-3 text-small")}
+        className={cn(controlClasses, "w-32 shrink-0 appearance-none text-r")}
       >
         {COUNTRIES.map((country) => (
           <option key={country.code} value={country.code}>

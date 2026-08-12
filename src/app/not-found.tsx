@@ -1,33 +1,30 @@
-import Link from "next/link";
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
+import { StateNotice } from "@/components/system";
+import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
-import { Typography } from "@/components/ui/typography";
 import { ROUTES } from "@/constants";
 
+/**
+ * 404 — UX Blueprint R26.2, R47.2.
+ *
+ * "That the address does not exist, briefly and dryly, with the two most
+ * likely destinations." Forbidden: apologising at length, selling, breaking the
+ * register, and **an action** (R26.5, R39.4). So there is no `Action` here and
+ * no way to add one — `StateNotice` does not accept it.
+ */
 export default function NotFound() {
   return (
-    <Section spacing="hero">
-      <Container size="md" className="flex flex-col items-center gap-6 text-center">
-        <Typography variant="overline">404</Typography>
-        <Typography variant="h1">This page could not be found</Typography>
-        <Typography variant="lead" className="max-w-xl">
-          The link may be out of date, or the page may have moved. The product catalogue is a
-          good place to pick the trail back up.
-        </Typography>
-
-        <div className="mt-2 flex flex-col gap-3 sm:flex-row">
-          <Link href={ROUTES.products} className={buttonVariants({ size: "lg" })}>
-            Browse products
-          </Link>
-          <Link
-            href={ROUTES.contact}
-            className={buttonVariants({ variant: "outline", size: "lg" })}
-          >
-            Contact us
-          </Link>
-        </div>
-      </Container>
+    <Section>
+      <Field type="reading">
+        <StateNotice
+          state="notFound"
+          destinations={[
+            { href: ROUTES.products, label: "Products" },
+            { href: ROUTES.home, label: "Home" },
+          ]}
+        >
+          This address does not exist.
+        </StateNotice>
+      </Field>
     </Section>
   );
 }

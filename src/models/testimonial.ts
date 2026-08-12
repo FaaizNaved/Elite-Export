@@ -12,7 +12,6 @@ export const testimonialSchema = z.object({
   countryCode: z.string().length(2).optional(),
   avatar: imageSchema.optional(),
   rating: z.int().min(1).max(5).optional(),
-  featured: z.boolean().default(false),
   order: orderSchema,
 });
 

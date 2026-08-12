@@ -1,19 +1,15 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ProductCard } from "@/components/cards";
-import { CtaBanner } from "@/components/layout";
-import { Stagger, StaggerItem } from "@/components/motion";
-import { PageHero, SectionHeader } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import { EmptyState } from "@/components/ui/loading";
+import { RecordSet } from "@/components/evidence";
+import { Breadcrumb } from "@/components/layout";
+import { Opening, SiblingIndex } from "@/components/structure";
+import { StateNotice } from "@/components/system";
+import { Field } from "@/components/ui/field";
+import { Passage } from "@/components/ui/typography";
 import { Section } from "@/components/ui/section";
-import { ROUTES } from "@/constants";
 import { subcategoryBreadcrumbs } from "@/lib/breadcrumbs";
 import { getCategory, getProducts, getSubcategory, getSubcategoryRoutes } from "@/lib/content";
 import { categoryMetadata } from "@/lib/seo";
-import { formatCount } from "@/utils/format";
 
 interface PageProps {
   params: Promise<{ category: string; subcategory: string }>;
@@ -47,56 +43,61 @@ export default async function SubcategoryPage({ params }: PageProps) {
 
   return (
     <>
-      <PageHero
+      {/* Placeholder frame removed (§24.5); the breadcrumb states the location (§12.3, R38.4). */}
+      <Opening
         title={subcategory.name}
-        eyebrow={category.name}
         summary={subcategory.shortDescription}
-        image={subcategory.hero ?? subcategory.thumbnail}
-        breadcrumbs={subcategoryBreadcrumbs(category, subcategory)}
+        breadcrumb={<Breadcrumb items={subcategoryBreadcrumbs(category, subcategory)} />}
       />
 
-      <Section spacing="lg">
-        <Container size="lg" className="flex flex-col gap-12">
-          <SectionHeader
-            eyebrow={formatCount(products.length, "product")}
-            heading={`${subcategory.name} we manufacture`}
-            description={subcategory.description}
-          />
+      <Section break="chapter">
+        <Field type="full" className="flex flex-col gap-s4">
+          {/*
+            R19.1: no counting of items. The eyebrow read "2 products" and the
+            heading was assembled in this file from the sub-category's name.
+            What the family is, is the sub-category's own description.
+          */}
+          {subcategory.description && <Passage>{subcategory.description}</Passage>}
 
           {products.length === 0 ? (
-            <EmptyState
-              title="No products published here yet"
-              description="Tell us what you are looking for and we will confirm whether we can produce it."
-              action={
-                <Link href={ROUTES.buyerEnquiry} className={buttonVariants({ variant: "outline" })}>
-                  Send an enquiry
-                </Link>
-              }
-            />
+            <StateNotice state="empty">
+              Nothing has been published in this subcategory yet.
+            </StateNotice>
           ) : (
-            <Stagger className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {products.map((product, index) => (
-                <StaggerItem key={product.href} className="h-full">
-                  <ProductCard product={product} priority={index < 3} className="h-full" />
-                </StaggerItem>
-              ))}
-            </Stagger>
+            <RecordSet
+              items={products.map((product) => ({
+                href: product.href,
+                title: product.title,
+                summary: product.shortDescription,
+              }))}
+            />
           )}
-        </Container>
+
+          {/* R37.8: siblings and the route up, within a surface that has depth. */}
+          <SiblingIndex
+            parent={{ href: category.href, label: category.name }}
+            siblings={category.subcategories.map((sibling) => ({
+              href: sibling.href,
+              label: sibling.name,
+            }))}
+            current={subcategory.href}
+            className="mt-s4"
+          />
+        </Field>
       </Section>
 
-      <CtaBanner
-        heading="Private label production"
-        description="Every piece on this page can be produced under your brand, with your hardware and packaging."
-        primaryAction={
-          <Link
-            href={ROUTES.buyerEnquiry}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Buyer enquiry
-          </Link>
-        }
-      />
+      {/*
+        No action. **R19.6: every product record ends at Enquiry, and it is the
+        only deep surface that does** — a buyer at a record has a specific
+        requirement, and a buyer three levels up is still reading the range.
+        R39.3's table agrees by omission: it names Products, Products — category
+        and Products — product record, and no subcategory row.
+
+        A `Close` stood here citing R39.3, which is the shape of drift the Action
+        gate was supposed to catch and could not: it reads content, and where an
+        action renders is a fact about a page file. `check:content` now asserts
+        R39.3's table against the imports directly.
+      */}
     </>
   );
 }

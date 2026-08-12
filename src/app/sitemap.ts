@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { ROUTES } from "@/constants";
 import {
-  getBlogPosts,
+  getArticles,
   getCatalog,
   getCompanyPages,
   getLegalPages,
@@ -14,11 +14,11 @@ import { absoluteUrl } from "@/lib/seo";
  * article is indexed without anyone remembering to add it here.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [catalog, companyPages, machines, posts, legalPages] = await Promise.all([
+  const [catalog, companyPages, machines, articles, legalPages] = await Promise.all([
     getCatalog(),
     getCompanyPages(),
     getMachines(),
-    getBlogPosts(),
+    getArticles(),
     getLegalPages(),
   ]);
 
@@ -33,9 +33,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry(ROUTES.home, 1, "weekly"),
     entry(ROUTES.products, 0.9, "weekly"),
     entry(ROUTES.gallery, 0.6),
-    entry(ROUTES.buyerEnquiry, 0.8),
-    entry(ROUTES.contact, 0.8),
-    entry(ROUTES.blog, 0.6, "weekly"),
+    entry(ROUTES.enquiry, 0.8),
+    entry(ROUTES.legal, 0.2, "yearly"),
+    entry(ROUTES.journal, 0.6, "weekly"),
 
     ...companyPages.map((page) => entry(page.href, 0.8)),
     ...catalog.categories.flatMap((category) => [
@@ -44,7 +44,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ]),
     ...catalog.products.map((product) => entry(product.href, 0.7, "monthly", product.updatedAt)),
     ...machines.map((machine) => entry(machine.href, 0.5, "yearly", machine.updatedAt)),
-    ...posts.map((post) => entry(post.href, 0.5, "yearly", post.updatedAt ?? post.publishedAt)),
+    ...articles.map((article) => entry(article.href, 0.5, "yearly", article.updatedAt ?? article.publishedAt)),
     ...legalPages.map((page) => entry(page.href, 0.2, "yearly", page.updatedAt)),
   ];
 }

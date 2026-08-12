@@ -1,8 +1,6 @@
 "use client";
 
-import { ChevronDown } from "lucide-react";
 import type { ComponentPropsWithoutRef, ReactNode } from "react";
-import { Icon } from "@/components/ui/icon";
 import { cn } from "@/lib/cn";
 import { COUNTRIES } from "@/utils/country";
 import { controlClasses, useFieldProps } from "./field";
@@ -21,34 +19,28 @@ import { controlClasses, useFieldProps } from "./field";
 
 /* ------------------------------------------------------------------- Input */
 
-export interface InputProps extends ComponentPropsWithoutRef<"input"> {
-  /** Decorative adornment inside the field, e.g. a search icon. */
-  leadingIcon?: ReactNode;
-}
+/**
+ * §38.3 removes two things from this control, and both are removed from the
+ * type rather than from the call sites:
+ *
+ * - **`placeholder`** — "it vanishes at the moment of use and cannot be checked
+ *   afterwards; it is a label that hides." The label is always visible instead.
+ * - **A leading icon** — §43.2 forbids an icon inside a container and as a
+ *   substitute for a word, and §43.3 closes the set at four, none of which is
+ *   a field adornment.
+ */
+export type InputProps = Omit<ComponentPropsWithoutRef<"input">, "placeholder">;
 
-export function Input({ className, leadingIcon, ...props }: InputProps) {
+export function Input({ className, ...props }: InputProps) {
   const field = useFieldProps();
 
-  if (!leadingIcon) {
-    return <input {...field} {...props} className={cn(controlClasses, className)} />;
-  }
-
-  return (
-    <div className="relative">
-      <span
-        aria-hidden
-        className="absolute top-1/2 left-4 -translate-y-1/2 text-foreground-muted"
-      >
-        {leadingIcon}
-      </span>
-      <input {...field} {...props} className={cn(controlClasses, "pl-11", className)} />
-    </div>
-  );
+  return <input {...field} {...props} className={cn(controlClasses, className)} />;
 }
 
 /* ---------------------------------------------------------------- Textarea */
 
-export type TextareaProps = ComponentPropsWithoutRef<"textarea">;
+/** §38.3: no placeholder here either — the label is always visible. */
+export type TextareaProps = Omit<ComponentPropsWithoutRef<"textarea">, "placeholder">;
 
 export function Textarea({ className, rows = 5, ...props }: TextareaProps) {
   const field = useFieldProps();
@@ -84,7 +76,7 @@ export function Select({ options, placeholder, className, ...props }: SelectProp
       <select
         {...field}
         {...props}
-        className={cn(controlClasses, "appearance-none pr-11", className)}
+        className={cn(controlClasses, "appearance-none pr-4", className)}
       >
         {placeholder && (
           <option value="" disabled>
@@ -98,12 +90,12 @@ export function Select({ options, placeholder, className, ...props }: SelectProp
         ))}
       </select>
 
-      <Icon
-        icon={ChevronDown}
-        size="sm"
-        tone="muted"
-        className="pointer-events-none absolute top-1/2 right-4 -translate-y-1/2"
-      />
+      {/*
+        No chevron. §43.3 closes the icon list at four and none of them is a
+        disclosure caret on a select; §43.2 forbids an icon beside a control as
+        decoration. The native select draws its own affordance, which is the
+        one every visitor already knows.
+      */}
     </div>
   );
 }
@@ -142,9 +134,9 @@ export function Checkbox({ label, className, ...props }: CheckboxProps) {
       <input
         type="checkbox"
         {...props}
-        className="mt-0.5 size-5 shrink-0 rounded-sm border-border accent-primary"
+        className="mt-0.5 size-5 shrink-0 accent-ink"
       />
-      <span className="font-sans text-small text-foreground-secondary">{label}</span>
+      <span className="font-sans text-r text-ink-secondary">{label}</span>
     </label>
   );
 }
@@ -183,9 +175,9 @@ export function RadioGroup({
             defaultChecked={defaultValue === option.value}
             {...(value !== undefined ? { checked: value === option.value } : {})}
             onChange={onChange}
-            className="size-5 shrink-0 border-border accent-primary"
+            className="size-5 shrink-0 accent-ink"
           />
-          <span className="font-sans text-small text-foreground-secondary">{option.label}</span>
+          <span className="font-sans text-r text-ink-secondary">{option.label}</span>
         </label>
       ))}
     </fieldset>
@@ -207,17 +199,17 @@ export function Switch({ label, className, ...props }: SwitchProps) {
       <span
         aria-hidden
         className={cn(
-          "relative h-6 w-11 shrink-0 rounded-badge bg-border-strong transition-fast",
-          "peer-checked:bg-primary",
+          "relative h-6 w-11 shrink-0 rounded-full bg-hairline motion-mark",
+          "peer-checked:bg-ink",
           "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus",
           // The knob is a descendant, not a sibling of the input, so it is
           // targeted through the track.
           "peer-checked:[&>span]:translate-x-5",
         )}
       >
-        <span className="absolute top-1 left-1 size-4 rounded-badge bg-surface transition-base" />
+        <span className="absolute top-1 left-1 size-4 rounded-full bg-paper motion-mark" />
       </span>
-      <span className="font-sans text-small text-foreground-secondary">{label}</span>
+      <span className="font-sans text-r text-ink-secondary">{label}</span>
     </label>
   );
 }

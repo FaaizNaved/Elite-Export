@@ -3,7 +3,7 @@ import { absoluteUrl } from "./url";
 import { company, SITE_URL, siteConfig } from "../../config";
 import { DEFAULT_HTML_LANG, DEFAULT_OG_LOCALE } from "../../constants/locale";
 import type {
-  BlogPost,
+  Article,
   Category,
   CompanyPage,
   Image,
@@ -143,7 +143,7 @@ export function categoryMetadata(category: Category | Subcategory): Metadata {
   });
 }
 
-export function blogPostMetadata(post: BlogPost): Metadata {
+export function articleMetadata(post: Article): Metadata {
   return buildMetadata({
     title: post.title,
     description: post.excerpt,
