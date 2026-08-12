@@ -77,22 +77,39 @@ export const isGeneratedPlaceholder = (src: string): boolean => generated.has(sr
  * caption is dropped: a caption is a specification of a photograph (VDS §12.2)
  * and there is no photograph yet.
  */
-export function reserve(image: Image, rank: EvidenceRank = "E3"): Image {
+export function reserve(image: Image, rank: EvidenceRank = "E3", shape?: [number, number]): Image {
   return {
     ...image,
     src: `${RESERVED}${image.src}`,
     caption: undefined,
     evidenceRank: image.evidenceRank ?? rank,
+    ...(shape ? { width: shape[0], height: shape[1] } : {}),
   };
 }
 
-/** Reserve a frame only if it is one of the generated blocks. */
-export const framed = (image: Image, rank: EvidenceRank = "E3"): Image =>
-  DEMO_MODE && isGeneratedPlaceholder(image.src) ? reserve(image, rank) : image;
+/**
+ * The ratio a record row reserves for its frame.
+ *
+ * The generated files are square, and a square frame on the 5-unit column of a
+ * §36.2 record row is 890px tall on a wide field — a category index two rows
+ * long would be 1,800px of one tone. That square is not a fact about anything:
+ * it is an artifact of the placeholder script's own ratio table, and every one
+ * of those files is deleted the day photography lands.
+ *
+ * So the row reserves the shape the **layout** needs, which is the direction a
+ * shot list is supposed to give: 3:2 landscape, the ratio §27.1's 1280
+ * breakpoint was derived against. The client shoots to the reserved frame; the
+ * frame does not bend to a stand-in.
+ */
+export const RECORD_ROW_SHAPE: [number, number] = [2400, 1600];
 
-/** Reserve a list of frames, dropping any the archive cannot draw at all. */
-export const framedAll = (images: readonly Image[], rank: EvidenceRank = "E3"): Image[] =>
-  images.filter((image) => image.width && image.height).map((image) => framed(image, rank));
+/** Reserve a frame only if it is one of the generated blocks. */
+export const framed = (
+  image: Image,
+  rank: EvidenceRank = "E3",
+  shape?: [number, number],
+): Image =>
+  DEMO_MODE && isGeneratedPlaceholder(image.src) ? reserve(image, rank, shape) : image;
 
 /**
  * What each chapter reserves, when the archive holds nothing for it.
@@ -107,21 +124,41 @@ export const framedAll = (images: readonly Image[], rank: EvidenceRank = "E3"): 
  * grade, in what order, and how much of the page each frame will take.
  */
 const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number]>> = {
-  /* The place, then a detail inside it, then one object off the bench. */
+  /*
+   * Two frames, not three, and they are different shapes.
+   *
+   * A reserved frame is honest but it is not interesting, and at §31.4's
+   * proportions a bleed frame is 60–100% of the viewport. Three of them in one
+   * chapter is 2,000px of one flat tone, which does not read as *the layout,
+   * pending photography* — it reads as a page that has failed to load. The
+   * ratio of every frame is still exact, so nothing moves when the photographs
+   * arrive; there are simply fewer frames holding the shape of the argument.
+   *
+   * The place at bleed, then one object off the bench, bounded (§31.3).
+   */
   C1: [
     ["E5", 2400, 1200],
-    ["E2", 1600, 900],
     ["E6", 1200, 1200],
   ],
   C2: [
     ["E2", 2400, 1200],
     ["E6", 1200, 1200],
   ],
-  /* §16's evidence table, exactly: one decision (E1) and one mechanism (E2). */
-  C3: [
-    ["E1", 2400, 1350],
-    ["E2", 1600, 900],
-  ],
+  /*
+   * One frame. Recognition is one decision being taken.
+   *
+   * §7.1 is unusually direct about what this chapter has to do: make a viewer
+   * understand that *a decision was taken*, not that a machine was operated.
+   * That is one photograph. §31.3 gives both E1 and E2 the bleed, so a second
+   * frame here is a second full-viewport image 48px below the first — and two
+   * bleeds meeting at S4 are read as one tall block with a seam in it, which is
+   * the note `Chapter` already carries about frames meeting at zero.
+   *
+   * The mechanism §16's evidence table asks for is not lost: it is stated in
+   * the annotation beside the frame, in the words the content layer already
+   * holds, and it arrives as an E2 photograph the day the archive has one.
+   */
+  C3: [["E1", 2400, 1350]],
   C4: [
     ["E2", 2400, 1200],
     ["E6", 1200, 1200],

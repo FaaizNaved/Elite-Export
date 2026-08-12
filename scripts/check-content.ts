@@ -579,19 +579,36 @@ async function main() {
     "Journal ends in space — no continuation, on the index or on an article (R24.3, R39.2, MIB §12.1)",
   );
 
+  /*
+   * Three surfaces, not eight — the Presentation package's CTA decision, held
+   * here so it cannot drift back.
+   *
+   * R39.3 permits the action on eight surfaces and the site carried it on all
+   * eight. The client's instruction was to remove it from six, and the reason
+   * is one the brand documents already argue: Brand Bible §16.4, *a luxury
+   * brand does not chase.* An ask repeated on every surface is not eight
+   * invitations, it is one invitation that has stopped being believed.
+   *
+   * R39.1 is untouched and is the rule that actually matters: **one action, one
+   * door, one label, leading to Enquiry and nowhere else.** What changed is
+   * R39.3's *where*, and it changed in the direction R39.4 already points —
+   * that rule is a list of places the ask is not welcome, and this is that list
+   * extended by the person whose company is doing the asking.
+   *
+   * The three that remain are the three where the visitor has already decided
+   * something:
+   *
+   *   /        the end of the whole documentary, after Recognition (R16.5)
+   *   product  one specific piece, in front of them (R19.6)
+   *   enquiry  where the action *is* the surface — no `Close`, so not listed
+   *
+   * Everywhere else ends on a continuation instead: R39.2, *a link rather than
+   * a demand.*
+   */
   assert.deepEqual(
     surfacesWithAction.sort(),
-    [
-      "/",
-      "/about",
-      "/export",
-      "/manufacturing",
-      "/products",
-      "/products/[category]",
-      "/products/[category]/[subcategory]/[product]",
-      "/quality",
-    ],
-    "the action appears on exactly the surfaces R39.3 permits — never on Technology, Gallery, Journal, a subcategory, or any system surface (R39.3, R39.4, R19.6, R26.5)",
+    ["/", "/products/[category]/[subcategory]/[product]"],
+    "the action appears on Home and the product record only — never on Manufacturing, Quality, Export, About, a category, a subcategory, Technology, Gallery, Journal or any system surface (R39.1, R39.4, R19.6, Brand Bible §16.4)",
   );
 
   // MIB §20.2 item 2: nothing is published carrying a name that may be wrong.

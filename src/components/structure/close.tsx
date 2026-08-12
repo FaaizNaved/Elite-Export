@@ -35,14 +35,28 @@ export interface CloseProps {
    * surface's, not this component's (MIB R6.4).
    */
   statement?: string;
+  /**
+   * The surface's atmosphere mark, if it spends one here. A class, not a
+   * variant: §14.5's marks are a property of the *field* a surface composes,
+   * not a setting this component offers, and giving it a `texture` prop is how
+   * the removed `Section` texture variant came back.
+   */
+  className?: string;
 }
 
-export function Close({ statement }: CloseProps) {
+export function Close({ statement, className }: CloseProps) {
   return (
-    <Section break="chapter">
+    <Section break="chapter" className={className}>
+      {/*
+        §23.3: a chapter ends by releasing, and the last thing asked is smaller
+        than the thing before it. The statement is held at the reading measure
+        rather than run across the whole field — a closing line at 131
+        characters is the same failure the chapters above had, and it is worse
+        here because this line is the one the visitor is meant to act on.
+      */}
       <Field type="full" className="flex flex-col gap-s4">
         {statement && (
-          <Statement rank="t2" as="h2">
+          <Statement rank="t2" as="h2" className="max-w-reading">
             {statement}
           </Statement>
         )}

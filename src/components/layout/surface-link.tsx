@@ -40,6 +40,15 @@ export function SurfaceLink({ label, href }: { label: string; href: string }) {
       className={cn(
         "text-r underline decoration-1 underline-offset-4",
         "motion-mark transition-[text-decoration-color]",
+        /*
+          §47.5: the minimum interactive target is 44 × 44px, because below
+          roughly that the error rate rises sharply for anyone whose hands are
+          not steady. The label's line box is 20px, so the target is set to 44
+          and the text sits in the middle of it — measured at 20px before this,
+          in the bar *and* in the small-field index, where every destination on
+          the site is reached by thumb.
+        */
+        "inline-flex min-h-11 items-center",
         current ? "decoration-ink" : "decoration-transparent hover:decoration-ink-secondary",
       )}
     >

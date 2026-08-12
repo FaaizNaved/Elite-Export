@@ -5642,3 +5642,206 @@ Everything else outstanding is client-owned integration — the eighteen
 dependencies at §20, unchanged — plus the one construction task that waits
 deliberately on dependency 5, the Person model. No further architecture is
 authorised, and none is needed.
+
+---
+
+# PRESENTATION PACKAGE — HOME
+
+## The surface had one tone, one measure and no invitation worth taking
+
+**Phase** Presentation · **Status** complete · **Governing** VDS §10.1 (the
+measure), §14.5 (simulated material), §16.2, §23.1, §23.4, §23.6 (the inverted
+field), §31.3, §31.4, §36.2, §36.3, §42.3–§42.7 (motion), §47.5 · Motion
+Direction M6, M7, M10, M13, M15 · Documentary Storyboard §7, §10.1, §17.2,
+§22.3, §17.4 · Brand Bible §16.4 · UX Blueprint R39.1–R39.4, X8
+
+**No architecture was added, no primitive was created, no documentary model was
+rewritten, and no milestone was undone.** No company fact, figure, date,
+certificate, market, customer or claim was invented, and no copy was authored
+beyond four link labels naming destinations. Every change is composition,
+tone, measure, motion or a target size.
+
+### What was measured, before anything was changed
+
+| Measured | Was | Required |
+| --- | --- | --- |
+| Body measure, both chapters | **131 characters** | 60–72, target 66 (§10.1) |
+| Distinct ground tones on the surface | **1** — every section `rgba(0,0,0,0)` | Three exist in the palette |
+| The held moment | **720px of white**, 812 on a phone | Silence, which is only legible against something |
+| Recognition's mechanism heading | **22px** (T3) | Above the release beneath it, which was 30px |
+| Image mass | **0%** | A photography-led documentary |
+| Atmosphere marks in use | **0** of 4 built | — |
+| Tap targets under 44px | **21** | None (§47.5) |
+| Actions on the site | **8 surfaces** | One invitation |
+
+### The measure — the single worst thing on the page
+
+Both chapter annotations were passed `measure={false}`. That prop means *let
+the field set the width, where the field **is** the reading column*, and the
+field they sit in is `paired` — `max-w-field`, 1440px. So the reading column
+was discarded and the two passages carrying this surface's whole argument ran
+at **131 characters a line**, against the 66 §10.1 fixes and the ~75 past which
+the eye stops finding the start of the next line.
+
+Removed. **131 → 71 characters**, 640px, on the column the system is built
+around. Nothing else on the page changed as much for as little.
+
+### The tonal rhythm — what the surface did not have
+
+Every one of six top-level sections computed to transparent: 7,649px of one
+paper value from the masthead to the footer rule. The palette has three grounds
+and the surface was spending one.
+
+| | Was | Is | Rule |
+| --- | --- | --- | --- |
+| The held moment | Paper — a 900px white gap in a white document | **Ink**, one viewport | §23.6 rations the inverted field to once per surface at a minimum of one viewport height; §23.4 fixes the held moment at exactly that. The two specifications describe the same rectangle, so the strongest marker and the strongest transition are spent together, once, on the entrance to Recognition (§17.4, §22.3) |
+| The range | Paper, a text list | **Recessed**, with record rows | §36.3: Recessed is *the one permitted container*, and it exists *to bind a specification into one object*. A list of what the company makes is a specification of the range |
+
+The surface now reads paper → paper → **ink** → paper → **recessed** → paper.
+
+### The range — where the product was, and there was no product
+
+The one section whose subject is what the company makes carried no image mass
+at all: two paragraphs where the range should be. `RecordSet` has always known
+how to do this — §36.2's record row, *what replaces the card*, an image on the
+5-unit column and the specification on the 3-unit — but it was being handed
+items with no frame, so it fell back to passages and the pairing never engaged.
+
+It now reserves a 3:2 field per category. **That ratio is art direction, not a
+stand-in**: the generated files are square, that square is an artifact of the
+placeholder script's own ratio table, and every one of those files is deleted
+the day photography lands. The layout states the crop; the shoot delivers it.
+
+### Motion — introduced, and it is not a scroll reveal
+
+Milestone 0.3 removed the reveal machinery and measured the result: zero
+elements at opacity 0, zero transformed, zero animations. The surface was
+correct and it was inert.
+
+§42.3 names the entrance this system does have — band 4, *"the whole viewport:
+an inverted field, **a surface transition**"* — and M6 supplies the cause: a
+visitor who opened a surface caused it to arrive. One `arrive` keyframe on
+`main` at 540ms on the one curve, and one on each frame at 360ms as it resolves
+out of the space it was already occupying.
+
+Measured after the change, against Milestone 0.3's own audit table:
+
+| Check | Value |
+| --- | --- |
+| Elements in `main` below full opacity, after arrival | **0** |
+| Elements transformed away from their place | **0** |
+| Perpetual animations | **0** (M15) |
+| `scroll-behavior` | `auto` — the browser's own (M7) |
+| Simultaneous movements per field | **1** (M10) |
+| `animation-fill-mode` | `both`, so reduced motion paints the end state and substitutes nothing (§42.7) |
+
+**Nothing waits below the fold and nothing is withheld from a visitor who does
+not scroll**, which is §42.5 kept rather than reinterpreted. Hover is one
+property in band 1 everywhere it exists: a navigation underline changes colour,
+the action changes ground. Nothing scales, lifts, shadows or moves.
+
+### The atmosphere — four marks, none of them visible
+
+§14.5 sets the threshold for simulated material at zero. Every mark here is at
+or below **2% ink**, which is the value at which the claim stops being made: it
+is not a leather surface, it is the reason the field does not read as a screen.
+L14 is satisfied the same way — a mark that cannot be seen cannot carry an
+argument. All four are painted behind the content and any frame covers them
+completely; evidence wins (R8.7).
+
+| Field | Mark | Opacity |
+| --- | --- | --- |
+| The arrival | Saddle stitch, repeat | 2.0% |
+| C1 · The place | Horse, one silhouette, never repeated (M15) | 1.8% |
+| C3 · The decision | Basketweave tooling, repeat | 1.5% |
+| The close | Western tree in outline | 2.0% |
+| Every surface | Paper tooth, fractal noise | under 2% |
+
+### The reserved frame
+
+Demo mode only, and it is not a stand-in for a photograph: it is the space a
+photograph will occupy, at that photograph's own measured ratio, in the two
+paper tones, with a registration mark — what a plate is aligned to before it is
+printed, which is what the frame is waiting for.
+
+No file is served and no `<img>` is emitted, so the Placeholder gate — which
+reads files — sees nothing new, and **the gates are unchanged: 9 of 13 refuse,
+150 findings, exactly as before.** `NEXT_PUBLIC_DEMO_MODE=off` returns every
+surface to the state it ships in with no photography.
+
+The last generated tone block reaching a surface was Technology's hero — a
+brown gradient outside the closed eight-value palette, served as though it were
+a photograph. **Zero generated files now reach any surface.**
+
+### The CTA — eight surfaces to two
+
+R39.3 permitted the action on eight and the site carried it on all eight. The
+client's instruction was to remove it from six, and the brand documents already
+argue the reason: Brand Bible §16.4, *a luxury brand does not chase.* An ask
+repeated on every surface is not eight invitations — it is one invitation that
+has stopped being believed.
+
+**R39.1 is untouched**: one action, one door, one label, leading to Enquiry and
+nowhere else. What changed is R39.3's *where*, in the direction R39.4 already
+points. Manufacturing, Quality, Export, About, Products and the category
+surface now end on a continuation instead — R39.2, *a link rather than a
+demand.* `check:content` asserts the new list so it cannot drift back.
+
+### Header and footer
+
+Both were inset by S2 — 16px — while every field beneath them uses §24.1's
+margins, 24 below 720px and 48 above. **The masthead did not line up with the
+first word of the page it sat over, on any screen.** Corrected to the field's
+own padding.
+
+The footer's three blocks were laid out with `justify-between` on a 1440px
+field: the record in the left corner, ten links in the middle, two on the
+right, and two lakes of nothing between. It is now a grid at the 5+3 asymmetry
+§29.2 gives every other paired thing in this system, with the index in two
+columns. **No fact was added or removed**, and §37.2's "never" list is intact.
+
+### Targets
+
+**21 interactive targets measured under 44px** — the whole footer index at
+23px, every navigation destination at 20px, the wordmark at 23px. §47.5 sets
+the minimum at 44 × 44 because below roughly that the error rate rises sharply
+for anyone whose hands are not steady, and the footer index is the one place on
+the site where every destination is reached by thumb. **Now 0.**
+
+### Verification
+
+```
+npx tsc --noEmit                          ✓ clean
+npm run lint                              ✓ clean, no warnings
+npm run check:content                     ✓ green — action list updated and asserted
+npm run build                             ✓ green — 32 pages prerender, no warnings
+npm run check:publication -- --selftest   ✓ 25 checks
+npm run images:record -- --check          ✓ the library matches the files
+npm run check:publication                 ✗ 9 of 13 refuse, 150 findings — unchanged
+```
+
+Measured in the running application, at 1440 × 900:
+
+| | Before | After |
+| --- | --- | --- |
+| Body measure | 131 characters | **71** |
+| Ground tones on the surface | 1 | **3** — paper, ink, recessed |
+| Image mass | 0% | **40%** |
+| Reserved frames, exact ratio | 0 | **5** — 2.00, 1.00, 1.78, 1.50, 1.50 |
+| Atmosphere marks | 0 | **4**, all ≤ 2% |
+| Recognition heading vs its release | 22px vs 30px | **32px vs 32px**, peak marked by the ink field |
+| Tap targets under 44px | 21 | **0** |
+| Horizontal overflow, 375 / 768 / 1440 | none | **none** |
+| Actions on the site | 8 surfaces | **2** |
+| Generated tone blocks reaching a surface | 1 | **0** |
+| Elements below full opacity after arrival | — | **0** |
+| Facts, figures, certificates, markets or copy invented | — | **0** |
+
+### What is still the client's, and it is the only thing left
+
+**Photography.** Dependency 1 and 19. Five reserved frames on Home, and the
+held moment's own plate — `home/pause.json` declares a photograph and the field
+is currently ink with nothing in it, which is what §23.4 permits and what the
+frame will fill. Copy is dependency 12; the Facts Register is dependency 3.
+
+Nothing on this surface is waiting on the build.

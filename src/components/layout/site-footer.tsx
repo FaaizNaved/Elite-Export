@@ -73,12 +73,23 @@ export async function SiteFooter() {
             they can ring, each reachable in one action (§47.5's 44px target is
             met by the 24px line box plus the S1 gap between them).
           */}
-          <span className="flex flex-col gap-s1">
-            <a href={`mailto:${company.contact.email}`} className="motion-mark w-fit underline decoration-transparent underline-offset-4 hover:decoration-ink">
+          {/*
+            §47.5: 44 × 44px minimum, and these two were measured at 23px on a
+            phone — the address block is the one place on the site a buyer
+            reaches for with a thumb rather than a pointer.
+          */}
+          <span className="flex flex-col">
+            <a
+              href={`mailto:${company.contact.email}`}
+              className="motion-mark inline-flex min-h-11 w-fit items-center underline decoration-transparent underline-offset-4 hover:decoration-ink"
+            >
               {company.contact.email}
             </a>
             {phone && (
-              <a href={`tel:${phone.replace(/\s+/g, "")}`} className="motion-mark w-fit underline decoration-transparent underline-offset-4 hover:decoration-ink">
+              <a
+                href={`tel:${phone.replace(/\s+/g, "")}`}
+                className="motion-mark inline-flex min-h-11 w-fit items-center underline decoration-transparent underline-offset-4 hover:decoration-ink"
+              >
                 {phone}
               </a>
             )}
@@ -87,13 +98,19 @@ export async function SiteFooter() {
 
         <div className="flex flex-col gap-s3">
           {/* The index — R37.9. Every surface, plus the legal record. */}
+          {/*
+            Ten destinations at 44px each is 220px in two columns, which is why
+            the index runs in two rather than one: a single column of ten at the
+            target size is a list long enough that the record stops reading as
+            one object (§36.3).
+          */}
           <nav aria-label="Site index">
-            <ul className="grid grid-cols-2 gap-x-s3 gap-y-s1">
+            <ul className="grid grid-cols-2 gap-x-s3">
               {surfaceIndex.map((item) => (
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="motion-mark inline-block w-fit text-r underline decoration-transparent underline-offset-4 hover:decoration-ink"
+                    className="motion-mark inline-flex min-h-11 w-fit items-center text-r underline decoration-transparent underline-offset-4 hover:decoration-ink"
                   >
                     {item.label}
                   </Link>
@@ -103,12 +120,12 @@ export async function SiteFooter() {
           </nav>
 
           <nav aria-label="Legal">
-            <ul className="flex flex-wrap gap-x-s3 gap-y-s1">
+            <ul className="flex flex-wrap gap-x-s3">
               {legalPages.map((page) => (
                 <li key={page.href}>
                   <Link
                     href={page.href}
-                    className="motion-mark text-c text-ink-secondary underline decoration-transparent underline-offset-4 hover:decoration-ink-secondary"
+                    className="motion-mark inline-flex min-h-11 items-center text-c text-ink-secondary underline decoration-transparent underline-offset-4 hover:decoration-ink-secondary"
                   >
                     {page.title}
                   </Link>

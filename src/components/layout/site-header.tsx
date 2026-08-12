@@ -44,7 +44,7 @@ export function SiteHeader() {
         */}
         <Link
           href={ROUTES.home}
-          className="motion-mark text-r font-medium text-ink hover:text-ink-secondary"
+          className="motion-mark inline-flex min-h-11 items-center text-r font-medium text-ink hover:text-ink-secondary"
         >
           {company.tradingName}
         </Link>
