@@ -20,6 +20,7 @@
     "src/lib/mdx/**",
     "src/components/**",
     "src/services/**",
-    "src/lib/cn.ts"
+    "src/lib/cn.ts",
+    "src/lib/demo.ts"
   ]
 }

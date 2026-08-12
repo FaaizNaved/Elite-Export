@@ -19,14 +19,33 @@ import { ROUTES } from "@/constants";
  *
  * Height is 48px of control plus S2 above and below on a large field, S1 on a
  * small one, which is how VDS §37.1 derives 80/64.
+ *
+ * ### The margin, corrected
+ *
+ * The bar was inset by S2 — 16px — while every field beneath it is inset by
+ * §24.1's margins: 24 below 720px, 48 above. The company name therefore did not
+ * line up with the first word of the surface it sits over, on any screen. §24.1
+ * is not a per-element decision, and a masthead 8px to the left of its own page
+ * is the first thing a reader sees and the last thing anybody reports. The
+ * padding is now the field's own, so the name and the surface title share an
+ * edge.
  */
 export function SiteHeader() {
   return (
-    <header className="px-s2 py-s1 reading:py-s2">
+    <header className="px-6 py-s1 reading:px-12 reading:py-s2">
       {/* min-h-12 is the 48px control height VDS §37.1 derives 80/64 from. */}
       <div className="mx-auto flex min-h-12 max-w-field items-center justify-between gap-s4">
-        {/* Identity, not a destination — UX R37.2. */}
-        <Link href={ROUTES.home} className="text-r">
+        {/*
+          Identity, not a destination — UX R37.2, and §37.1 fixes the treatment:
+          the company name, set as text, sans at rank R. Medium rather than
+          regular is the one difference from a destination beside it, because
+          identity and navigation are two kinds of thing and the bar has no
+          other way to say so. §8.5 makes medium available; there is no bold.
+        */}
+        <Link
+          href={ROUTES.home}
+          className="motion-mark text-r font-medium text-ink hover:text-ink-secondary"
+        >
           {company.tradingName}
         </Link>
 
@@ -43,7 +62,9 @@ export function SiteHeader() {
 
           <details className="reading:hidden">
             {/* A word, not a glyph (VDS §43.2), on a 48px target (§47.5). */}
-            <summary className="-mr-s1 flex min-h-12 list-none items-center px-s1 text-r">Index</summary>
+            <summary className="motion-mark -mr-s1 flex min-h-12 list-none items-center px-s1 text-r hover:text-ink-secondary">
+              Index
+            </summary>
             <ul className="mt-s3 flex flex-col gap-s3">
               {primaryNav.map((item) => (
                 <li key={item.href}>

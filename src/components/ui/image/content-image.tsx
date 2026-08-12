@@ -1,4 +1,6 @@
 import NextImage from "next/image";
+import { cn } from "@/lib/cn";
+import { isReservedFrame } from "@/lib/demo";
 import type { Image as ImageToken } from "@/types";
 import { resolveImageUrl } from "@/utils/image";
 
@@ -60,6 +62,31 @@ export function ContentImage({ image, sizes, priority, className }: ContentImage
    * state, so it is reported rather than silently missing.
    */
   if (!image.width || !image.height) return null;
+
+  /**
+   * The reserved frame — demo mode only (`src/lib/demo.ts`).
+   *
+   * Not a photograph and not a stand-in for one: the space a photograph will
+   * occupy, at that photograph's own measured ratio, so the layout a reviewer
+   * approves is the layout that ships. No file is requested and no `<img>` is
+   * emitted, so nothing here can be mistaken for evidence by a person or by a
+   * gate.
+   *
+   * Two paper tones and one registration mark — the mark a plate is aligned to
+   * before it is printed, which is exactly what this frame is waiting for. It
+   * sits at 6% ink: visible when looked for, invisible when read past.
+   */
+  if (isReservedFrame(image.src)) {
+    return (
+      <div
+        aria-hidden
+        style={{ aspectRatio: `${image.width} / ${image.height}` }}
+        className={cn("reserved-frame grid w-full place-items-center bg-recessed", className)}
+      >
+        <span className="reserved-mark" />
+      </div>
+    );
+  }
 
   return (
     <NextImage

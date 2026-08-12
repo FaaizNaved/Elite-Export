@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/cn";
 
 /**
  * A navigation link that states whether you are on it.
@@ -14,6 +15,19 @@ import { usePathname } from "next/navigation";
  * The single client component in the shell. Reading the current URL from a
  * server component is not supported, and location is a requirement rather than
  * a nicety; nothing else here hydrates.
+ *
+ * ### The hover
+ *
+ * VDS §42.5: on hover **one property changes, in band 1**, and the list of what
+ * may never change is explicit — scale, lift, shadow, colour, image zoom,
+ * translation. The one property here is the underline's *colour*.
+ *
+ * Every link carries the underline at all times and it is transparent until it
+ * is earned, so nothing reflows when a pointer crosses it: the 4px offset and
+ * the 1px rule are already occupying their space (§37.1). Hovering brings the
+ * mark to secondary ink; being on the surface brings it to full ink. A visitor
+ * can therefore tell *where they are* and *what they are about to reach* apart
+ * at a glance, which is R37.5 with a second state rather than a new mark.
  */
 export function SurfaceLink({ label, href }: { label: string; href: string }) {
   const pathname = usePathname();
@@ -23,7 +37,11 @@ export function SurfaceLink({ label, href }: { label: string; href: string }) {
     <Link
       href={href}
       aria-current={current ? "page" : undefined}
-      className={current ? "text-r underline decoration-1 underline-offset-4" : "text-r"}
+      className={cn(
+        "text-r underline decoration-1 underline-offset-4",
+        "motion-mark transition-[text-decoration-color]",
+        current ? "decoration-ink" : "decoration-transparent hover:decoration-ink-secondary",
+      )}
     >
       {label}
     </Link>

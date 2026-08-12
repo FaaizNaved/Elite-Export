@@ -157,7 +157,7 @@ export const governedFacts: readonly GovernedFact[] = [
    * These carry no markers on purpose. The others above are detected by
    * scanning published prose, because a figure can appear in any sentence; an
    * identity fact is a field of a known record, and the Register gate reads
-   * that record directly. A marker for "Elite Export" would report the same
+   * that record directly. A marker for "New Elite Exports" would report the same
    * unconfirmed name once per document and bury the eleven items that need an
    * answer under thirty that say the same thing (R16.5).
    */

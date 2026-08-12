@@ -10,7 +10,8 @@ import { Passage, Statement } from "@/components/ui/typography";
 import { homeTelling, siteConfig } from "@/config";
 import { ROUTES } from "@/constants";
 import { sceneRefusal, type Scene } from "@/components/structure";
-import { chapterFrames, getCategories, getCompanyPage, getHomeContent } from "@/lib/content";
+import { getCategories, getCompanyPage, getHomeContent } from "@/lib/content";
+import { chapterFrames } from "@/lib/demo";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({

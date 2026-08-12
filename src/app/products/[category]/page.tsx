@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { RecordSet } from "@/components/evidence";
 import { Breadcrumb } from "@/components/layout";
-import { Close, Opening } from "@/components/structure";
+import { Opening } from "@/components/structure";
 import { StateNotice } from "@/components/system";
 import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
@@ -87,8 +87,19 @@ export default async function CategoryPage({ params }: PageProps) {
 
       {/* No second product list. R38.3: a fact links once per surface. */}
 
-      {/* R39.3, R39.8: one action, at the close, and its wording is not this surface's. */}
-      <Close />
+      {/*
+        No action, and no continuation either.
+
+        R39.3 permitted an action here, and the Presentation package removed it
+        on the client's instruction: a category page is a place a visitor is
+        still choosing, and an ask arriving before the choice is made is an ask
+        arriving early. The product record is where one piece is in front of
+        them, and that is where it now stands.
+
+        No continuation either, because the subcategory list above **is** the
+        continuation — R38.3: a fact links once per surface, and a second link
+        to the same place is the one that gets ignored.
+      */}
     </>
   );
 }

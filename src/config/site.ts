@@ -30,10 +30,10 @@ export const siteConfig = {
   name: company.tradingName,
   legalName: company.legalName,
   url: SITE_URL,
-  /** Appended to page titles: "One Ear Headstall | Elite Export". */
+  /** Appended to page titles: "One Ear Headstall | New Elite Exports". */
   titleSeparator: "|",
   description:
-    "Elite Export manufactures premium equestrian tack, leather bags and accessories for international buyers, with full OEM and ODM capability.",
+    "New Elite Exports manufactures premium equestrian tack, leather bags and accessories for international buyers, with full OEM and ODM capability.",
   keywords: [
     "leather manufacturer",
     "equestrian tack manufacturer",

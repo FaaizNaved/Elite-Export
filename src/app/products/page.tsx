@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { RecordSet } from "@/components/evidence";
-import { Chapter, Close, Opening } from "@/components/structure";
+import { Chapter, Opening } from "@/components/structure";
+import { Continuation } from "@/components/ui/action";
 import { StateNotice } from "@/components/system";
 import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
 import { productsTelling, surfaceIndex } from "@/config";
 import { ROUTES } from "@/constants";
-import { chapterFrames, getCategories } from "@/lib/content";
+import { getCategories } from "@/lib/content";
+import { chapterFrames } from "@/lib/demo";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -100,11 +102,28 @@ export default async function ProductsPage() {
       </Section>
 
       {/*
-        R39.3: one action, at the close, after the argument. It carries no
-        statement — the one that stood here was authored in this file, and
-        R39.8 fixes the action's own wording for the whole site.
+        No close, and no action.
+
+        UX Blueprint R39.3 permitted one here. The Presentation package removed
+        it on the client's instruction: the site carried the same ask on eight
+        surfaces, and an ask repeated eight times is not confidence, it is
+        anxiety — Brand Bible §16.4, *a luxury brand does not chase.*
+
+        The action now stands in three places only, and each is somewhere a
+        visitor has already decided something: **Home** at the end of the whole
+        documentary, the **product record** where one specific piece is in front
+        of them, and **Enquiry**, where the action is the surface. R39.1 is
+        untouched — one action, one door, one label.
+
+        What stands here instead is the continuation — R39.2: *a link rather
+        than a demand,* naming what comes next. §8.4: a chapter ends by
+        releasing, and the last thing asked is smaller than the thing before it.
       */}
-      <Close />
+      <Section break="chapter">
+        <Field type="full">
+          <Continuation href={ROUTES.manufacturing}>How these are made</Continuation>
+        </Field>
+      </Section>
     </>
   );
 }

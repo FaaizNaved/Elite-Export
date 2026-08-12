@@ -15,7 +15,7 @@ import { buildMetadata, faqJsonLd } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Enquiry",
   description:
-    "Send Elite Export your requirement — products, quantities and finishes — or write to us directly. A person reads every enquiry.",
+    "Send New Elite Exports your requirement — products, quantities and finishes — or write to us directly. A person reads every enquiry.",
   path: ROUTES.enquiry,
 });
 

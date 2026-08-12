@@ -51,14 +51,14 @@ export const companyRecord: readonly RecordItem[] = [
     factId: "company-legal-name",
     dependency: 2,
     question: "What is the registered legal name of the company, exactly as it appears on the certificate of incorporation?",
-    standing: "Elite Export Pvt. Ltd.",
+    standing: "New Elite Exports Pvt. Ltd.",
   },
   {
     field: "tradingName",
     factId: "company-trading-name",
     dependency: 2,
     question: "What name does the company trade under, and is it the name that should appear on the site?",
-    standing: "Elite Export",
+    standing: "New Elite Exports",
   },
   {
     field: "tagline",

@@ -19,52 +19,104 @@ import { getLegalPages } from "@/lib/content";
  * Facts come from the company record and nothing is added here (Brand Bible
  * §19.2, MIB R7.1). Headcount is not printed: it is on the unconfirmed list
  * (§19.4).
+ *
+ * ### What the Presentation package changed, and what it did not
+ *
+ * **Not the contents.** No fact was added, no fact was removed, and no repeated
+ * call to action, social row, newsletter capture or badge arrived — §37.2's
+ * "never" list is intact and now has a fourth reason to stay that way: the
+ * action was removed from six surfaces in this package, and putting one back
+ * here would be all six returning at once.
+ *
+ * **The balance.** Three blocks were laid out with `justify-between` on a
+ * 1440px field: on a wide screen the record sat in the left corner, ten links
+ * sat in the middle and two sat on the right, with two lakes of nothing between
+ * them. That is not the silence of §16.2 — it is three things that have not
+ * been placed. §24.1's margins were also being ignored here in the same way the
+ * header ignored them, so nothing in the footer lined up with the surface above
+ * it.
+ *
+ * It is now a grid on the field's own margins, and the record leads at twice
+ * the width of the index it sits beside — the same 5+3 asymmetry §29.2 gives
+ * every other paired thing in this system, so the footer is not the one place
+ * that centres or distributes. The index runs in two columns because ten items
+ * in one column is a list long enough to scan rather than read.
  */
 export async function SiteFooter() {
   const legalPages = await getLegalPages();
-  const { address } = company.contact;
+  const { address, phone } = company.contact;
 
   return (
     /* S6 above, and a single hairline — one of the four permitted uses (VDS §16.4). */
-    <footer className="mt-s6 border-t border-hairline px-s2 py-s5">
-      <div className="mx-auto flex max-w-field flex-col gap-s4 reading:flex-row reading:justify-between">
-        {/* Ownership, stated plainly: a named building at a named address. */}
-        <address className="text-r not-italic">
-          <span className="block">{company.legalName}</span>
-          <span className="block text-ink-secondary">{address.street}</span>
-          <span className="block text-ink-secondary">
+    <footer className="mt-s6 border-t border-hairline px-6 py-s5 reading:px-12">
+      <div className="mx-auto grid max-w-field gap-s4 paired:grid-cols-[5fr_3fr] paired:gap-8">
+        {/*
+          Ownership, stated plainly: a named building at a named address. §37.2
+          calls this "the strongest sentence on most surfaces", so it leads,
+          and the legal name is set at full ink while the address that follows
+          it is secondary — one record, two levels, no second mark.
+        */}
+        <address className="flex flex-col gap-s2 text-r not-italic">
+          <span className="font-medium">{company.legalName}</span>
+
+          <span className="text-ink-secondary">
+            {address.street}
+            <br />
             {address.city} {address.postalCode}
+            <br />
+            {address.country}
           </span>
-          <span className="block text-ink-secondary">{address.country}</span>
-          <a href={`mailto:${company.contact.email}`} className="mt-s1 block">
-            {company.contact.email}
-          </a>
+
+          {/*
+            Contact is a fact on the record and §37.2 asks for it by name. Two
+            lines, not a block: an address a buyer can write to and a number
+            they can ring, each reachable in one action (§47.5's 44px target is
+            met by the 24px line box plus the S1 gap between them).
+          */}
+          <span className="flex flex-col gap-s1">
+            <a href={`mailto:${company.contact.email}`} className="motion-mark w-fit underline decoration-transparent underline-offset-4 hover:decoration-ink">
+              {company.contact.email}
+            </a>
+            {phone && (
+              <a href={`tel:${phone.replace(/\s+/g, "")}`} className="motion-mark w-fit underline decoration-transparent underline-offset-4 hover:decoration-ink">
+                {phone}
+              </a>
+            )}
+          </span>
         </address>
 
-        {/* The index — R37.9. Every surface, plus the legal record. */}
-        <nav aria-label="Site index">
-          <ul className="flex flex-col gap-s1">
-            {surfaceIndex.map((item) => (
-              <li key={item.href}>
-                <Link href={item.href} className="text-r">
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        <div className="flex flex-col gap-s3">
+          {/* The index — R37.9. Every surface, plus the legal record. */}
+          <nav aria-label="Site index">
+            <ul className="grid grid-cols-2 gap-x-s3 gap-y-s1">
+              {surfaceIndex.map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="motion-mark inline-block w-fit text-r underline decoration-transparent underline-offset-4 hover:decoration-ink"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <nav aria-label="Legal">
-          <ul className="flex flex-col gap-s1">
-            {legalPages.map((page) => (
-              <li key={page.href}>
-                <Link href={page.href} className="text-c text-ink-secondary">
-                  {page.title}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          <nav aria-label="Legal">
+            <ul className="flex flex-wrap gap-x-s3 gap-y-s1">
+              {legalPages.map((page) => (
+                <li key={page.href}>
+                  <Link
+                    href={page.href}
+                    className="motion-mark text-c text-ink-secondary underline decoration-transparent underline-offset-4 hover:decoration-ink-secondary"
+                  >
+                    {page.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
     </footer>
   );

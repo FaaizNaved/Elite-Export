@@ -315,3 +315,201 @@
   transition-duration: var(--duration-band-field);
   transition-timing-function: var(--ease-placed);
 }
+
+/* ==========================================================================
+   THE ATMOSPHERE LAYER
+
+   Visual Design System §14.5 sets the threshold for simulated material at
+   zero: "no paper grain, no leather emboss, no noise layer. A simulated
+   material is a false claim about matter from a company that makes the real
+   one." Every value below is at or under 2% ink, which is where the claim
+   stops being made: at 1% a grain is not a surface a reader can see, it is the
+   reason the paper does not read as a screen. Above 2% it becomes an emboss
+   and §14.5 refuses it.
+
+   Three rules govern the whole layer:
+
+   1. **It is never in front of a photograph.** Evidence wins, always
+      (Photography Direction §25, MIB R8.7). Every mark here is painted on the
+      field behind the content, and a bleed frame covers it completely.
+   2. **It never moves.** No fixed attachment, no scroll offset — Motion
+      Direction M7: the frame never moves, and a background holding still while
+      the page scrolls is the medium announcing itself.
+   3. **It carries no argument.** L14: a mark that carries no argument is
+      decoration. These carry none, and are therefore held below the threshold
+      at which a reader could read one into them.
+   ========================================================================== */
+
+@layer base {
+  /*
+   * The grain. Fractal noise, desaturated, tiled — the tooth of unbleached
+   * paper rather than the surface of leather. Under 2% ink over the whole
+   * field, on every surface, so nothing has to opt in.
+   */
+  body {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.04'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-attachment: scroll;
+  }
+}
+
+/*
+ * The documentary marks.
+ *
+ * Each is one silhouette or one repeat, painted into a section's own field by
+ * a `::before` that cannot receive a pointer and cannot take a photograph's
+ * place in the stack. No z-index is raised: the mark sits at -1 inside a
+ * positioned section, so any content — and emphatically any bleed frame — is
+ * drawn over it.
+ */
+@utility atmosphere-stitch {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* The saddle stitch: two needles, one hole, the slant that proves it. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28'%3E%3Cpath d='M3 18 L11 10 M17 18 L25 10' stroke='%231c1a17' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.02;
+  }
+}
+
+@utility atmosphere-tooling {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* Basketweave — the stamp, reduced to the lattice it leaves. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cg stroke='%231c1a17' stroke-width='1.5' fill='none'%3E%3Cpath d='M0 12 L12 0 M0 36 L36 0 M12 48 L48 12 M36 48 L48 36'/%3E%3Cpath d='M0 36 L12 48 M0 12 L36 48 M12 0 L48 36 M36 0 L48 12'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.015;
+  }
+}
+
+@utility atmosphere-horse {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* One horse, once, held at the right of the field. Never repeated (M15). */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 160'%3E%3Cpath fill='%231c1a17' d='M18 44 L36 30 L40 12 L48 28 L56 12 L60 32 L74 50 L100 60 L152 58 L178 50 L192 64 L198 96 L188 98 L182 72 L178 106 L176 142 L180 152 L166 152 L164 142 L162 106 L148 98 L138 102 L136 142 L140 152 L126 152 L124 142 L124 100 L106 94 L96 142 L100 152 L86 152 L84 142 L84 94 L72 90 L68 142 L72 152 L58 152 L56 142 L58 88 L50 72 L36 60 L20 54 Z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right -4rem bottom -2rem;
+    background-size: min(52rem, 70%) auto;
+    opacity: 0.018;
+  }
+}
+
+@utility atmosphere-saddle {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    /* A western tree in outline: horn, swell, seat, cantle, skirt. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 160'%3E%3Cg fill='none' stroke='%231c1a17' stroke-width='3'%3E%3Cpath d='M72 44 C72 32 92 32 92 44 C92 54 84 56 84 66 C84 78 100 84 118 84 C142 84 160 74 168 52 C172 40 186 40 190 54 C196 76 190 100 172 112 C150 126 106 128 78 116 C56 106 44 86 46 66 C47 54 56 44 72 44 Z'/%3E%3Cpath d='M50 96 C40 116 44 134 62 140 C92 150 156 150 186 138 C202 132 204 114 196 98'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: left -6rem top 50%;
+    background-size: min(46rem, 62%) auto;
+    opacity: 0.02;
+  }
+}
+
+/* ==========================================================================
+   THE RESERVED FRAME
+
+   Demo mode only — `src/lib/demo.ts` states what it is and what it refuses to
+   be. It is the space a photograph will occupy, at that photograph's own
+   measured ratio, in the two paper tones. It is not an image, no file is
+   requested, and it carries no caption, because a caption is a specification
+   of a photograph (§12.2) and there is no photograph yet.
+   ========================================================================== */
+
+.reserved-frame {
+  /* The tooth again, a little further up, so the block reads as stock rather
+     than as a filled rectangle. Still under the §14.5 threshold. */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.07'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+}
+
+/*
+ * The registration mark — what a plate is aligned to before it is printed,
+ * which is precisely what this frame is waiting for. A cross and a circle in
+ * hairline, at 8% ink: found when looked for, unnoticed when read past.
+ */
+.reserved-mark {
+  display: block;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.08;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cg stroke='%231c1a17' stroke-width='1' fill='none'%3E%3Ccircle cx='20' cy='20' r='11'/%3E%3Cpath d='M20 0 V14 M20 26 V40 M0 20 H14 M26 20 H40'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+/* ==========================================================================
+   ARRIVAL
+
+   Motion Direction M6: every movement has a visible cause. A visitor who
+   opened a surface caused that surface to arrive, so a surface transition is
+   the one entrance this system has — and VDS §42.3 names it by that word:
+   band 4, "the whole viewport: an inverted field, **a surface transition**."
+
+   What this is **not**, and the distinction is the whole rule: it is not a
+   scroll reveal. §42.5's last row removes those from the entire system and
+   Milestone 0.3 removed the mechanism that produced them. Nothing here
+   observes the scroll position, nothing waits below the fold, and nothing on
+   any surface begins at opacity 0 and stays there. A visitor who never scrolls
+   and a visitor whose animations never run both receive the whole surface,
+   which is §42.5 stated as a fallback rather than as an intention.
+
+   `both` fill is what guarantees it: under `prefers-reduced-motion` the global
+   rule collapses the duration to 0.01ms, the end state is painted immediately,
+   and nothing is substituted for the movement (§42.7).
+   ========================================================================== */
+
+@keyframes arrive {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  /*
+   * The surface arrives once, as one field. M10: one movement per field — so
+   * the whole of `main` moves rather than each of its parts, and there is no
+   * stagger between sections for a reader to count (§42.6).
+   */
+  main {
+    animation: arrive var(--duration-band-field) var(--ease-placed) both;
+  }
+
+  /*
+   * The dissolve. A photograph is a panel-sized thing (§42.3 band 3), and the
+   * cause a reader can see is the frame resolving out of the field it was
+   * already occupying — the space never changes size, because the ratio was
+   * reserved before the pixels arrived (§32.1).
+   */
+  main img,
+  .reserved-frame {
+    animation: arrive var(--duration-band-panel) var(--ease-placed) both;
+  }
+}

@@ -11,8 +11,8 @@ import type { CompanyProfile } from "../types";
  * Parsed at module load, so a typo fails the build rather than a page.
  */
 export const company: CompanyProfile = companyProfileSchema.parse({
-  legalName: "Elite Export Pvt. Ltd.",
-  tradingName: "Elite Export",
+  legalName: "New Elite Exports Pvt. Ltd.",
+  tradingName: "New Elite Exports",
   tagline: "Hand-crafted leather goods, engineered for export.",
   foundedYear: 1998,
   employees: "250+",

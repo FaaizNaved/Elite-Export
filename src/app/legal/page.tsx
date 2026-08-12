@@ -13,7 +13,7 @@ import { formatDate } from "@/utils/format";
 
 export const metadata: Metadata = buildMetadata({
   title: "Legal",
-  description: "Elite Export's legal identity record and published legal documents.",
+  description: "New Elite Exports' legal identity record and published legal documents.",
   path: ROUTES.legal,
 });
 

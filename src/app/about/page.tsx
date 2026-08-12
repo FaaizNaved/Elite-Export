@@ -1,9 +1,14 @@
 import { Fragment } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Chapter, Close, HeldMoment, Opening, sceneRefusal, type Scene } from "@/components/structure";
+import { Chapter, HeldMoment, Opening, sceneRefusal, type Scene } from "@/components/structure";
+import { Continuation } from "@/components/ui/action";
+import { Field } from "@/components/ui/field";
+import { Section } from "@/components/ui/section";
+import { ROUTES } from "@/constants";
 import { aboutTelling } from "@/config";
-import { chapterFrames, getCompanyPage } from "@/lib/content";
+import { getCompanyPage } from "@/lib/content";
+import { chapterFrames } from "@/lib/demo";
 import { companyPageMetadata } from "@/lib/seo";
 import type { Chapter as ChapterId } from "@/types";
 
@@ -148,18 +153,28 @@ export default async function AboutPage() {
       })}
 
       {/*
-        R39.3: once, at the close, after the argument — and §24.6 makes this the
-        site's ending rather than a surface's: *the website ends by one action,
-        stated once, with a person behind it.* §24.7 is the test it has to pass —
-        **would this ending still be correct if nobody ever made contact?** — so
-        it hands over rather than closing (§24.2: a company that does not need
-        the visitor).
+        No close, and no action.
 
-        It carries no statement. The one that stood here was authored in this
-        file, and copy is Brand Bible §11–§12's and the copywriter's (R6.4,
-        dependency 12).
+        UX Blueprint R39.3 permitted one here. The Presentation package removed
+        it on the client's instruction: the site carried the same ask on eight
+        surfaces, and an ask repeated eight times is not confidence, it is
+        anxiety — Brand Bible §16.4, *a luxury brand does not chase.*
+
+        The action now stands in three places only, and each is somewhere a
+        visitor has already decided something: **Home** at the end of the whole
+        documentary, the **product record** where one specific piece is in front
+        of them, and **Enquiry**, where the action is the surface. R39.1 is
+        untouched — one action, one door, one label.
+
+        What stands here instead is the continuation — R39.2: *a link rather
+        than a demand,* naming what comes next. §8.4: a chapter ends by
+        releasing, and the last thing asked is smaller than the thing before it.
       */}
-      <Close />
+      <Section break="chapter">
+        <Field type="full">
+          <Continuation href={ROUTES.manufacturing}>How the work is done</Continuation>
+        </Field>
+      </Section>
     </>
   );
 }

@@ -11,7 +11,7 @@ import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
   title: "Journal",
-  description: "Notes on leather and manufacturing from the Elite Export workshop floor.",
+  description: "Notes on leather and manufacturing from the New Elite Exports workshop floor.",
   path: ROUTES.journal,
 });
 

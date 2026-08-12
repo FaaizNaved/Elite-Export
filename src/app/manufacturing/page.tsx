@@ -1,10 +1,15 @@
 import { Fragment } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Chapter, Close, HeldMoment, Opening, sceneRefusal, type Scene } from "@/components/structure";
+import { Chapter, HeldMoment, Opening, sceneRefusal, type Scene } from "@/components/structure";
+import { Continuation } from "@/components/ui/action";
+import { Field } from "@/components/ui/field";
+import { Section } from "@/components/ui/section";
 import { Passage, Statement } from "@/components/ui/typography";
 import { manufacturingTelling } from "@/config";
-import { chapterFrames, getCompanyPage } from "@/lib/content";
+import { ROUTES } from "@/constants";
+import { getCompanyPage } from "@/lib/content";
+import { chapterFrames } from "@/lib/demo";
 import { companyPageMetadata } from "@/lib/seo";
 import type { Chapter as ChapterId, StepBlock } from "@/types";
 
@@ -175,14 +180,24 @@ export default async function ManufacturingPage() {
       })}
 
       {/*
-        R17.6: no chapter on this surface carries an action — the surface's
-        single action is at its close, after C10 (R39.3).
+        R17.6: no chapter on this surface carries an action, and after the
+        Presentation package neither does its close.
 
-        It carries no statement. The one that stood here was authored in this
-        file, and copy is Brand Bible §11–§12's and the copywriter's (R6.4,
-        dependency 12). The action states itself.
+        R39.3 permitted one here. It was removed on the client's instruction:
+        the same ask stood on eight surfaces, and an ask repeated eight times is
+        not confidence, it is anxiety (Brand Bible §16.4 — *a luxury brand does
+        not chase*). The action now stands on Home, the product record and
+        Enquiry, and nowhere else.
+
+        What stands here is the continuation — R39.2, *a link rather than a
+        demand.* Manufacturing hands on to the machines the process runs on,
+        which is the next thing a buyer asks about.
       */}
-      <Close />
+      <Section break="chapter">
+        <Field type="full">
+          <Continuation href={ROUTES.technology}>The machines this runs on</Continuation>
+        </Field>
+      </Section>
     </>
   );
 }

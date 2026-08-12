@@ -1,18 +1,15 @@
 import { Fragment } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import {
-  Chapter,
-  Close,
-  HeldMoment,
-  Opening,
-  RESERVE_RECOGNITION_CHAPTER,
-  sceneRefusal,
-  type Scene,
-} from "@/components/structure";
+import { Chapter, HeldMoment, Opening, RESERVE_RECOGNITION_CHAPTER, sceneRefusal, type Scene } from "@/components/structure";
+import { Continuation } from "@/components/ui/action";
+import { Field } from "@/components/ui/field";
+import { Section } from "@/components/ui/section";
+import { ROUTES } from "@/constants";
 import { Passage, Statement } from "@/components/ui/typography";
 import { qualityTelling } from "@/config";
-import { chapterFrames, getCompanyPage } from "@/lib/content";
+import { getCompanyPage } from "@/lib/content";
+import { chapterFrames } from "@/lib/demo";
 import { companyPageMetadata } from "@/lib/seo";
 import type { Chapter as ChapterId, StepBlock } from "@/types";
 
@@ -198,19 +195,28 @@ export default async function QualityPage() {
       })}
 
       {/*
-        R39.3: once, at the close, after the argument. It carries no statement —
-        the one that stood here was authored in this file, and copy is Brand
-        Bible §11–§12's and the copywriter's (R6.4, dependency 12).
+        No close, and no action.
 
-        R20.5's limits — what is not tested, what is not certified, what is
-        checked by sampling rather than by unit — belong on this surface and are
-        not here, because no document states them. §12.1 puts the limit
-        statement inside the chapter whose capability it qualifies rather than
-        on a surface of its own, which is where it will arrive: C7's release
-        (§8.4). Inventing one would be the thing the whole surface exists to
-        refuse.
+        UX Blueprint R39.3 permitted one here. The Presentation package removed
+        it on the client's instruction: the site carried the same ask on eight
+        surfaces, and an ask repeated eight times is not confidence, it is
+        anxiety — Brand Bible §16.4, *a luxury brand does not chase.*
+
+        The action now stands in three places only, and each is somewhere a
+        visitor has already decided something: **Home** at the end of the whole
+        documentary, the **product record** where one specific piece is in front
+        of them, and **Enquiry**, where the action is the surface. R39.1 is
+        untouched — one action, one door, one label.
+
+        What stands here instead is the continuation — R39.2: *a link rather
+        than a demand,* naming what comes next. §8.4: a chapter ends by
+        releasing, and the last thing asked is smaller than the thing before it.
       */}
-      <Close />
+      <Section break="chapter">
+        <Field type="full">
+          <Continuation href={ROUTES.exportCapabilities}>What leaves the building</Continuation>
+        </Field>
+      </Section>
     </>
   );
 }

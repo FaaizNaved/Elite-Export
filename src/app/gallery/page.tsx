@@ -7,13 +7,13 @@ import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
 import { Statement } from "@/components/ui/typography";
 import { ROUTES } from "@/constants";
-import { chapterFrames } from "@/lib/content";
+import { chapterFrames } from "@/lib/demo";
 import { buildMetadata } from "@/lib/seo";
 import { imageSizes } from "@/utils/image";
 
 export const metadata: Metadata = buildMetadata({
   title: "Gallery",
-  description: "Inside the Elite Export factory.",
+  description: "Inside the New Elite Exports factory.",
   path: ROUTES.gallery,
 });
 
@@ -94,7 +94,7 @@ export default async function GalleryPage() {
         The words are the surface's name and nothing else. Two things stood here
         and both were presentation on the surface that exists to have none:
 
-        - `eyebrow: "Inside Elite Export"` — §12.3 makes an eyebrow *a location
+        - `eyebrow: "Inside New Elite Exports"` — §12.3 makes an eyebrow *a location
           in the structure*, and that is a framing.
         - `summary: "…photographed on ordinary production days."` — a provenance
           claim made once, in prose, for the whole library. R23.3 and Photography

@@ -137,7 +137,7 @@ export function EnquiryForm({ fallbackEmail }: EnquiryFormProps) {
 
       <Field label="Consent" hideLabel error={errors.consent?.message}>
         <Checkbox
-          label="I agree to Elite Export contacting me about this enquiry."
+          label="I agree to New Elite Exports contacting me about this enquiry."
           {...register("consent")}
         />
       </Field>
