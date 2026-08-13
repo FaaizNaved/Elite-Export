@@ -30,7 +30,7 @@ export function Reveal() {
           observer.unobserve(entry.target);
         }
       },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.01 },
+      { rootMargin: "0px 0px -15% 0px", threshold: 0.01 },
     );
 
     for (const element of document.querySelectorAll("[data-reveal]")) {
@@ -54,7 +54,7 @@ export function Reveal() {
         /* -1 when the element is entering from below, +1 when it has left
            above. Multiplied by half the amplitude, so total travel is 28px. */
         const progress = (box.top + box.height / 2 - viewport / 2) / (viewport / 2 + box.height / 2);
-        const amount = Number(element.dataset.drift) || 14;
+        const amount = Number(element.dataset.drift) || 18;
         element.style.setProperty("--drift", `${(-progress * amount).toFixed(2)}px`);
       }
     };

@@ -93,14 +93,19 @@ export function EditorialImage({
       {image.caption && (
         <figcaption
           className={cn(
-            "mt-s3 flex items-start gap-s2",
+            "mt-s2",
             /* A bleed frame runs edge to edge; its label still belongs on the
                field's own margin, aligned with the words below it. */
             bleed && "mx-auto w-full max-w-field px-6 reading:px-12",
           )}
         >
-          <span aria-hidden className="mt-[0.62em] h-px w-8 shrink-0 bg-hairline" />
-          <Caption className={isReservedFrame(image.src) ? "tracking-mark uppercase" : undefined}>
+          <Caption
+            className={
+              isReservedFrame(image.src)
+                ? "tracking-plate text-ink-secondary/70 uppercase"
+                : undefined
+            }
+          >
             {image.caption}
           </Caption>
         </figcaption>

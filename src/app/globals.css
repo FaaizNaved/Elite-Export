@@ -77,27 +77,27 @@
   --text-*: initial;
 
   /* D — the statement, peak register. One per surface, only where there is a peak. */
-  --text-d: clamp(2.5rem, 1.757rem + 3.048vw, 4.5rem);
-  --text-d--line-height: 1.05;
-  --text-d--letter-spacing: -0.01em;
+  --text-d: clamp(2.375rem, 1.6rem + 3.2vw, 4.5rem);
+  --text-d--line-height: 1.02;
+  --text-d--letter-spacing: -0.016em;
 
   /* H — the overture. The arrival statement, and the one rank above D.
      It exists once, on the first screen of Home, and nowhere else: a company
      that makes one thing well says its name at one size. 44px on a phone,
      112px on the 1440 field. */
-  --text-h: clamp(2.625rem, 1.35rem + 5.24vw, 5.25rem);
-  --text-h--line-height: 0.98;
-  --text-h--letter-spacing: -0.024em;
+  --text-h: clamp(2.75rem, 1.36rem + 5.7vw, 5.75rem);
+  --text-h--line-height: 0.94;
+  --text-h--letter-spacing: -0.03em;
 
   /* The coda — the closing statement. Between D and H. */
-  --text-coda: clamp(2rem, 1.15rem + 3.5vw, 4rem);
-  --text-coda--line-height: 1.02;
-  --text-coda--letter-spacing: -0.018em;
+  --text-coda: clamp(2.125rem, 1.1rem + 4.2vw, 4.75rem);
+  --text-coda--line-height: 0.98;
+  --text-coda--letter-spacing: -0.024em;
 
   /* T1 — surface title, chapter opening. */
-  --text-t1: clamp(1.875rem, 1.457rem + 1.714vw, 3rem);
-  --text-t1--line-height: 1.1;
-  --text-t1--letter-spacing: -0.005em;
+  --text-t1: clamp(1.875rem, 1.4rem + 1.95vw, 3.125rem);
+  --text-t1--line-height: 1.08;
+  --text-t1--letter-spacing: -0.012em;
 
   /* T2 — section heading. */
   --text-t2: clamp(1.375rem, 1.143rem + 0.952vw, 2rem);
@@ -109,8 +109,8 @@
   --text-t3--line-height: 1.3;
 
   /* B — body. The sans, because body is a record (Brand Bible §16.3). */
-  --text-b: clamp(1.0625rem, 1.039rem + 0.095vw, 1.125rem);
-  --text-b--line-height: 1.55;
+  --text-b: clamp(1.0625rem, 1.02rem + 0.19vw, 1.1875rem);
+  --text-b--line-height: 1.62;
 
   /* R — the record: specifications, tables, meta, interface. */
   --text-r: 0.9375rem;
@@ -118,8 +118,8 @@
 
   /* C — caption, eyebrow, legal. The floor: the smallest size at which a
      grotesque holds its counters at reading distance (§9.1). */
-  --text-c: 0.8125rem;
-  --text-c--line-height: 1.45;
+  --text-c: 0.75rem;
+  --text-c--line-height: 1.5;
 
   /* §12.3 — the eyebrow is the one place tracking is opened up. */
   --tracking-*: initial;
@@ -128,7 +128,8 @@
      C and never longer than four words, so the tracking is legible rather than
      decorative. */
   --tracking-mark: 0.16em;
-  --tracking-rail: 0.24em;
+  --tracking-rail: 0.22em;
+  --tracking-plate: 0.14em;
 
   /* §8.5 — four weights. There is no bold serif: a bold statement is a raised
      voice, and this company does not raise its voice. */
@@ -209,7 +210,7 @@
   --duration-band-panel: 360ms; /* ≤800px: a dialog, an index */
   --duration-band-field: 540ms; /* the whole viewport */
   /* The arrival of a composed element into the field. Slow, heavy, placed. */
-  --duration-band-arrival: 1100ms;
+  --duration-band-arrival: 1400ms;
 
   /* The one curve. Acceleration peaks at t=0.28 — inside the first third — and
      the final quarter of the distance takes 55% of the time: things are placed,
@@ -352,10 +353,18 @@
   body {
     background-color: var(--color-paper);
     background-image:
+      /* Laid paper — the wire marks a mould leaves, at 1.1% on a 4px pitch. */
+      repeating-linear-gradient(
+        to bottom,
+        rgba(28, 26, 23, 0.011) 0px,
+        rgba(28, 26, 23, 0.011) 1px,
+        rgba(28, 26, 23, 0) 1px,
+        rgba(28, 26, 23, 0) 4px
+      ),
       radial-gradient(120% 80% at 15% 0%, rgba(255, 253, 248, 0.75) 0%, rgba(255, 253, 248, 0) 55%),
       radial-gradient(100% 70% at 88% 12%, rgba(28, 26, 23, 0.022) 0%, rgba(28, 26, 23, 0) 60%),
       url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)' opacity='0.05'/%3E%3C/svg%3E");
-    background-repeat: no-repeat, no-repeat, repeat;
+    background-repeat: repeat, no-repeat, no-repeat, repeat;
     background-attachment: scroll;
   }
 }
@@ -446,51 +455,52 @@
 .reserved-frame {
   position: relative;
   isolation: isolate;
-  overflow: hidden;
-  background-color: #b9b1a5;
+  background-color: var(--plate, #b6ada0);
   background-image:
     /* Tooth. */
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.17'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)' opacity='0.19'/%3E%3C/svg%3E"),
     /* Pebble — the grain a hide has and a sheet of paper does not. */
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.38' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.12'/%3E%3C/svg%3E"),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.36' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23p)' opacity='0.13'/%3E%3C/svg%3E"),
     /* The rake — one source, upper left, falling to the lower right. */
       linear-gradient(
         104deg,
-        rgba(247, 244, 238, 0.62) 0%,
-        rgba(247, 244, 238, 0.14) 26%,
-        rgba(28, 26, 23, 0.05) 58%,
-        rgba(28, 26, 23, 0.19) 100%
+        rgba(247, 244, 238, 0.66) 0%,
+        rgba(247, 244, 238, 0.16) 24%,
+        rgba(28, 26, 23, 0.04) 55%,
+        rgba(28, 26, 23, 0.2) 100%
       ),
-    /* The fall. */
-      radial-gradient(155% 130% at 34% 28%, rgba(28, 26, 23, 0) 40%, rgba(28, 26, 23, 0.26) 100%);
+    /* The fall — the corners go last, as they do in every frame ever exposed. */
+      radial-gradient(158% 132% at 32% 26%, rgba(28, 26, 23, 0) 38%, rgba(28, 26, 23, 0.28) 100%);
   background-repeat: repeat, repeat, no-repeat, no-repeat;
-}
 
-/*
- * The blind emboss — the ridge a plate takes when it is pressed into board.
- * Light on the two edges the light falls on, shadow on the two it leaves.
- */
-.reserved-frame::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+  /*
+   * The mount. A plate is a physical object laid on paper, and four things
+   * make it one: a lit edge where the light strikes, a dark edge where it does
+   * not, a hairline of the sheet it is pressed into, and a shadow that is
+   * almost not there. The cast is 40px of blur at 22% and offset by 10 — the
+   * length of shadow a 2mm board throws in room light, not the drop shadow of
+   * an interface.
+   */
   box-shadow:
-    inset 1px 1px 0 rgba(255, 253, 248, 0.26),
-    inset -1px -1px 0 rgba(28, 26, 23, 0.16);
+    inset 0 1px 0 rgba(255, 253, 248, 0.3),
+    inset 1px 0 0 rgba(255, 253, 248, 0.16),
+    inset -1px 0 0 rgba(28, 26, 23, 0.14),
+    inset 0 -1px 0 rgba(28, 26, 23, 0.2),
+    0 1px 2px rgba(28, 26, 23, 0.1),
+    0 10px 40px -18px rgba(28, 26, 23, 0.28);
 }
 
 /*
- * The trim — four corner marks, hairline, at the sheet's own margin. No
- * rectangle: a drawn box reads as a frame around nothing, and the marks alone
- * read as a sheet that has been positioned.
+ * The trim — four corner marks at the sheet's own margin, hairline, in the
+ * paper's own tone. No rectangle: a drawn box frames nothing, and the marks
+ * alone read as a sheet that has been positioned under glass.
  */
 .reserved-frame::after {
   content: "";
   position: absolute;
-  inset: clamp(0.875rem, 3%, 2.25rem);
+  inset: clamp(0.875rem, 3.2%, 2.5rem);
   pointer-events: none;
-  --crop: rgba(247, 244, 238, 0.4);
+  --crop: rgba(247, 244, 238, 0.34);
   background-image:
     linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop)),
     linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop)),
@@ -498,14 +508,14 @@
     linear-gradient(var(--crop), var(--crop)), linear-gradient(var(--crop), var(--crop));
   background-repeat: no-repeat;
   background-size:
-    1px 22px,
-    22px 1px,
-    1px 22px,
-    22px 1px,
-    1px 22px,
-    22px 1px,
-    1px 22px,
-    22px 1px;
+    1px 26px,
+    26px 1px,
+    1px 26px,
+    26px 1px,
+    1px 26px,
+    26px 1px,
+    1px 26px,
+    26px 1px;
   background-position:
     left top,
     left top,
@@ -517,130 +527,11 @@
     right bottom;
 }
 
-/*
- * The tall plate — a hide hangs. A second, softer fall down the length of the
- * frame, so a portrait board does not read as a flat panel.
- */
+/* A hanging board takes a deeper ground than one lying flat. */
 .reserved-frame--tall {
-  background-color: #b5ada1;
+  --plate: #ada496;
 }
 
-/* ==========================================================================
-   THE REVEAL
-
-   A cross dissolve, once per element, on arrival into the field. It is the
-   only thing on this site that reacts to the scroll position, and it reacts by
-   dissolving rather than by moving: nothing slides, nothing scales, nothing
-   parallaxes, and the frame itself never moves (M7).
-
-   The hidden state is gated on `html[data-reveal="on"]`, which only the
-   observer sets. A visitor whose script never runs receives the whole surface
-   painted, and `prefers-reduced-motion` collapses the transition to nothing
-   through the global rule above.
-   ========================================================================== */
-
-@layer base {
-  [data-reveal] {
-    transition:
-      opacity var(--duration-band-panel) var(--ease-placed),
-      translate var(--duration-band-panel) var(--ease-placed);
-  }
-
-  html[data-reveal="on"] [data-reveal]:not([data-revealed]) {
-    opacity: 0;
-    translate: 0 0.75rem;
-  }
-
-  /* A frame dissolves in place. It is already occupying its space — the ratio
-     was reserved before the pixels arrived — so it may not also move (§32.1). */
-  html[data-reveal="on"] [data-reveal="frame"]:not([data-revealed]) {
-    translate: none;
-    transition-duration: var(--duration-band-field);
-  }
-}
-
-/* ==========================================================================
-   THE RULE THAT GROWS
-
-   The one motion permitted on a navigation destination: a hairline drawn from
-   the leading edge to the trailing one, in band 1. Nothing else changes —
-   no colour, no weight, no lift (§42.5).
-   ========================================================================== */
-
-@utility rule-grow {
-  position: relative;
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset-inline: 0;
-    bottom: -0.35em;
-    height: 1px;
-    background-color: currentColor;
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform var(--duration-band-mark) var(--ease-placed);
-  }
-
-  &:hover::after,
-  .group:hover &::after,
-  &[aria-current="page"]::after,
-  [aria-current="page"] &::after {
-    transform: scaleX(1);
-  }
-}
-
-/* ==========================================================================
-   ARRIVAL
-
-   Motion Direction M6: every movement has a visible cause. A visitor who
-   opened a surface caused that surface to arrive, so a surface transition is
-   the one entrance this system has — and VDS §42.3 names it by that word:
-   band 4, "the whole viewport: an inverted field, **a surface transition**."
-
-   What this is **not**, and the distinction is the whole rule: it is not a
-   scroll reveal. §42.5's last row removes those from the entire system and
-   Milestone 0.3 removed the mechanism that produced them. Nothing here
-   observes the scroll position, nothing waits below the fold, and nothing on
-   any surface begins at opacity 0 and stays there. A visitor who never scrolls
-   and a visitor whose animations never run both receive the whole surface,
-   which is §42.5 stated as a fallback rather than as an intention.
-
-   `both` fill is what guarantees it: under `prefers-reduced-motion` the global
-   rule collapses the duration to 0.01ms, the end state is painted immediately,
-   and nothing is substituted for the movement (§42.7).
-   ========================================================================== */
-
-@keyframes arrive {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@layer base {
-  /*
-   * The surface arrives once, as one field. M10: one movement per field — so
-   * the whole of `main` moves rather than each of its parts, and there is no
-   * stagger between sections for a reader to count (§42.6).
-   */
-  main {
-    animation: arrive var(--duration-band-field) var(--ease-placed) both;
-  }
-
-  /*
-   * The dissolve. A photograph is a panel-sized thing (§42.3 band 3), and the
-   * cause a reader can see is the frame resolving out of the field it was
-   * already occupying — the space never changes size, because the ratio was
-   * reserved before the pixels arrived (§32.1).
-   */
-  main img,
-  .reserved-frame {
-    animation: arrive var(--duration-band-panel) var(--ease-placed) both;
-  }
-}
 /* ==========================================================================
    MOTION
 
@@ -678,7 +569,7 @@
 
   html[data-motion="on"] [data-reveal]:not([data-revealed]) {
     opacity: 0;
-    translate: 0 1.25rem;
+    translate: 0 1.75rem;
   }
 
   /* A plate dissolves in place. It already occupies its space, so it may not
@@ -748,5 +639,93 @@
     transform: scaleX(1);
     transform-origin: left;
     transition: transform var(--duration-band-panel) var(--ease-placed);
+  }
+}
+
+/* ==========================================================================
+   DISSOLVES
+
+   The page has no seams. Where the ground changes, it changes over a band
+   rather than at a line — the tone of the field is graded from one to the
+   next, so a reader falls into the dark instead of arriving at an edge.
+   ========================================================================== */
+
+@utility dissolve-into-ink {
+  height: clamp(9rem, 34svh, 24rem);
+  background-image: linear-gradient(
+    to bottom,
+    #f2efe9 0%,
+    #e3dfd7 22%,
+    #b9b3a9 44%,
+    #7c766d 64%,
+    #45403a 82%,
+    #1c1a17 100%
+  );
+}
+
+@utility dissolve-out-of-ink {
+  height: clamp(9rem, 34svh, 24rem);
+  background-image: linear-gradient(
+    to bottom,
+    #1c1a17 0%,
+    #45403a 18%,
+    #7c766d 36%,
+    #b9b3a9 56%,
+    #e3dfd7 78%,
+    #f2efe9 100%
+  );
+}
+
+@utility dissolve-into-recessed {
+  height: clamp(4rem, 12svh, 9rem);
+  background-image: linear-gradient(to bottom, var(--color-paper) 0%, var(--color-recessed) 100%);
+}
+
+@utility dissolve-out-of-recessed {
+  height: clamp(4rem, 12svh, 9rem);
+  background-image: linear-gradient(to bottom, var(--color-recessed) 0%, var(--color-paper) 100%);
+}
+
+/* The page's own grade — a warmth that deepens as the document runs, so the
+   paper at the foot is not the paper at the head. Under 2% across 9,000px. */
+@utility field-grade {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background-image: linear-gradient(
+      to bottom,
+      rgba(28, 26, 23, 0) 0%,
+      rgba(28, 26, 23, 0.018) 55%,
+      rgba(28, 26, 23, 0.038) 100%
+    );
+  }
+}
+
+/* ==========================================================================
+   OPTICAL CORRECTIONS
+
+   The things that separate set type from typed text.
+   ========================================================================== */
+
+@layer base {
+  /*
+   * Optical left. A serif capital carries a left side bearing, so a display
+   * line set flush to a margin sits visibly inside it while the rule and the
+   * rank-C label above it sit on it. Pulling the line back by its own bearing
+   * puts the ink on the margin instead of the box.
+   */
+  .optical-left {
+    margin-left: -0.045em;
+  }
+
+  /* Figures in a rail are compared, so they are lined and tabular. */
+  .rail-figure {
+    font-variant-numeric: tabular-nums lining-nums;
+    font-feature-settings: "tnum" 1;
   }
 }

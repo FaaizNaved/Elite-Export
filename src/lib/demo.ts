@@ -154,8 +154,8 @@ const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number,
    * The place at bleed, then one object off the bench, bounded (§31.3).
    */
   C1: [
-    ["E5", 2400, 1200, "The workshop floor, Kanpur"],
-    ["E6", 1200, 1200, "Harness leather on the bench"],
+    ["E5", 1800, 2250, "The workshop floor, Kanpur"],
+    ["E6", 1300, 1000, "Harness leather on the bench"],
   ],
   C2: [
     ["E2", 2400, 1200, "A hide being graded at intake"],
@@ -175,7 +175,7 @@ const CHAPTER_PLAN: Record<Chapter, ReadonlyArray<[EvidenceRank, number, number,
    * the annotation beside the frame, in the words the content layer already
    * holds, and it arrives as an E2 photograph the day the archive has one.
    */
-  C3: [["E1", 2400, 1350, "The cut being decided, along the backbone"]],
+  C3: [["E1", 2400, 1080, "The cut being decided, along the backbone"]],
   C4: [
     ["E2", 2400, 1200, "Skiving to thickness"],
     ["E6", 1200, 1200, "A shaped component, off the press"],
