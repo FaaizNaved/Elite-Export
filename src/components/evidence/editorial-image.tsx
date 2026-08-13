@@ -27,8 +27,6 @@ import { imageSizes } from "@/utils/image";
 
 export interface EditorialImageProps {
   image: ImageToken;
-  /** Demo mode only — see {@link ContentImage}. Ignored for a photograph. */
-  stitched?: boolean;
   /** How wide it will render. Use `imageSizes`, not a hand-written string. */
   sizes?: string;
   priority?: boolean;
@@ -49,7 +47,6 @@ export function EditorialImage({
   priority,
   bleed = false,
   className,
-  stitched = false,
 }: EditorialImageProps) {
   if (!image.width || !image.height) return null;
 
@@ -87,16 +84,25 @@ export function EditorialImage({
       style={ceiling}
       className={cn("flex flex-col", bleed && "w-screen max-w-none", className)}
     >
-      <ContentImage image={image} sizes={sizes} priority={priority} stitched={stitched} />
+      <ContentImage image={image} sizes={sizes} priority={priority} />
+
       {/*
-        A reserved plate carries its own stamp inside the trim, and the stamp is
-        not a caption — it is what is reserved, not a specification of a
-        photograph that does not exist. Printing it twice, once inside the frame
-        and once beneath it, would state it as both.
+        The plate label — a rule, then the subject, set the way a monograph sets
+        one. Nothing inside the frame, and nothing about the frame.
       */}
-      {image.caption && !isReservedFrame(image.src) && (
-        <figcaption className="mt-s2">
-          <Caption>{image.caption}</Caption>
+      {image.caption && (
+        <figcaption
+          className={cn(
+            "mt-s3 flex items-start gap-s2",
+            /* A bleed frame runs edge to edge; its label still belongs on the
+               field's own margin, aligned with the words below it. */
+            bleed && "mx-auto w-full max-w-field px-6 reading:px-12",
+          )}
+        >
+          <span aria-hidden className="mt-[0.62em] h-px w-8 shrink-0 bg-hairline" />
+          <Caption className={isReservedFrame(image.src) ? "tracking-mark uppercase" : undefined}>
+            {image.caption}
+          </Caption>
         </figcaption>
       )}
     </figure>

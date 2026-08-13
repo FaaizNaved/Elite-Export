@@ -201,7 +201,6 @@ export function Chapter({
           sizes={imageSizes.bleed}
           priority={priority}
           bleed
-          stitched
         />
       )}
 
@@ -256,7 +255,6 @@ export function Chapter({
                 image={frame}
                 bleed
                 sizes={imageSizes.bleed}
-                stitched
                 className={index === 0 && position === 0 && !openingFrame ? undefined : "mt-s4"}
               />
             ))}
@@ -296,7 +294,6 @@ export function Chapter({
                         key={frame.src}
                         image={frame}
                         sizes={imageSizes.record}
-                        stitched
                       />
                     ))}
                   </div>

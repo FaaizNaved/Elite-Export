@@ -126,28 +126,17 @@ export interface ContinuationProps {
 
 export function Continuation({ href, children, className }: ContinuationProps) {
   return (
-    <TextLink
+    <Link
       href={href}
       className={cn(
-        "font-sans text-r",
-        /*
-         * A continuation is a standing target rather than a word inside a
-         * sentence, so two rules apply that do not apply to a link in prose.
-         *
-         * §35.3: it is a link, and a link is the size of its label. As a flex
-         * child it would otherwise stretch to the field and carry an underline
-         * the full width of the surface, which is a band.
-         *
-         * §47.5: the minimum interactive target is 44 × 44px, because below
-         * roughly that, error rates rise sharply for anyone whose hands are not
-         * steady. The label's own line box is 22px, so the target is set to 44
-         * and the text sits in the middle of it.
-         */
-        "inline-flex w-fit min-h-11 items-center self-start",
+        "group inline-flex w-fit min-h-11 items-center gap-s2 self-start",
+        "motion-panel text-c tracking-rail text-ink uppercase transition-opacity hover:opacity-100",
+        "opacity-75",
         className,
       )}
     >
-      {children}
-    </TextLink>
+      <span className="rule-grow">{children}</span>
+      <Mark name="arrow" />
+    </Link>
   );
 }

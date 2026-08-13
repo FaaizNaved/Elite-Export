@@ -3,33 +3,24 @@
 import { useEffect } from "react";
 
 /**
- * The reveal — the surface's one cross dissolve.
+ * The two movements that respond to a reader.
  *
- * Motion Direction M6: every movement has a visible cause, and the cause here
- * is the reader arriving at the element. It dissolves; it does not move the
- * frame, scale, zoom, float or parallax, and nothing is staggered inside a
- * field — one movement per field (M10).
+ * **The rise** — an element arrives at 0 opacity and 20px low, and takes 1.1s
+ * to be placed. Once. It is never re-hidden on the way back up.
  *
- * Three properties make it safe to have at all:
+ * **The drift** — a plate moves against the scroll by at most 28px across its
+ * whole travel through the viewport. It is under the threshold at which a
+ * reader can watch it happen, and over the one at which a page reads as flat.
  *
- * 1. **It cannot hide content.** The hidden state is gated on
- *    `html[data-reveal="on"]`, which only this component sets, and it sets it
- *    on mount. A visitor whose script never runs is served the whole surface,
- *    painted.
- * 2. **It happens once.** Each element is unobserved the moment it arrives, so
- *    nothing re-fades on the way back up — a thing that disappears when you
- *    scroll away from it is the medium announcing itself (M7).
- * 3. **It disappears under `prefers-reduced-motion`.** The global rule in
- *    `globals.css` collapses the transition to 0.01ms and the end state paints
- *    immediately, with nothing substituted for the movement (§42.7).
- *
- * Mounted by the surface that uses it rather than by the shell, so the
- * observer is re-established on navigation.
+ * Both are gated on `html[data-motion="on"]`, set here on mount: a visitor
+ * whose script never runs is served the whole surface, painted. Reduced motion
+ * removes both — the transition through the global rule, the drift through its
+ * own media query.
  */
 export function Reveal() {
   useEffect(() => {
     const root = document.documentElement;
-    root.dataset.reveal = "on";
+    root.dataset.motion = "on";
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -39,17 +30,52 @@ export function Reveal() {
           observer.unobserve(entry.target);
         }
       },
-      /* A little inside the fold, so a thing is arrived at rather than caught. */
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.01 },
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.01 },
     );
 
     for (const element of document.querySelectorAll("[data-reveal]")) {
       observer.observe(element);
     }
 
+    /* The drift. One loop, one read of the layout per frame, written straight
+       to a custom property so no layout is invalidated. */
+    const drifting = [...document.querySelectorAll<HTMLElement>("[data-drift]")];
+    let frame = 0;
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const place = () => {
+      frame = 0;
+      const viewport = window.innerHeight;
+
+      for (const element of drifting) {
+        const box = element.getBoundingClientRect();
+        if (box.bottom < -200 || box.top > viewport + 200) continue;
+
+        /* -1 when the element is entering from below, +1 when it has left
+           above. Multiplied by half the amplitude, so total travel is 28px. */
+        const progress = (box.top + box.height / 2 - viewport / 2) / (viewport / 2 + box.height / 2);
+        const amount = Number(element.dataset.drift) || 14;
+        element.style.setProperty("--drift", `${(-progress * amount).toFixed(2)}px`);
+      }
+    };
+
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(place);
+    };
+
+    if (!reduced && drifting.length > 0) {
+      place();
+      window.addEventListener("scroll", onScroll, { passive: true });
+      window.addEventListener("resize", onScroll, { passive: true });
+    }
+
     return () => {
       observer.disconnect();
-      delete root.dataset.reveal;
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (frame) cancelAnimationFrame(frame);
+      delete root.dataset.motion;
     };
   }, []);
 

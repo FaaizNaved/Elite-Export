@@ -38,12 +38,6 @@ export interface ContentImageProps {
   priority?: boolean;
   /** Layout classes for the image itself. Width only — height follows. */
   className?: string;
-  /**
-   * Demo mode only: draw the reserved plate with a stitched trim rather than a
-   * plain one. It has no effect on a photograph — a frame that holds evidence
-   * is never decorated (§25, R8.7).
-   */
-  stitched?: boolean;
 }
 
 /**
@@ -57,13 +51,7 @@ export interface ContentImageProps {
  */
 const DELIVERY_QUALITY = 90;
 
-export function ContentImage({
-  image,
-  sizes,
-  priority,
-  className,
-  stitched = false,
-}: ContentImageProps) {
+export function ContentImage({ image, sizes, priority, className }: ContentImageProps) {
   /**
    * An image whose intrinsic size is unknown cannot be shown to reach the
    * evidence threshold (VDS §30.2), so it is not published.
@@ -95,33 +83,12 @@ export function ContentImage({
         style={{ aspectRatio: `${image.width} / ${image.height}` }}
         data-reveal="frame"
         className={cn(
-          "reserved-frame relative w-full",
-          /*
-           * The stitched trim, on a frame that leads a passage. A dashed
-           * hairline inside the crop marks: the saddle stitch reduced to the
-           * interval it leaves.
-           */
-          stitched && "reserved-frame--stitched",
+          "reserved-frame w-full",
+          /* A hanging board takes a deeper ground than a lying one. */
+          image.height > image.width && "reserved-frame--tall",
           className,
         )}
-      >
-        <span className="reserved-mark absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-
-        {/*
-          The plate's own stamp — bottom left, inside the trim.
-
-          It is not a caption. §12.2 makes a caption a specification of a
-          photograph and there is no photograph, so this states the one thing
-          that is true of this rectangle: what is reserved, and for what. A
-          reviewer reads *the photography goes here* rather than *the image
-          failed to load*, which is the whole difference between a layout under
-          review and a page under construction.
-        */}
-        <span className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-baseline justify-between gap-x-s3 gap-y-1 p-[clamp(1.5rem,4.4%,3rem)] text-c tracking-mark text-[rgba(242,239,233,0.72)] uppercase">
-          <span>{image.caption ?? "Plate reserved"}</span>
-          <span>Photography to come</span>
-        </span>
-      </div>
+      />
     );
   }
 

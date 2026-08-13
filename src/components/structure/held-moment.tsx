@@ -1,82 +1,52 @@
 import type { ReactNode } from "react";
-import { Statement } from "@/components/ui/typography";
+import { Record, Statement } from "@/components/ui/typography";
 import { ContentImage } from "@/components/ui/image";
 import { cn } from "@/lib/cn";
 import type { Image as ImageToken } from "@/types";
 import { imageSizes } from "@/utils/image";
 
 /**
- * The held moment — Visual Design System §23.4, Master Implementation
- * Blueprint §11.1.
- *
- * R11.3 explains why it is a component at all: "the held moment is a
- * component, not an absence. It is listed here because things that are not
- * built do not survive a sprint."
- *
- * §23.4 measures it, and every row is expressed below:
- *
- *   Extent    ≥ one viewport height, never less than 560px  → S7
- *   Contents  **one element, or none**
- *   Persistent elements in view  **zero**
- *   Frequency exactly one per surface longer than three viewport heights
- *
- * **The zero is the rule.** Creative Direction Book §22.4: space around an
- * element that still shares its field with a persistent control is not
- * silence, it is padding. A held moment with a sticky header in it does not
- * exist, however much space it has. Nothing in this system is sticky — the
- * navigation has been `position: static` since the navigation package and the
- * back-to-top, sticky CTA and chat widget were removed before that — so the
- * zero holds structurally rather than by a rule somebody has to remember.
- *
- * "Never removed to fit content; the content is removed instead" (§11.1).
+ * The held moment — one viewport, one element, nothing else in view.
  */
 export interface HeldMomentProps {
-  /**
-   * One element, or none. A photograph at or above the evidence threshold, a
-   * single statement, or nothing at all — and the union is exclusive because
-   * two of them would be two elements.
-   */
   photograph?: ImageToken;
   statement?: ReactNode;
+  /** A single line beneath the statement, at rank C. Not a second statement. */
+  mark?: string;
   className?: string;
 }
 
-export function HeldMoment({ photograph, statement, className }: HeldMomentProps) {
-  /* One element, or none. If a caller passes both, the photograph is the moment. */
+export function HeldMoment({ photograph, statement, mark, className }: HeldMomentProps) {
   const element = photograph?.width ? "photograph" : statement ? "statement" : "none";
 
   return (
     <div
-      /*
-       * S7 is `max(100svh, 30rem)` — one viewport height, floored at 480 on a
-       * small field and 560 on a wide one per §23.4. The token carries the
-       * number; nothing is typed here.
-       */
-      className={cn("flex min-h-s7 w-full flex-col justify-center", className)}
+      className={cn(
+        "relative flex min-h-s7 w-full flex-col justify-center overflow-hidden",
+        className,
+      )}
       aria-hidden={element === "none" ? true : undefined}
     >
       {element === "photograph" && photograph && (
         <ContentImage image={photograph} sizes={imageSizes.bleed} />
       )}
+
       {element === "statement" && (
         <div className="mx-auto w-full max-w-field px-6 reading:px-12">
-          {/*
-            One element, and it is the sentence.
-
-            The moment was empty — one viewport of ink with nothing in it, which
-            §23.4 does permit and which, on the way into Recognition, spends the
-            strongest transition in the system on a blank screen. §22.3 names
-            what this construction is for: *silence before a claim — the pause
-            that makes the next statement land.* A claim needs a sentence.
-
-            The mark above it is one hairline at the reading edge — the same
-            dateline rule the overture uses — so the statement is placed in the
-            field rather than floated in it.
-          */}
-          <span aria-hidden className="mb-s4 block h-px w-16 bg-ink-secondary-inverse" />
-          <Statement rank="d" as="p" data-reveal className="max-w-[18ch] reading:max-w-[16ch]">
-            {statement}
-          </Statement>
+          <div data-reveal className="max-w-[20rem] reading:max-w-[46rem] field:max-w-[54rem]">
+            <span aria-hidden className="mb-s5 block h-px w-14 bg-ink-secondary-inverse/70" />
+            <Statement rank="d" as="p" className="reading:max-w-none">
+              {statement}
+            </Statement>
+            {mark && (
+              <Record
+                rank="c"
+                className="mt-s5 tracking-rail text-ink-secondary-inverse uppercase"
+              >
+                {mark}
+              </Record>
+            )}
+          </div>
         </div>
       )}
     </div>

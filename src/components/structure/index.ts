@@ -11,4 +11,6 @@ export type { OpeningProps } from "./opening";
 export { Overture } from "./overture";
 export type { OvertureProps } from "./overture";
 export { Close } from "./close";
+export { Coda } from "./coda";
+export type { CodaProps } from "./coda";
 export type { CloseProps } from "./close";
