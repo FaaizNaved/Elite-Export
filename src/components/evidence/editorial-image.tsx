@@ -1,7 +1,7 @@
 import { ContentImage } from "@/components/ui/image";
 import { Caption } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
-import { isReservedFrame } from "@/lib/demo";
+import { isDrawableFrame, isPlate } from "@/lib/plates";
 import type { Image as ImageToken } from "@/types";
 import { imageSizes } from "@/utils/image";
 
@@ -48,7 +48,12 @@ export function EditorialImage({
   bleed = false,
   className,
 }: EditorialImageProps) {
-  if (!image.width || !image.height) return null;
+  /*
+   * The figure is not drawn where the frame is not. Without this the caption,
+   * its rule and the figure's own space survived an image that renders nothing
+   * — a label under an empty rectangle, which is worse than the absence.
+   */
+  if (!isDrawableFrame(image)) return null;
 
   /*
    * §31.4 is Bounded and its ceiling is absolute: a full-bleed photograph
@@ -76,13 +81,47 @@ export function EditorialImage({
    * are refused above; R18.5 puts that end of the range where it belongs —
    * *where a surface needs a shape the library lacks, the answer is a different
    * photograph.*
+   *
+   * **It applies to every frame, not only to the ones that declare `bleed`.**
+   *
+   * §31.4 is a rule about vertical extent. `bleed` is a prop about a caption's
+   * margin. Gating the first on the second meant the rule was enforced for the
+   * two-edge case and skipped for the other one §31.3 names — the one-edge
+   * bleed at and above 1280, *the system's characteristic asymmetry*, which a
+   * surface reaches by giving a frame a column that starts at the field's edge.
+   * No prop is involved, so no ceiling was. Home's second chapter is exactly
+   * that shape and measured **124% of the viewport** at 1440×700: a frame that
+   * cannot be seen whole, which is the one thing §31.4 forbids outright.
+   *
+   * Unconditional, it costs a bounded frame nothing — the width at which a
+   * frame is one viewport tall is far wider than any column that holds one, so
+   * the cap does not bind and no bounded composition moves. It binds only where
+   * a frame was about to break the rule, which is the whole of its job.
    */
-  const ceiling = bleed ? { maxWidth: `calc(100svh * ${image.width} / ${image.height})` } : undefined;
+  const ceiling = { maxWidth: `calc(100svh * ${image.width} / ${image.height})` };
 
   return (
     <figure
       style={ceiling}
-      className={cn("flex flex-col", bleed && "w-screen max-w-none", className)}
+      className={cn(
+        "flex flex-col",
+        /*
+         * `w-full`, not `w-screen`.
+         *
+         * `w-screen` is `width: 100vw`, and `100vw` **includes the classic
+         * scrollbar** while the layout viewport does not. Every bleed frame on
+         * the site was therefore 15–17px wider than the space available, which
+         * is the horizontal scrollbar visible on every screenshot at 1280 and
+         * above. It is not a composition problem: it is a unit that measures a
+         * different box from the one the element sits in.
+         *
+         * A bleed frame is always a direct child of a full-width section with
+         * no inline padding, so `100%` *is* the viewport — edge to edge, with
+         * nothing to overflow. The composition is unchanged at every width.
+         */
+        bleed && "w-full max-w-none",
+        className,
+      )}
     >
       <ContentImage image={image} sizes={sizes} priority={priority} />
 
@@ -101,7 +140,7 @@ export function EditorialImage({
         >
           <Caption
             className={
-              isReservedFrame(image.src)
+              isPlate(image.src)
                 ? "tracking-plate text-ink-secondary/70 uppercase"
                 : undefined
             }

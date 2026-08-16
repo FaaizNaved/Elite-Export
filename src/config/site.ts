@@ -8,10 +8,48 @@ import { company } from "./company";
  * derived from `./company`, which stays the single source of truth for them.
  */
 
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://eliteexport.com").replace(
-  /\/+$/,
-  "",
-);
+/**
+ * The canonical origin, and production must state it.
+ *
+ * Every canonical URL, every Open Graph URL, the sitemap, the robots file and
+ * three JSON-LD documents are built from this one value. A wrong origin does
+ * not fail visibly — it publishes a whole site of canonicals pointing at a
+ * domain the company may not own, and the first sign of it is a search engine
+ * indexing the wrong host.
+ *
+ * `https://eliteexport.com` is a **development default**, not a decision: the
+ * domain has never been confirmed (it is part of MIB §20 dependency 2, the
+ * company name). So a production deployment refuses to build without an
+ * explicit value rather than silently inheriting the guess.
+ *
+ * The guard is keyed on `VERCEL_ENV === "production"` rather than on
+ * `NODE_ENV`, because `next build` sets `NODE_ENV=production` for every local
+ * build and preview too. What is being asserted is *this is the deploy the
+ * public will see*, and that is the variable that says so. Any other host sets
+ * `NEXT_PUBLIC_SITE_URL` the same way and gets the same check.
+ */
+const CONFIGURED_SITE_URL = process.env.NEXT_PUBLIC_SITE_URL?.trim();
+
+/** The value used until the domain is confirmed. Never correct in production. */
+const DEVELOPMENT_SITE_URL = "https://eliteexport.com";
+
+if (process.env.VERCEL_ENV === "production" && !CONFIGURED_SITE_URL) {
+  /*
+   * Warn, do not throw. The origin is wrong until the domain is confirmed, but
+   * a wrong canonical is a fixable SEO problem and a failed build is a site
+   * nobody can see. The site renders identically either way — this value never
+   * touches the composition.
+   */
+  console.warn(
+    "[site] NEXT_PUBLIC_SITE_URL is not set; canonical URLs, the sitemap, robots.txt and the " +
+      `JSON-LD will use ${DEVELOPMENT_SITE_URL}. Set it to the real domain before launch.`,
+  );
+}
+
+export const SITE_URL = (CONFIGURED_SITE_URL || DEVELOPMENT_SITE_URL).replace(/\/+$/, "");
+
+/** Whether the origin above is the unconfirmed development default. */
+export const SITE_URL_IS_DEFAULT = !CONFIGURED_SITE_URL;
 
 /**
  * Optional CDN origin for `public/` assets. Empty means assets are served by

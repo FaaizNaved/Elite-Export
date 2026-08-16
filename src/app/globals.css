@@ -246,6 +246,13 @@
 
   html {
     -webkit-tap-highlight-color: transparent;
+    /*
+     * Native smooth scrolling for in-page jumps — the skip link and the two
+     * chapter anchors. It is the browser's own scroller, so nothing is
+     * hijacked, nothing is throttled and it costs no JavaScript. The global
+     * reduced-motion rule below sets it back to `auto`.
+     */
+    scroll-behavior: smooth;
   }
 
   body {
@@ -372,61 +379,35 @@
 /*
  * Linen — the weave of a book cloth, at 0.9%. Warp and weft, nothing else.
  */
-@utility atmosphere-linen {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cg stroke='%231c1a17' stroke-width='0.6' fill='none'%3E%3Cpath d='M0 2 H8 M0 6 H8'/%3E%3Cpath d='M2 0 V8 M6 0 V8' opacity='0.55'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0.009;
-  }
-}
-
 /*
- * The stitch — the interval two needles leave, at 0.9%, on a 64px repeat.
+ * MATERIAL — what survived the edit, and why so little did.
+ *
+ * A previous revision gave each section its own drawn material: leather grain
+ * under the house, cutting templates under the range, blueprint linework under
+ * the process. On paper that reads as a system. On screen it read as
+ * **wallpaper** — at any opacity where the motif could be recognised it was
+ * decoration, and at any opacity where it could not there was no reason to ship
+ * it. A pattern a reader can name is a pattern competing with the type.
+ *
+ * They are gone. What is left is not a texture library, it is two things that
+ * describe how a surface is *lit* and what it is *made of*:
+ *
+ *   the sheet   fine tooth and laid lines, on `body`, under the whole document
+ *   the light   one warm fall across a field, so a section reads as a room
+ *   the cloth   a book weave, on the back cover only, at 2%
+ *
+ * The depth on this page comes from the plates, the ink field and the two
+ * dissolves — from material and light, not from motif. Nothing here can be
+ * pointed at, and that is the test each one had to pass.
+ *
+ * Not present, and deliberately: the horse silhouette. It is the most
+ * predictable image in the category, every competitor has one, and at 3%
+ * behind a section it does not become subtle — it becomes a competitor's
+ * homepage at low opacity. The creative direction reserves it for the 404.
  */
-@utility atmosphere-stitch {
-  position: relative;
 
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cpath d='M8 40 L22 26 M40 40 L54 26' stroke='%231c1a17' stroke-width='2' stroke-linecap='round' fill='none'/%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0.009;
-  }
-}
-
-/*
- * The emboss — a blind-stamped lattice, at 0.8%, on a 112px repeat.
- */
-@utility atmosphere-emboss {
-  position: relative;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='112' height='112'%3E%3Cg stroke='%231c1a17' stroke-width='1' fill='none'%3E%3Cpath d='M0 28 L28 0 M0 84 L84 0 M28 112 L112 28 M84 112 L112 84'/%3E%3Cpath d='M0 84 L28 112 M0 28 L84 112 M28 0 L112 84 M84 0 L112 28'/%3E%3C/g%3E%3C/svg%3E");
-    background-repeat: repeat;
-    opacity: 0.008;
-  }
-}
-
-/*
- * The light — one warm fall across a section, at under 1%. It is what makes a
- * field read as a room rather than as a colour.
- */
+/* The light. Not a texture: one warm fall across a field, and the reason a
+   section reads as a room rather than as a colour. */
 @utility atmosphere-light {
   position: relative;
 
@@ -439,6 +420,29 @@
     background-image:
       radial-gradient(80% 60% at 12% 8%, rgba(255, 252, 246, 0.85) 0%, rgba(255, 252, 246, 0) 60%),
       radial-gradient(90% 70% at 92% 96%, rgba(28, 26, 23, 0.03) 0%, rgba(28, 26, 23, 0) 62%);
+  }
+}
+
+/* The cloth. A book weave on the back cover, at 2% — felt as the difference
+   between ink and a black rectangle, never seen as a pattern. */
+@utility atmosphere-linen {
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cg stroke='%23f2efe9' stroke-width='0.6' fill='none'%3E%3Cpath d='M0 2 H8 M0 6 H8'/%3E%3Cpath d='M2 0 V8 M6 0 V8' opacity='0.55'/%3E%3C/g%3E%3C/svg%3E");
+    background-repeat: repeat;
+    opacity: 0.02;
+  }
+
+  @media (width < 45rem) {
+    &::before {
+      display: none;
+    }
   }
 }
 

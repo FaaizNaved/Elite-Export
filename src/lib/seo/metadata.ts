@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { isGeneratedPlaceholder } from "../placeholders";
 import { absoluteUrl } from "./url";
 import { company, SITE_URL, siteConfig } from "../../config";
 import { DEFAULT_HTML_LANG, DEFAULT_OG_LOCALE } from "../../constants/locale";
@@ -44,6 +45,24 @@ export function buildMetadata(input: MetadataInput): Metadata {
   const canonical = absoluteUrl(seo?.canonical ?? input.path);
   const keywords = [...(seo?.keywords ?? []), ...siteConfig.keywords];
 
+  /*
+   * A social preview is published imagery.
+   *
+   * `siteConfig.ogImage` points at `/images/og/default.webp`, which is one of
+   * the 98 files the placeholder generator wrote — so every surface on the site
+   * was handing a brown gradient block to Slack, WhatsApp, LinkedIn and every
+   * search engine that renders a card, on a URL the company does not control
+   * the caching of. Photography Direction §24.5 does not have an exception for
+   * images that are not on the page.
+   *
+   * So the card is published without an image rather than with a placeholder
+   * one. A text-only preview is a preview; a brown rectangle is a claim about
+   * the company's photography.
+   */
+  const images = isGeneratedPlaceholder(image.src)
+    ? undefined
+    : [{ url: absoluteUrl(image.src), alt: image.alt, width: image.width, height: image.height }];
+
   return {
     title,
     description,
@@ -57,14 +76,7 @@ export function buildMetadata(input: MetadataInput): Metadata {
       url: canonical,
       siteName: siteConfig.name,
       locale: DEFAULT_OG_LOCALE,
-      images: [
-        {
-          url: absoluteUrl(image.src),
-          alt: image.alt,
-          width: image.width,
-          height: image.height,
-        },
-      ],
+      ...(images ? { images } : {}),
       ...(input.type === "article" && {
         publishedTime: input.publishedTime?.toISOString(),
         modifiedTime: input.modifiedTime?.toISOString(),
@@ -74,7 +86,7 @@ export function buildMetadata(input: MetadataInput): Metadata {
       card: "summary_large_image",
       title,
       description,
-      images: [absoluteUrl(image.src)],
+      ...(images ? { images: [absoluteUrl(image.src)] } : {}),
       creator: siteConfig.twitterHandle,
     },
   };

@@ -8,7 +8,7 @@ import { Section } from "@/components/ui/section";
 import { productsTelling, surfaceIndex } from "@/config";
 import { ROUTES } from "@/constants";
 import { getCategories } from "@/lib/content";
-import { chapterFrames } from "@/lib/demo";
+import { chapterFrames } from "@/lib/plates";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({

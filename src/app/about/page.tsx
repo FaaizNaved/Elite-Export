@@ -8,7 +8,7 @@ import { Section } from "@/components/ui/section";
 import { ROUTES } from "@/constants";
 import { aboutTelling } from "@/config";
 import { getCompanyPage } from "@/lib/content";
-import { chapterFrames } from "@/lib/demo";
+import { chapterFrames } from "@/lib/plates";
 import { companyPageMetadata } from "@/lib/seo";
 import type { Chapter as ChapterId } from "@/types";
 

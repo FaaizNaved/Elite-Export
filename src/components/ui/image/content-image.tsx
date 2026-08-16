@@ -1,6 +1,7 @@
 import NextImage from "next/image";
 import { cn } from "@/lib/cn";
-import { isReservedFrame } from "@/lib/demo";
+import { isPlate } from "@/lib/plates";
+import { isGeneratedPlaceholder } from "@/lib/placeholders";
 import type { Image as ImageToken } from "@/types";
 import { resolveImageUrl } from "@/utils/image";
 
@@ -64,19 +65,26 @@ export function ContentImage({ image, sizes, priority, className }: ContentImage
   if (!image.width || !image.height) return null;
 
   /**
-   * The reserved frame — demo mode only (`src/lib/demo.ts`).
+   * **The plate — a design element, and there is no mode behind it.**
    *
-   * Not a photograph and not a stand-in for one: the space a photograph will
-   * occupy, at that photograph's own measured ratio, so the layout a reviewer
-   * approves is the layout that ships. No file is requested and no `<img>` is
-   * emitted, so nothing here can be mistaken for evidence by a person or by a
-   * gate.
+   * Two things can be true of a path in this library. Either a real photograph
+   * sits there, in which case it is rendered as one; or the file at that path
+   * is still one of the blocks the generator wrote, in which case the plate is
+   * drawn: the exact space and ratio the photograph will occupy, as a lit
+   * archival board. Both are the finished website. Neither is a fallback, and
+   * no environment variable chooses between them.
    *
-   * Two paper tones and one registration mark — the mark a plate is aligned to
-   * before it is printed, which is exactly what this frame is waiting for. It
-   * sits at 6% ink: visible when looked for, invisible when read past.
+   * The day a real frame replaces a generated one in `public/images`, that
+   * position becomes a photograph on the next build — same ratio, same place,
+   * nothing in the layout moves.
+   *
+   * Two consequences worth stating plainly. A generated file is **never**
+   * emitted as an `<img>`, at any width, in any environment — so the brown
+   * blocks Photography Direction §24.5 refuses cannot be served. And no
+   * section, chapter or composition can vanish because a photograph has not
+   * arrived: the space is always drawn.
    */
-  if (isReservedFrame(image.src)) {
+  if (isPlate(image.src) || isGeneratedPlaceholder(image.src)) {
     return (
       <div
         aria-hidden
@@ -84,7 +92,7 @@ export function ContentImage({ image, sizes, priority, className }: ContentImage
         data-reveal="frame"
         className={cn(
           "reserved-frame w-full",
-          /* A hanging board takes a deeper ground than a lying one. */
+          /* A hanging board takes a deeper ground than one lying flat. */
           image.height > image.width && "reserved-frame--tall",
           className,
         )}

@@ -116,6 +116,14 @@ export const companyRecord: readonly RecordItem[] = [
     question: "Which countries has the company actually shipped to? A market is a record of fact, never an ambition.",
     standing: "US, GB, DE, FR, AU, AE, CA, IT",
   },
+  {
+    field: "capabilities",
+    factId: "manufacturing-capability",
+    dependency: 3,
+    question:
+      "Does the company manufacture to a buyer's own design (OEM), develop designs for a buyer to put their name on (ODM), or both? A buyer reads this as a commitment that their drawings will be worked to.",
+    standing: "OEM, ODM",
+  },
   /*
    * Not a field of `CompanyProfile`, and here for exactly that reason.
    *

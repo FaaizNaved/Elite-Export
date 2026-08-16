@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
 import { Statement } from "@/components/ui/typography";
 import { ROUTES } from "@/constants";
-import { chapterFrames } from "@/lib/demo";
+import { chapterFrames } from "@/lib/plates";
 import { buildMetadata } from "@/lib/seo";
 import { imageSizes } from "@/utils/image";
 

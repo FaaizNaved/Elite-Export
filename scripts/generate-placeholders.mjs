@@ -33,12 +33,33 @@ const RATIO = {
   product: [2000, 2000],
   portrait: [1200, 1600],
   og: [1200, 630],
+  /*
+   * The Home opening board — 4:5, and the one bucket here that is a *brief*
+   * rather than a convenience.
+   *
+   * Every other ratio in this table is a shape this script picked so a file
+   * would exist. This one is the shape the Home opening reserves, so it is
+   * also the ratio the photograph has to be delivered at: the file, the image
+   * library measured from it, and the space the layout draws are then one
+   * value, and the day the real frame lands nothing moves.
+   *
+   * `lib/plates.ts` states it as `DELIVERY_SHAPES` and `check:content` refuses
+   * a library record that disagrees with it. Changing the Home opening's ratio
+   * means changing both, and the check is what makes that unavoidable.
+   *
+   * It was `heroTall` (2400×1350, 16:9) — a default, never a decision — while
+   * the page drew the board at 4:5 through a render-time override. Two ratios
+   * for one frame, which Photography Direction §22.4 calls two statements, and
+   * the Crop gate could not see it because the override never entered the
+   * content layer.
+   */
+  openingBoard: [2000, 2500],
 };
 
 /** @type {Array<[string, keyof typeof RATIO]>} */
 const IMAGES = [
   // Page heroes
-  ["images/hero/home-hero", "heroTall"],
+  ["images/hero/home-hero", "openingBoard"],
   ["images/hero/about-hero", "hero"],
   ["images/hero/manufacturing-hero", "hero"],
   ["images/hero/technology-hero", "hero"],
@@ -179,11 +200,26 @@ const title = (name) =>
     .replace(/-/g, " ")
     .toUpperCase();
 
+/*
+ * An optional substring filter, so one board can be redrawn without reissuing
+ * ninety-eight files.
+ *
+ * The manifest is still built from the whole list whatever is passed: it is the
+ * record of *which paths hold a generated file*, which the plate, the SEO layer
+ * and the Placeholder gate all read. Narrowing it to the files touched by one
+ * run would tell three layers that ninety-seven placeholders had become
+ * photographs.
+ */
+const only = process.argv[2];
+
 let written = 0;
 /** Exact record of what this script produced — the publication gate reads it. */
 const manifest = [];
 
 for (const [name, ratio] of IMAGES) {
+  manifest.push(`public/images/${name.replace(/^images\//, "")}.webp`);
+  if (only && !name.includes(only)) continue;
+
   const [width, height] = RATIO[ratio];
   const target = path.join(PUBLIC_DIR, `${name}.webp`);
 
@@ -192,7 +228,6 @@ for (const [name, ratio] of IMAGES) {
     .webp({ quality: 72 })
     .toFile(target);
 
-  manifest.push(`public/images/${name.replace(/^images\//, "")}.webp`);
   written += 1;
 }
 

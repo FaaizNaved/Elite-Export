@@ -11,6 +11,7 @@
     "check:content": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/check-content.js",
     "check:publication": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/check-publication.js",
     "images:record": "node -e \"require('node:fs').rmSync('.content-check',{recursive:true,force:true})\" && tsc -p tsconfig.scripts.json && node .content-check/scripts/record-images.js",
+    "check:layout": "node scripts/check-layout.mjs",
     "generate:placeholders": "node scripts/generate-placeholders.mjs"
   },
   "dependencies": {

@@ -10,10 +10,23 @@ export interface GalleryProps {
   className?: string;
 }
 
+/*
+ * The breakpoints are the design system's three, not Tailwind's five.
+ *
+ * `globals.css` resets the breakpoint namespace to `initial` (VDS §27.1: every
+ * width is read off the content, never off a device), so `sm:` and `lg:`
+ * compile to **nothing at all** — this table set one column at every width and
+ * had done since the theme reset landed. Nothing reported it, because a class
+ * that emits no CSS is not an error anywhere.
+ *
+ *   reading  720   the reading column plus its margins
+ *   paired  1024   the first width at which a second column exists
+ *   field   1280   the first width at which the 5-unit column clears 728px
+ */
 const masonryColumns = {
-  2: "columns-1 sm:columns-2",
-  3: "columns-1 sm:columns-2 lg:columns-3",
-  4: "columns-2 sm:columns-3 lg:columns-4",
+  2: "columns-1 reading:columns-2",
+  3: "columns-1 reading:columns-2 paired:columns-3",
+  4: "columns-2 reading:columns-3 paired:columns-4",
 } as const;
 
 /**

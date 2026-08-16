@@ -1,4 +1,5 @@
 {
+  "//resolveJsonModule": "src/lib/placeholders.ts reads the generator manifest, and both check scripts reach it through the SEO layer.",
   "//": "Used by `npm run check:content`, `check:publication` and `images:record` — compiles the content engine to CJS so it can run outside Next.",
   "compilerOptions": {
     "target": "ES2022",
@@ -11,6 +12,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "noEmit": false,
+    "resolveJsonModule": true,
     "types": ["node"]
   },
   "include": ["scripts/**/*.ts", "src/**/*.ts"],
@@ -21,6 +23,6 @@
     "src/components/**",
     "src/services/**",
     "src/lib/cn.ts",
-    "src/lib/demo.ts"
+    "src/lib/plates.ts"
   ]
 }

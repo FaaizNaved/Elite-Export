@@ -14,15 +14,25 @@ export interface NavDestination {
 }
 
 /**
- * Primary navigation — UX Blueprint R37.2 assigns these five and no others.
+ * Primary navigation — five destinations, and the bar carries nothing else.
  *
- * The order is the canonical chapter order, not a ranking of importance
- * (R37.4, X2). Home is reached by the company name, which is identity rather
- * than a destination; Enquiry is absent deliberately, because putting the ask
- * in the bar offers Conversation before Confidence (X5, Brand Bible §8.2).
+ * It briefly carried all eight, and the bar became a sitemap: eight tracked
+ * capitals across the top of a page whose first screen is one serif sentence.
+ * The header competed with the headline, which is the one thing on the surface
+ * that must not be competed with.
  *
- * A sixth entry is not a design decision. VDS §37.1: a structure that needs
- * six is a structure that needs an index, and the index is the footer.
+ * Five is the number the surface can hold quietly. The order is the canonical
+ * chapter order rather than a ranking of importance (R37.4, X2).
+ *
+ * Two absences are deliberate:
+ *
+ * - **Home**, because it is the company name — identity, not a destination.
+ * - **Enquiry**, because a bar that carries the ask offers Conversation before
+ *   Confidence (X5, Brand Bible §8.2). It is reached from the record of every
+ *   product, and from the index on the back cover.
+ *
+ * Technology, Gallery and Journal are reached from the surfaces they belong to
+ * and from the complete index in the footer (R37.3, R37.9).
  */
 export const primaryNav: readonly NavDestination[] = [
   { label: "Manufacturing", href: ROUTES.manufacturing },

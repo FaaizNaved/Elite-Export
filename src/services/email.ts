@@ -51,6 +51,14 @@ export async function sendEnquiryEmail({ subject, fields, replyTo }: EnquiryEmai
     throw new Error("SMTP is not configured");
   }
 
+  /*
+   * The subject carries a submitted company name and goes into a mail header.
+   * A newline in a header is how a caller adds headers of their own — a Bcc, a
+   * second Reply-To — so both line-break characters are collapsed and the
+   * length is capped. The body is escaped separately by `escapeHtml`.
+   */
+  const safeSubject = subject.replace(/[\r\n]+/g, " ").slice(0, 200);
+
   const transporter = nodemailer.createTransport({
     host: SMTP_HOST,
     port: SMTP_PORT,
@@ -62,12 +70,12 @@ export async function sendEnquiryEmail({ subject, fields, replyTo }: EnquiryEmai
     from: `"${siteConfig.name} website" <${SMTP_USER}>`,
     to: company.contact.salesEmail ?? company.contact.email,
     replyTo,
-    subject,
+    subject: safeSubject,
     text: Object.entries(fields)
       .map(([label, value]) => `${label}: ${value}`)
       .join("\n"),
     html: `<div style="font-family:Inter,Arial,sans-serif;color:#202020">
-      <h2 style="font-family:Georgia,serif;font-weight:500">${escapeHtml(subject)}</h2>
+      <h2 style="font-family:Georgia,serif;font-weight:500">${escapeHtml(safeSubject)}</h2>
       <table style="border-collapse:collapse;font-size:14px">${renderRows(fields)}</table>
       <p style="color:#8c8c8c;font-size:12px;margin-top:24px">Received ${new Date().toUTCString()}</p>
     </div>`,

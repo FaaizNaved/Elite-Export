@@ -1,4 +1,5 @@
 import { company, siteConfig } from "../../config";
+import { isGeneratedPlaceholder } from "../placeholders";
 import type { Breadcrumb, Faq, Product } from "../../types";
 import { absoluteUrl } from "./url";
 
@@ -11,17 +12,36 @@ export type JsonLd = Record<string, unknown>;
 
 const withContext = (node: JsonLd): JsonLd => ({ "@context": "https://schema.org", ...node });
 
+/** Where the logotype will live. Not published while it is a generated file. */
+const ORGANISATION_LOGO = "/images/logos/logo.png";
+
 export function organizationJsonLd(): JsonLd {
   return withContext({
     "@type": "Organization",
     name: company.legalName,
     alternateName: company.tradingName,
     url: absoluteUrl("/"),
-    logo: absoluteUrl("/images/logos/logo.png"),
+    /*
+     * The logotype is one of the 98 generated files, and it is also MIB §20
+     * dependency 2 — the mark cannot be drawn until the company name is
+     * confirmed. `logo` in Organization data is what a search engine puts in a
+     * knowledge panel, so publishing a placeholder there is publishing the
+     * company's identity as a brown block. Omitted until there is a logotype.
+     */
+    ...(isGeneratedPlaceholder(ORGANISATION_LOGO)
+      ? {}
+      : { logo: absoluteUrl(ORGANISATION_LOGO) }),
     description: siteConfig.description,
     foundingDate: String(company.foundedYear),
     email: company.contact.email,
-    telephone: company.contact.phone,
+    /*
+     * Only fields that hold something. `telephone: undefined` and an empty
+     * `sameAs: []` are not neutral in structured data — they are a claim,
+     * published to every search engine, that this company has no accounts and
+     * that the number below is its number. `withContext` drops undefined keys;
+     * `sameAs` is omitted rather than emitted empty.
+     */
+    ...(company.contact.phone ? { telephone: company.contact.phone } : {}),
     address: {
       "@type": "PostalAddress",
       streetAddress: company.contact.address.street,
@@ -30,7 +50,9 @@ export function organizationJsonLd(): JsonLd {
       postalCode: company.contact.address.postalCode,
       addressCountry: company.contact.address.countryCode,
     },
-    sameAs: company.social.map((link) => link.href),
+    ...(company.social.length > 0
+      ? { sameAs: company.social.map((link) => link.href) }
+      : {}),
   });
 }
 

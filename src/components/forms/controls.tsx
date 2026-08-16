@@ -130,7 +130,14 @@ export interface CheckboxProps extends Omit<ComponentPropsWithoutRef<"input">, "
  */
 export function Checkbox({ label, className, ...props }: CheckboxProps) {
   return (
-    <label className={cn("flex cursor-pointer items-start gap-3", className)}>
+    /*
+     * §47.5: the target is 44px tall, and here the target is the whole row —
+     * the box and its sentence are one label. It measured 23px, which is the
+     * height of a 20px box beside a line of rank-R text and nothing else. The
+     * padding is vertical only, so the row does not move and nothing else on
+     * the form shifts.
+     */
+    <label className={cn("flex min-h-11 cursor-pointer items-start gap-3 py-s2", className)}>
       <input
         type="checkbox"
         {...props}

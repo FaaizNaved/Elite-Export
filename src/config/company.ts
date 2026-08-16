@@ -19,8 +19,23 @@ export const company: CompanyProfile = companyProfileSchema.parse({
   contact: {
     email: "info@eliteexport.com",
     salesEmail: "sales@eliteexport.com",
-    phone: "+91 581 000 0000",
-    whatsapp: "+91 90000 00000",
+    /*
+     * No telephone, no WhatsApp, and no social links.
+     *
+     * What stood here was `+91 581 000 0000` and `+91 90000 00000` — numbers
+     * whose own digits say they are not numbers — beside three social URLs with
+     * no account on the end of them (`linkedin.com/company/`,
+     * `instagram.com/`, `facebook.com/`). They were rendered in the colophon,
+     * on Enquiry beside the form, and emitted into the Organization JSON-LD as
+     * `telephone` and `sameAs`, which is a machine-readable claim about a
+     * company published to search engines.
+     *
+     * Brand Bible §19.2 does not distinguish between a wrong fact and a
+     * placeholder standing in for one, and MIB R20.4 fixes what happens while
+     * it is outstanding: the mechanism is stated and the fact is withheld. So
+     * the fields are absent. They return when the client confirms them in
+     * writing, and `check:publication` asks for them by name until then.
+     */
     address: {
       street: "Industrial Estate, Phase II",
       city: "Kanpur",
@@ -31,14 +46,21 @@ export const company: CompanyProfile = companyProfileSchema.parse({
     },
     businessHours: "Mon – Sat, 9:00 – 18:00 IST",
   },
-  social: [
-    { platform: "linkedin", label: "LinkedIn", href: "https://www.linkedin.com/company/" },
-    { platform: "instagram", label: "Instagram", href: "https://www.instagram.com/" },
-    { platform: "facebook", label: "Facebook", href: "https://www.facebook.com/" },
-  ],
+  social: [],
   certifications: [
     { name: "ISO 9001:2015", issuer: "Bureau Veritas", year: 2021 },
     { name: "Leather Working Group — Gold", issuer: "LWG", year: 2023 },
   ],
   exportMarkets: ["US", "GB", "DE", "FR", "AU", "AE", "CA", "IT"],
+  /*
+   * Attested in three content documents already — `company/export.mdx`'s
+   * summary, the `oem-odm` FAQ, and `config/site.ts`'s description. None of
+   * them is the company record, so none of them could be derived from; the
+   * home page had a fourth copy typed into it as a literal.
+   *
+   * Unconfirmed, like every other field here: it is registered as
+   * `manufacturing-capability` against dependency 3, and `check:publication`
+   * asks for it by name until the client answers in writing.
+   */
+  capabilities: ["OEM", "ODM"],
 });

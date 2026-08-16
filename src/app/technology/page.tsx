@@ -7,7 +7,7 @@ import { Field } from "@/components/ui/field";
 import { Section } from "@/components/ui/section";
 import { Record, Statement } from "@/components/ui/typography";
 import { getCompanyPage, getMachinesByStage } from "@/lib/content";
-import { framed } from "@/lib/demo";
+import { framed } from "@/lib/plates";
 import { companyPageMetadata } from "@/lib/seo";
 import { loadCompanyContent } from "@/lib/mdx";
 import type { ProductionStage } from "@/types";
@@ -47,7 +47,7 @@ export default async function TechnologyPage() {
           brown gradient, outside the closed eight-value palette (§15.3) — and
           it was being served as though it were a photograph. `framed` reserves
           it instead: same ratio, same position, the two paper tones. Off in
-          production (`NEXT_PUBLIC_DEMO_MODE=off`), where the real hero renders
+          the archive holds the real hero, where that photograph renders
           untouched.
         */
         photograph={page.hero && framed(page.hero, "E5")}

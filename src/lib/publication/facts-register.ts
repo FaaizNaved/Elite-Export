@@ -234,6 +234,28 @@ export const governedFacts: readonly GovernedFact[] = [
     classification: "authored",
     markers: [/\b(?:\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:countries|markets)\b/i],
   },
+  /*
+   * The fourth kind of statement §19 governs, and the one the Register did not
+   * hold.
+   *
+   * This module's own opening sentence names it — *no number, certification,
+   * endorsement or **capability claim*** — and there was no entry for a
+   * capability. So "OEM and ODM" reached the home page's record rail as a
+   * string literal, with no field behind it, no dependency answering it and
+   * nothing for a gate to look at. It is the same shape as §19.1's failure: a
+   * claim survives review because nothing is looking where it lives.
+   *
+   * `markers` is empty, like every other record field. The capability is
+   * stated as a field, not counted out of a sentence, so a marker would report
+   * the same unconfirmed claim once per document and bury the items that need
+   * an answer (R16.5) — the rule stated above `export-markets`.
+   */
+  {
+    id: "manufacturing-capability",
+    label: "Manufacturing capability offered to buyers — OEM, ODM, or both",
+    classification: "authored",
+    markers: [],
+  },
   {
     id: "testimonial",
     label: "All testimonials",

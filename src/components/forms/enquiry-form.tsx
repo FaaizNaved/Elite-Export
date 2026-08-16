@@ -56,8 +56,24 @@ export function EnquiryForm({ fallbackEmail }: EnquiryFormProps) {
   const { formRef, release } = useRetainedValues("enquiry", form);
 
   if (state === "success") {
+    /*
+     * No reply time — Brand Bible §19.5, UX Blueprint R25.4, and MIB §20
+     * dependency 10.
+     *
+     * This panel published *"reply … within three working days"* while the
+     * Facts Register classified `reply-time` as authored and the Enquiry
+     * surface's own header comment said no reply time is published. The
+     * register was right and the panel was wrong: a published reply time is an
+     * operational commitment, and this one was never confirmed by the company
+     * that would have to keep it.
+     *
+     * What is stated instead is what R25.4 permits with nothing outstanding
+     * behind it: that the enquiry arrived, and what the answer will contain.
+     * When dependency 10 is confirmed in writing, the time goes here and the
+     * fact's classification changes in `facts-register.ts`.
+     */
     return (
-      <SuccessPanel message="We will review your requirement and reply with feasibility and indicative pricing within three working days." />
+      <SuccessPanel message="Your enquiry has been received. We will write back with what we can and cannot make, and what it would take." />
     );
   }
 
@@ -70,9 +86,9 @@ export function EnquiryForm({ fallbackEmail }: EnquiryFormProps) {
         // the words exactly where the visitor left them (R47.3).
         if (await submit("/api/enquiry", values)) release();
       })}
-      className="flex flex-col gap-5"
+      className="flex flex-col gap-s3"
     >
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-s3 reading:grid-cols-2">
         <Field label="Company name" required error={errors.companyName?.message}>
           <Input autoComplete="organization" {...register("companyName")} />
         </Field>
@@ -82,7 +98,7 @@ export function EnquiryForm({ fallbackEmail }: EnquiryFormProps) {
         </Field>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-s3 reading:grid-cols-2">
         <Field label="Email" required error={errors.email?.message}>
           <Input type="email" autoComplete="email" {...register("email")} />
         </Field>
@@ -92,7 +108,7 @@ export function EnquiryForm({ fallbackEmail }: EnquiryFormProps) {
         </Field>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-s3 reading:grid-cols-2">
         <Field label="Phone" required error={errors.phone?.message}>
           <Input type="tel" autoComplete="tel" {...register("phone")} />
         </Field>
@@ -106,7 +122,7 @@ export function EnquiryForm({ fallbackEmail }: EnquiryFormProps) {
         <Select options={BUSINESS_TYPES} {...register("businessType")} />
       </Field>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-s3 reading:grid-cols-2">
         <Field
           label="Interested products"
           required

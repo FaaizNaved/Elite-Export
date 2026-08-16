@@ -7,7 +7,13 @@ export const contactSchema = z.object({
   email: z.email(),
   /** Secondary inbox for buyer enquiries; falls back to `email` when absent. */
   salesEmail: z.email().optional(),
-  phone: z.string().min(1),
+  /*
+   * Optional, because a number the company has not confirmed is not a number.
+   * MIB R20.4: a gating dependency never becomes an invention — so the field
+   * is absent rather than filled with something plausible, and every surface
+   * that reads it already has to handle its absence.
+   */
+  phone: z.string().min(1).optional(),
   whatsapp: z.string().optional(),
   address: z.object({
     street: z.string().min(1),
@@ -70,6 +76,23 @@ export const companyProfileSchema = z.object({
   certifications: z.array(certificationSchema).default([]),
   /** ISO 3166-1 alpha-2 codes of export destinations. */
   exportMarkets: z.array(z.string().length(2)).default([]),
+  /**
+   * What the company will manufacture *for* a buyer — OEM, ODM, or both.
+   *
+   * Brand Bible §19 governs four kinds of statement, and this is the fourth:
+   * *no number, certification, endorsement or **capability claim** may be
+   * published unless it is traceable to the confirmed company record.* The
+   * first three each had a field here. This one did not, and so the claim was
+   * living as a string literal on the home page while `export.mdx`,
+   * `faqs.json` and `config/site.ts` each stated it again in their own words —
+   * four expressions of one fact, which R7.1 says will eventually disagree.
+   *
+   * Held as the bare capability names rather than a sentence, because the
+   * surfaces set it differently: the home record joins them, the export page
+   * writes them into prose, and JSON-LD would want them as a list. A sentence
+   * here would force every surface to unpick it.
+   */
+  capabilities: z.array(z.string().min(1)).default([]),
 });
 
 /**

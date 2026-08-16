@@ -16,7 +16,7 @@ import {
   getProductRoutes,
   getTestimonials,
 } from "../src/lib/content";
-import { imageLibrary } from "../src/lib/content/images";
+import { DELIVERY_SHAPES, IMAGE_LIBRARY_FILE, imageLibrary } from "../src/lib/content/images";
 import { isActivePath } from "../src/lib/navigation";
 import {
   approvedDocuments,
@@ -98,8 +98,18 @@ async function main() {
   assert.ok(crumbs.slice(0, -1).every((crumb) => !crumb.current));
   assert.equal(subcategoryBreadcrumbs(categories[0], categories[0].subcategories[0]).length, 4);
 
-  // Navigation architecture (UX Blueprint §37): exactly five destinations, in
-  // chapter order, and the index carries every surface the bar does not.
+  /*
+   * Navigation architecture — five in the bar, everything in the index.
+   *
+   * The bar briefly carried all eight destinations plus the ask. It read as a
+   * sitemap across the top of the page and competed with the one serif
+   * sentence the first screen exists for, so it is five again: the count the
+   * composition can hold quietly, in canonical chapter order (R37.4).
+   *
+   * R37.2 holds — Home is the company name, and the ask is not a destination.
+   * R37.9 holds on the back cover, which carries every surface including the
+   * four the bar does not: Technology, Gallery, Journal and Enquiry.
+   */
   assert.equal(primaryNav.length, 5, "primary navigation must carry exactly five destinations");
   assert.deepEqual(
     primaryNav.map((item) => item.href),
@@ -605,10 +615,26 @@ async function main() {
    * Everywhere else ends on a continuation instead: R39.2, *a link rather than
    * a demand.*
    */
+  /*
+   * One surface, not two — Home lost the ask in the art direction package.
+   *
+   * The client's instruction was explicit: *the homepage must not end with an
+   * enquiry CTA; it should end with confidence.* Home now closes on a statement
+   * and a continuation into Manufacturing (R39.2, *a link rather than a
+   * demand*), and the invitation lives where the visitor has already decided
+   * something specific: in front of one piece.
+   *
+   * This assertion is **narrower** than it was, not weaker. R39.1 is untouched
+   * — one action, one door, one label, leading to Enquiry and nowhere else —
+   * and R39.4's list of places the ask is not welcome has grown by one, which
+   * is the direction that rule points and the person doing the asking is the
+   * one who extended it. Enquiry is absent from this list because the action
+   * *is* that surface and it carries no `Close`.
+   */
   assert.deepEqual(
     surfacesWithAction.sort(),
-    ["/", "/products/[category]/[subcategory]/[product]"],
-    "the action appears on Home and the product record only — never on Manufacturing, Quality, Export, About, a category, a subcategory, Technology, Gallery, Journal or any system surface (R39.1, R39.4, R19.6, Brand Bible §16.4)",
+    ["/products/[category]/[subcategory]/[product]"],
+    "the action appears on the product record only — never on Home, Manufacturing, Quality, Export, About, a category, a subcategory, Technology, Gallery, Journal or any system surface (R39.1, R39.4, R19.6, Brand Bible §16.4)",
   );
 
   // MIB §20.2 item 2: nothing is published carrying a name that may be wrong.
@@ -627,6 +653,41 @@ async function main() {
     assert.ok(
       factById(item.factId),
       `company.${item.field} names the fact "${item.factId}", which the Facts Register does not hold (R20.6)`,
+    );
+  }
+
+  /*
+   * Photography Direction §22.4: a frame has one canonical crop, and two crops
+   * of one frame are two statements. Where a surface reserves a shape, that
+   * shape *is* the delivery ratio, and the library must agree with it.
+   *
+   * This is the check the Crop gate could not perform. That gate compares the
+   * ratios a frame is referenced at across the content layer, so it catches a
+   * document disagreeing with another document — but the Home opening's shape
+   * was applied at render time, downstream of everything the gate can read,
+   * and it disagreed with the library silently for as long as the file stayed
+   * a placeholder. The failure was scheduled for the day the photograph
+   * arrived, which is the worst possible time to discover it.
+   *
+   * A ratio, not a size: the photograph is delivered larger than the plate and
+   * §32.3 already requires that. Tolerance is one part in five hundred, which
+   * is under half a pixel on a 2,000px frame and well inside what a re-export
+   * can shift.
+   */
+  for (const [src, [width, height]] of Object.entries(DELIVERY_SHAPES)) {
+    const record = imageLibrary()[src];
+    assert.ok(record, `${src} has a reserved delivery shape but no record in ${IMAGE_LIBRARY_FILE}`);
+    assert.ok(
+      record.width && record.height,
+      `${src} has a reserved delivery shape but no measured size in ${IMAGE_LIBRARY_FILE} — run \`npm run images:record\``,
+    );
+    const declared = width / height;
+    const recorded = record.width / record.height;
+    assert.ok(
+      Math.abs(declared - recorded) / declared < 0.002,
+      `${src} is recorded at ${record.width}×${record.height} (${recorded.toFixed(3)}) but the surface reserves ${width}×${height} (${declared.toFixed(3)}). ` +
+        `The layout draws the reserved shape, so the frame would move when this file is replaced. ` +
+        `Deliver the photograph at the reserved ratio, or change DELIVERY_SHAPES in src/lib/content/images.ts and the matching bucket in scripts/generate-placeholders.mjs together (Photography Direction §22.4, VDS §32.1)`,
     );
   }
 

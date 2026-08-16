@@ -56,4 +56,18 @@ export const imageSizes = {
   reading: "(min-width: 720px) 640px, 100vw",
   /** A record: specification imagery inside the 480px column. */
   record: "(min-width: 720px) 480px, 100vw",
+  /**
+   * Home's own three, held here rather than at the call site.
+   *
+   * VDS §48.3 puts every design value in one source, and a `sizes` string is a
+   * container expressed for the browser — so a media query typed into a page is
+   * the same stray value as a hex code typed into a component. These three are
+   * the compositions Home is built from and nothing else uses them.
+   */
+  /** The board hung on the trailing edge of the first screen. */
+  overture: "(min-width: 1280px) 40vw, 100vw",
+  /** A board that leaves the field by one edge — the place, a range spread. */
+  spread: "(min-width: 1024px) 60vw, 100vw",
+  /** A board held inside the field with the words beside it. */
+  inset: "(min-width: 1024px) 36vw, 100vw",
 } as const;

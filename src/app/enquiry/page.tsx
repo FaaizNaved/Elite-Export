@@ -52,7 +52,7 @@ export default async function EnquiryPage() {
       <Opening
         title="Enquiry"
         eyebrow="Start here"
-        summary="Tell us what you need made. The more you can send up front — a drawing, a reference sample, photographs — the more useful our first reply will be. Nothing here commits you to anything."
+        summary="Tell us what you need made — the piece, the quantity, and whatever you already know about materials, finishes and timing. If you have a drawing, a reference sample or photographs, say so and we will ask for them in our reply. Nothing here commits you to anything."
       />
 
       <Section>
@@ -83,14 +83,17 @@ export default async function EnquiryPage() {
                     {contact.salesEmail ?? contact.email}
                   </a>
                 </Record>
-                <Record>
-                  <a
-                    href={`tel:${contact.phone.replace(/\s+/g, "")}`}
-                    className="underline decoration-1 underline-offset-1 motion-mark hover:decoration-2"
-                  >
-                    {contact.phone}
-                  </a>
-                </Record>
+                {/* The number is published only when there is one to publish. */}
+                {contact.phone && (
+                  <Record>
+                    <a
+                      href={`tel:${contact.phone.replace(/\s+/g, "")}`}
+                      className="underline decoration-1 underline-offset-1 motion-mark hover:decoration-2"
+                    >
+                      {contact.phone}
+                    </a>
+                  </Record>
+                )}
                 {contact.businessHours && (
                   <Record rank="c" tone="secondary">
                     {contact.businessHours}

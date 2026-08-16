@@ -9,7 +9,7 @@ import { ROUTES } from "@/constants";
 import { Passage, Statement } from "@/components/ui/typography";
 import { qualityTelling } from "@/config";
 import { getCompanyPage } from "@/lib/content";
-import { chapterFrames } from "@/lib/demo";
+import { chapterFrames } from "@/lib/plates";
 import { companyPageMetadata } from "@/lib/seo";
 import type { Chapter as ChapterId, StepBlock } from "@/types";
 

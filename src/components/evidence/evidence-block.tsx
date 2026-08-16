@@ -108,7 +108,16 @@ export function RecordSet({ items, className }: RecordSetProps) {
 
   const row = (item: RecordRowItem) => (
     <div className="flex flex-col gap-s1">
-      <Record as="h3" rank="r" weight="medium">
+      {/*
+       * `h2`, not `h3` — UX Blueprint R49.2, and it was a real skip.
+       *
+       * All three surfaces that render a record set (Products, a category, a
+       * subcategory) put it directly under the surface title with nothing
+       * between, so the document outline read h1 → h3 and a screen reader user
+       * moving by heading was told a level had been left out. Nothing about the
+       * appearance changes: the rank is still R, which is what sets the size.
+       */}
+      <Record as="h2" rank="r" weight="medium">
         {/*
          * §47.5: the minimum interactive target is 44 × 44px. A record's title
          * is how a visitor reaches it, so the link is given the target the rule
