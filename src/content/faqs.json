@@ -2,14 +2,14 @@
   {
     "id": "minimum-order-quantity",
     "question": "What is your minimum order quantity?",
-    "answer": "MOQ depends on the product and customisation involved. For most equestrian tack it starts at 50 pieces per style; bags and accessories start at 100 pieces. Sampling orders are accepted separately.",
+    "answer": "Minimums depend on the product and how much customisation is involved — construction, hardware and whether the piece runs on our patterns or yours all change it. Tell us the style and we will confirm the minimum for it. Sampling orders are quoted separately.",
     "topic": "ordering",
     "order": 1
   },
   {
     "id": "oem-odm",
     "question": "Do you manufacture to our own designs?",
-    "answer": "Yes. We work as both OEM and ODM. Send technical drawings, reference samples or photographs and our pattern team will produce a prototype for approval before bulk production begins.",
+    "answer": "Yes. Send technical drawings, reference samples or photographs and our pattern team will produce a prototype for approval before bulk production begins. If you have a brief rather than a drawing, we will develop the piece from it.",
     "topic": "manufacturing",
     "order": 2
   },
@@ -23,7 +23,7 @@
   {
     "id": "lead-time",
     "question": "What are your typical lead times?",
-    "answer": "Samples ship within 10–15 working days. Bulk production runs 30–45 days from approval, depending on order size and finishing requirements.",
+    "answer": "Lead times are quoted against the specification rather than advertised as a fixed range, because finishing and hardware change them substantially. We confirm sampling and bulk dates in writing before you commit, and give progress updates at cutting, assembly and finishing.",
     "topic": "ordering",
     "order": 4
   },
@@ -37,7 +37,7 @@
   {
     "id": "quality-inspection",
     "question": "How is quality controlled?",
-    "answer": "Every batch passes a four-stage inspection — raw material, in-process, pre-finishing and final AQL inspection — with a written report supplied before dispatch.",
+    "answer": "Every batch passes a four-stage inspection — raw material, in-process, pre-finishing and final inspection against the approved sample — with a written report supplied before dispatch. Where your standard is stricter than ours, yours applies.",
     "topic": "quality",
     "order": 6
   }

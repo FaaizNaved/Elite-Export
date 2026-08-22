@@ -15,7 +15,7 @@ import { buildMetadata, faqJsonLd } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Buyer Enquiry",
   description:
-    "Send Elite Export your requirement — products, quantities and finishes — and receive feasibility and indicative pricing within three working days.",
+    "Send New Elite Exports your requirement — products, quantities and finishes — and receive feasibility and indicative pricing from the team that would make it.",
   path: ROUTES.buyerEnquiry,
 });
 
@@ -50,13 +50,16 @@ export default async function BuyerEnquiryPage() {
               <div className="flex flex-col gap-3">
                 <Typography variant="overline">What happens next</Typography>
                 <ol className="flex flex-col gap-3">
+                  {/* No day counts. The turnaround figures that used to sit
+                      here were unverified, and this is the one page where a
+                      buyer is most likely to hold us to them. */}
                   {[
-                    "We confirm feasibility and materials, usually within three working days.",
-                    "A prototype is produced for your approval in 10–15 working days.",
-                    "Bulk production runs 30–45 days from sample sign-off.",
+                    "We confirm feasibility and materials, and tell you what we cannot do as clearly as what we can.",
+                    "A prototype is produced for your approval, and revised until you sign it off.",
+                    "Bulk runs against the approved sample, with dates confirmed in writing before you commit.",
                   ].map((step, index) => (
                     <li key={step} className="flex gap-3">
-                      <span className="font-display text-h4 text-accent">
+                      <span className="font-display text-h4 text-foreground-muted">
                         {String(index + 1).padStart(2, "0")}
                       </span>
                       <Typography variant="small" className="text-foreground-secondary">

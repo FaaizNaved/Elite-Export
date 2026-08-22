@@ -9,19 +9,9 @@ hero:
   width: 2400
   height: 1200
 order: 2
-stats:
-  - value: 8
-    label: Production stages
-    icon: layers
-  - value: 3
-    label: Parallel production lines
-    icon: factory
-  - value: 45000
-    label: Square feet of facility
-    suffix: " sq ft"
-  - value: 4
-    label: Inspection gates per order
-    icon: shield-check
+# Line count and floor area are unverified. Stage and gate counts are true but
+# self-evident from the sequence below — counting them in a band above the thing
+# being counted is decoration, not evidence.
 steps:
   - title: Hide selection
     description: Hides are graded by hand against the order's requirements — substance, grain consistency, and the area of usable belly. Anything that will not cut cleanly is rejected before it reaches the floor.
@@ -54,7 +44,7 @@ steps:
       src: /images/manufacturing/finishing.webp
       alt: Edge burnishing at the finishing bench
   - title: Quality inspection
-    description: Final AQL inspection against the approved sample — dimensions, hardware function, stitch density, finish consistency. The written report travels with the shipment.
+    description: Final inspection against the approved sample — dimensions, hardware function, stitch density, finish consistency. The written report travels with the shipment.
     image:
       src: /images/manufacturing/inspection.webp
       alt: Inspector checking a finished piece
@@ -64,7 +54,7 @@ steps:
       src: /images/manufacturing/packaging.webp
       alt: Finished goods being packed into export cartons
 seo:
-  description: How Elite Export manufactures leather goods — eight controlled stages from hide selection and pattern making through cutting, assembly, finishing and export packing.
+  description: How New Elite Exports manufactures leather goods — eight controlled stages from hide selection and pattern making through cutting, assembly, finishing and export packing.
 ---
 
 Manufacturing leather at export volume is a problem of consistency, not capability. Any
@@ -84,6 +74,6 @@ hands set all three.
 
 ## Capacity
 
-Three lines run in parallel, giving roughly 40,000 pieces a month across tack and leather
-goods. Sampling runs are handled off-line so that prototype work never displaces bulk
-production already in progress.
+Sampling runs are handled away from the bulk lines, so prototype work never displaces
+production already in progress. Capacity for a given order is confirmed against its
+specification rather than quoted as a headline figure.

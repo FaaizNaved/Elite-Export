@@ -29,7 +29,15 @@ export function CardImage({
   return (
     <CardMedia className={cn(className)}>
       <AspectRatio ratio={ratio}>
-        <ContentImage image={image} sizes={sizes} priority={priority} />
+        {/* Eager, not preloaded. `preload` injects a <link> in the head and
+            the docs reserve it for a single LCP element; a grid has several
+            candidates depending on viewport. All `priority` means here is
+            "above the fold — do not lazy-load this one". */}
+        <ContentImage
+          image={image}
+          sizes={sizes}
+          loading={priority ? "eager" : "lazy"}
+        />
       </AspectRatio>
     </CardMedia>
   );

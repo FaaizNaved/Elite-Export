@@ -30,15 +30,17 @@ export const siteConfig = {
   name: company.tradingName,
   legalName: company.legalName,
   url: SITE_URL,
-  /** Appended to page titles: "One Ear Headstall | Elite Export". */
+  /** Appended to page titles: "One Ear Headstall | New Elite Exports". */
   titleSeparator: "|",
-  description:
-    "Elite Export manufactures premium equestrian tack, leather bags and accessories for international buyers, with full OEM and ODM capability.",
+  // Derived, not restated. The trading name lived here as a literal until the
+  // rename, at which point this string silently disagreed with `company` —
+  // exactly the drift the "one authority per fact" rule exists to prevent.
+  description: `${company.tradingName} manufactures equestrian tack, leather bags and accessories in Kanpur for international buyers — to our patterns or to yours.`,
   keywords: [
     "leather manufacturer",
     "equestrian tack manufacturer",
     "western tack exporter",
-    "leather goods OEM",
+    "leather goods manufacturer india",
     "leather bags supplier",
   ],
   ogImage: defaultOgImage,

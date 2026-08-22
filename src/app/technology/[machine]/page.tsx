@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Gallery } from "@/components/gallery";
-import { CtaBanner } from "@/components/layout";
 import { PageHero, Prose, SectionHeader } from "@/components/sections";
 import { Badge } from "@/components/ui/badge";
-import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { Typography } from "@/components/ui/typography";
@@ -110,19 +107,6 @@ export default async function MachinePage({ params }: PageProps) {
           </Container>
         </Section>
       )}
-
-      <CtaBanner
-        heading="Want to see it running?"
-        description="We host buyer and agency visits at any stage of production."
-        primaryAction={
-          <Link
-            href={ROUTES.contact}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Arrange a visit
-          </Link>
-        }
-      />
     </>
   );
 }

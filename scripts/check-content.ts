@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { mainNav } from "../src/config/navigation";
-import { productBreadcrumbs, subcategoryBreadcrumbs } from "../src/lib/breadcrumbs";
+import { productBreadcrumbs } from "../src/lib/breadcrumbs";
 import {
   contentRegistry,
   getBlogPosts,
@@ -15,6 +15,7 @@ import {
   getProductRoutes,
   getProductsMegaMenu,
   getRelatedProducts,
+  getStatement,
   getTestimonials,
 } from "../src/lib/content";
 import { isActivePath } from "../src/lib/navigation";
@@ -87,7 +88,13 @@ async function main() {
   assert.equal(crumbs[0].href, "/");
   assert.ok(crumbs.at(-1)?.current, "last breadcrumb must be marked current");
   assert.ok(crumbs.slice(0, -1).every((crumb) => !crumb.current));
-  assert.equal(subcategoryBreadcrumbs(categories[0], categories[0].subcategories[0]).length, 4);
+  // Subcategories are bands on the category page, so their crumb and their
+  // mega-menu link must both be an anchor rather than a route of their own.
+  assert.match(
+    crumbs[3].href,
+    /^\/products\/[^/]+#[^/]+$/,
+    "the subcategory crumb must point at a band on the category page",
+  );
 
   // Navigation: the mega menu mirrors the catalog.
   const megaMenu = await getProductsMegaMenu();
@@ -128,14 +135,32 @@ async function main() {
     albums.every((album) => album.images.length > 0),
     "a gallery album has no images",
   );
-  assert.ok(faqs.length > 0 && testimonials.length > 0, "singleton collections are empty");
+  assert.ok(faqs.length > 0, "FAQs are empty");
+  // Testimonials are deliberately empty: the only quotes the project ever had
+  // were fabricated names at fabricated companies. Real, attributable,
+  // permissioned quotes or none.
+  assert.equal(testimonials.length, 0, "testimonials must stay empty until real ones are supplied");
+
+  // Facts register: no unverified figure may re-enter the content layer.
+  const contentBlob = JSON.stringify([companyPages, faqs, home]);
+  for (const forbidden of ["40,000", "40000", "45,000", "45000", "250+", "AQL 2.5", "0.4%"]) {
+    assert.ok(!contentBlob.includes(forbidden), `unverified figure "${forbidden}" is back in content`);
+  }
 
   // Home is assembled from one file per section; every section the page reads
   // must be present after composition.
   assert.ok(home.hero.heading.length > 0, "home hero did not load");
-  assert.ok(home.intro.body.length > 0, "home company body did not load");
+  // The house section is a heading and a photograph; its body paragraph was
+  // removed because it restated the hero, so the heading is what proves the
+  // file composed.
+  assert.ok(home.intro.heading.length > 0, "home company section did not load");
+  assert.ok(home.intro.image.src.length > 0, "home company image did not load");
   assert.ok(home.pause.image.src.length > 0, "home pause image did not load");
-  assert.ok(home.cta.primaryCta.href.length > 0, "home CTA did not load");
+  // The closing statement is site-level and rendered by the root layout, so it
+  // has to load independently of the home document.
+  const statement = await getStatement();
+  assert.ok(statement.statement.length > 0, "closing statement did not load");
+  assert.ok(statement.caption.length > 0, "closing statement caption did not load");
   for (const key of ["categories", "manufacturing", "quality", "origin"]) {
     assert.ok(home.sections[key]?.heading, `home section "${key}" is missing after composition`);
   }

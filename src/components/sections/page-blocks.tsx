@@ -146,7 +146,7 @@ export function ProcessSteps({
                   )}
 
                   <div className="flex flex-col gap-3">
-                    <Typography variant="overline" className="text-accent">
+                    <Typography variant="overline">
                       Stage {String(index + 1).padStart(2, "0")}
                     </Typography>
                     <Typography variant="h3" as="h3">
@@ -162,7 +162,7 @@ export function ProcessSteps({
           <ol className="grid gap-px overflow-hidden rounded-card bg-border md:grid-cols-2">
             {steps.map((step, index) => (
               <li key={step.title} className="flex flex-col gap-3 bg-surface p-8">
-                <Typography variant="overline" className="text-accent">
+                <Typography variant="overline">
                   {String(index + 1).padStart(2, "0")}
                 </Typography>
                 <Typography variant="h4" as="h3">

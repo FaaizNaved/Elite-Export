@@ -1,10 +1,7 @@
 "use client";
 
-import { Maximize2, ZoomIn } from "lucide-react";
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Icon } from "@/components/ui/icon";
+import { useCallback, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { Image as ImageToken } from "@/types";
 import { BLUR_DATA_URL } from "@/utils/image";
@@ -13,7 +10,7 @@ import { Lightbox } from "./lightbox";
 export interface ProductGalleryProps {
   images: readonly ImageToken[];
   /**
-   * Higher-resolution variants used for zoom and fullscreen, index-aligned with
+   * Higher-resolution variants used when a frame is opened, index-aligned with
    * `images`. Falls back to `images` when omitted.
    */
   zoomImages?: readonly ImageToken[];
@@ -22,138 +19,67 @@ export interface ProductGalleryProps {
   className?: string;
 }
 
-const MAX_SCALE = 3;
-const MIN_SCALE = 1;
-const SWIPE_THRESHOLD = 50;
-const DOUBLE_TAP_MS = 300;
-
 /**
- * Premium product viewer.
+ * One photograph of the piece, and a row of frames if there is more than one.
  *
- * Desktop: pointer-tracked magnification, wheel to zoom in and out, fullscreen.
- * Touch: swipe between images, double-tap to zoom, native pinch in fullscreen.
+ * This was a shop viewer: pointer-tracked magnification, wheel-to-zoom,
+ * double-tap zoom, swipe, and a floating cluster of two round control buttons
+ * over the top-right corner of the object. All of that is the vocabulary of a
+ * checkout page, and it put the interface in front of the leather — the first
+ * thing the eye found was a zoom button.
  *
- * Zoom is a CSS transform on the image, so magnifying costs no network request
- * beyond the high-resolution variant already being displayed.
+ * What remains: the frame is the control. Click or press Enter to open it
+ * larger, arrow keys to move between frames. Nothing floats over the object.
  */
 export function ProductGallery({ images, zoomImages, title, className }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [scale, setScale] = useState(MIN_SCALE);
-  const [origin, setOrigin] = useState({ x: 50, y: 50 });
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
-  const pointerStart = useRef<number | null>(null);
-  const lastTap = useRef(0);
 
   const highRes = zoomImages ?? images;
   const active = images[activeIndex];
-  const activeZoom = highRes[activeIndex] ?? active;
-  const zoomed = scale > MIN_SCALE;
 
   const select = useCallback(
     (index: number) => {
       if (images.length === 0) return;
       setActiveIndex((index + images.length) % images.length);
-      setScale(MIN_SCALE);
     },
     [images.length],
   );
-
-  // React attaches `wheel` passively, so preventDefault needs a native listener.
-  useEffect(() => {
-    const stage = stageRef.current;
-    if (!stage) return;
-
-    const onWheel = (event: WheelEvent) => {
-      if (!event.ctrlKey && !stage.matches(":hover")) return;
-      event.preventDefault();
-      setScale((current) =>
-        Math.min(MAX_SCALE, Math.max(MIN_SCALE, current - event.deltaY * 0.002)),
-      );
-    };
-
-    stage.addEventListener("wheel", onWheel, { passive: false });
-    return () => stage.removeEventListener("wheel", onWheel);
-  }, []);
 
   if (!active) return null;
 
   return (
     <div className={cn("flex flex-col gap-4", className)}>
-      <div
-        role="group"
-        aria-label={`${title} images`}
-        tabIndex={0}
+      <button
+        type="button"
+        aria-label={`${title} — view larger`}
+        onClick={() => setLightboxIndex(activeIndex)}
         onKeyDown={(event) => {
           if (event.key === "ArrowRight") select(activeIndex + 1);
           if (event.key === "ArrowLeft") select(activeIndex - 1);
         }}
-        className="relative"
+        className="group block w-full cursor-zoom-in overflow-hidden bg-surface-sunken"
       >
-        <div
-          ref={stageRef}
-          onMouseMove={(event) => {
-            if (!zoomed) return;
-            const rect = event.currentTarget.getBoundingClientRect();
-            setOrigin({
-              x: ((event.clientX - rect.left) / rect.width) * 100,
-              y: ((event.clientY - rect.top) / rect.height) * 100,
-            });
-          }}
-          onMouseLeave={() => setScale(MIN_SCALE)}
-          onPointerDown={(event) => {
-            pointerStart.current = event.clientX;
-
-            const now = Date.now();
-            if (now - lastTap.current < DOUBLE_TAP_MS) {
-              setScale((current) => (current > MIN_SCALE ? MIN_SCALE : 2));
-            }
-            lastTap.current = now;
-          }}
-          onPointerUp={(event) => {
-            const start = pointerStart.current;
-            pointerStart.current = null;
-            if (start === null || zoomed) return;
-            const delta = event.clientX - start;
-            if (Math.abs(delta) > SWIPE_THRESHOLD) select(activeIndex + (delta < 0 ? 1 : -1));
-          }}
-          className={cn(
-            "overflow-hidden rounded-image bg-surface-sunken",
-            zoomed ? "cursor-zoom-out" : "cursor-zoom-in",
-          )}
-        >
-          <AspectRatio ratio="product">
-            <Image
-              key={activeZoom.src}
-              src={activeZoom.src}
-              alt={activeZoom.alt}
-              fill
-              priority
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              placeholder="blur"
-              blurDataURL={BLUR_DATA_URL}
-              style={{
-                transform: `scale(${scale})`,
-                transformOrigin: `${origin.x}% ${origin.y}%`,
-              }}
-              className="object-cover transition-[transform] duration-200 ease-standard select-none motion-reduce:transition-none"
-            />
-          </AspectRatio>
-        </div>
-
-        <div className="absolute top-4 right-4 flex flex-col gap-2">
-          <StageButton
-            label={zoomed ? "Reset zoom" : "Zoom in"}
-            icon={ZoomIn}
-            onClick={() => setScale(zoomed ? MIN_SCALE : 2)}
-          />
-          <StageButton
-            label="Open fullscreen"
-            icon={Maximize2}
-            onClick={() => setLightboxIndex(activeIndex)}
+        {/* Height-bound on desktop rather than ratio-bound. A 4:5 plate across
+            the full content measure came out 1200px tall, which pushed the
+            material list and the enquiry link a full screen below the object —
+            the buyer saw the top half of a bag and nothing else. Capping to the
+            viewport keeps identity, object and action on one screen while the
+            photograph still dominates it. */}
+        <div className="relative aspect-[4/5] w-full sm:aspect-[3/2] md:aspect-auto md:h-[62vh] md:max-h-[46rem]">
+          <Image
+            key={active.src}
+            src={active.src}
+            alt={active.alt}
+            fill
+            preload
+            sizes="(min-width: 1024px) 62vw, 100vw"
+            placeholder="blur"
+            blurDataURL={BLUR_DATA_URL}
+            className="object-cover transition-premium group-hover:scale-[1.01] motion-reduce:group-hover:scale-100"
           />
         </div>
-      </div>
+      </button>
 
       {images.length > 1 && (
         <ul className="flex flex-wrap gap-3">
@@ -165,13 +91,16 @@ export function ProductGallery({ images, zoomImages, title, className }: Product
                 aria-label={`Show image ${index + 1} of ${images.length}`}
                 aria-current={index === activeIndex ? "true" : undefined}
                 className={cn(
-                  "relative size-20 overflow-hidden rounded-button bg-surface-sunken transition-fast",
+                  "relative size-16 overflow-hidden bg-surface-sunken transition-fast",
+                  // A hairline, not a gold ring with an offset. The selected
+                  // frame should be legible without becoming the brightest
+                  // thing on the page.
                   index === activeIndex
-                    ? "ring-2 ring-accent ring-offset-2 ring-offset-background"
-                    : "opacity-60 hover:opacity-100",
+                    ? "outline outline-foreground/50"
+                    : "opacity-55 hover:opacity-100",
                 )}
               >
-                <Image src={image.src} alt="" fill sizes="80px" className="object-cover" />
+                <Image src={image.src} alt="" fill sizes="64px" className="object-cover" />
               </button>
             </li>
           ))}
@@ -185,26 +114,5 @@ export function ProductGallery({ images, zoomImages, title, className }: Product
         onIndexChange={setLightboxIndex}
       />
     </div>
-  );
-}
-
-function StageButton({
-  label,
-  icon,
-  onClick,
-}: {
-  label: string;
-  icon: typeof ZoomIn;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={label}
-      className="inline-flex size-10 items-center justify-center rounded-badge bg-surface/85 text-foreground shadow-sm backdrop-blur-sm transition-fast hover:bg-surface"
-    >
-      <Icon icon={icon} size="sm" />
-    </button>
   );
 }

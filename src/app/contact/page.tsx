@@ -16,7 +16,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Contact",
   description:
-    "Contact Elite Export — factory address, phone, email and a direct enquiry form. We reply within two business days.",
+    "Contact New Elite Exports — factory address, phone, email and a direct enquiry form. We reply within two business days.",
   path: ROUTES.contact,
 });
 
@@ -50,7 +50,7 @@ export default function ContactPage() {
                 <Typography variant="overline">Factory &amp; office</Typography>
 
                 <div className="flex gap-3">
-                  <Icon icon={MapPin} size="sm" tone="accent" className="mt-1" />
+                  <Icon icon={MapPin} size="sm" tone="muted" className="mt-1" />
                   <address className="font-sans text-small not-italic text-foreground-secondary">
                     {address.street}
                     <br />
@@ -62,7 +62,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Icon icon={Phone} size="sm" tone="accent" className="mt-1" />
+                  <Icon icon={Phone} size="sm" tone="muted" className="mt-1" />
                   <div className="flex flex-col gap-1">
                     <a
                       href={`tel:${contact.phone.replace(/\s+/g, "")}`}
@@ -77,7 +77,7 @@ export default function ContactPage() {
                 </div>
 
                 <div className="flex gap-3">
-                  <Icon icon={Mail} size="sm" tone="accent" className="mt-1" />
+                  <Icon icon={Mail} size="sm" tone="muted" className="mt-1" />
                   <div className="flex flex-col gap-1">
                     <a
                       href={`mailto:${contact.email}`}

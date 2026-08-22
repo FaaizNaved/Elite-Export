@@ -15,15 +15,119 @@ import sharp from "sharp";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public");
 
-/** Brand-range tones, so a page of placeholders still reads as one palette. */
-const TONES = [
-  ["#2A2724", "#514840"],
-  ["#4A3E33", "#7A6248"],
-  ["#6B573F", "#A9814F"],
-  ["#8C7355", "#C4A276"],
-  ["#B68D40", "#7C5F2B"],
-  ["#3A3632", "#6E6257"],
+/**
+ * Visual ROLES, not one palette.
+ *
+ * Every placeholder used to share a single recipe, so the home hero, a product
+ * plate, the export bay and the workshop were the same brown gradient at
+ * different aspect ratios — which is the main reason the site read as designed
+ * rather than photographed. A real photograph of a studio-lit bag and a real
+ * photograph of a cutting floor have nothing in common tonally, and the layout
+ * cannot be judged until the stand-ins say the same thing.
+ *
+ * Each role sets its own key (how dark), temperature (warm leather vs cool
+ * steel), contrast, light position and grain. None of them depict anything —
+ * they are tonal fields. That is deliberate: a placeholder must never be
+ * mistaken for evidence that a photograph exists.
+ *
+ *   key        base gradient, dark → light stop
+ *   light      where the highlight sits, as % of the frame
+ *   lift       highlight strength
+ *   falloff    vignette strength at the edge
+ *   grain      film grain amount
+ */
+const ROLES = {
+  /** Cinematic, low-key, warm charcoal. The room, not the object. */
+  hero: {
+    key: ["#191614", "#3A322A"],
+    light: [38, 30],
+    lift: 0.13,
+    falloff: 0.5,
+    grain: 18,
+  },
+  /** Warmer and a stop lighter — daylight on a bench, people present. */
+  human: {
+    key: ["#3A322A", "#6B5B49"],
+    light: [30, 26],
+    lift: 0.17,
+    falloff: 0.3,
+    grain: 16,
+  },
+  /** Studio: near-neutral, evenly lit, minimal vignette. The object leads. */
+  product: {
+    key: ["#514A43", "#6F675E"],
+    light: [50, 38],
+    lift: 0.14,
+    falloff: 0.16,
+    grain: 10,
+  },
+  /** Industrial: darker, harder falloff, cooler than leather. Machinery. */
+  factory: {
+    key: ["#17171A", "#33342F"],
+    light: [58, 24],
+    lift: 0.10,
+    falloff: 0.58,
+    grain: 20,
+  },
+  /** Steel and container: coolest in the set, logistics rather than craft. */
+  export: {
+    key: ["#1E2124", "#454B4E"],
+    light: [62, 30],
+    lift: 0.11,
+    falloff: 0.42,
+    grain: 17,
+  },
+  /** The pause and the closing frame: warm, tactile, mid-key. */
+  material: {
+    key: ["#332A22", "#6A5540"],
+    light: [42, 44],
+    lift: 0.18,
+    falloff: 0.34,
+    grain: 15,
+  },
+};
+
+/** Path prefix → role. First match wins, so order matters. */
+const ROLE_BY_PREFIX = [
+  ["images/hero/home-hero", "hero"],
+  ["images/hero/cta-workshop", "material"],
+  ["images/hero/export-hero", "export"],
+  ["images/hero/technology-hero", "factory"],
+  ["images/hero/manufacturing-hero", "factory"],
+  ["images/hero/contact-hero", "human"],
+  ["images/hero/enquiry-hero", "human"],
+  ["images/hero/about-hero", "human"],
+  ["images/hero/products-hero", "product"],
+  ["images/hero/quality-hero", "factory"],
+  ["images/hero/gallery-hero", "hero"],
+  ["images/about/craftsman", "human"],
+  ["images/about/workshop", "human"],
+  ["images/about/", "human"],
+  ["images/products/", "product"],
+  ["images/categories/", "product"],
+  ["images/machinery/", "factory"],
+  ["images/manufacturing/packaging", "export"],
+  ["images/manufacturing/inspection", "factory"],
+  ["images/manufacturing/hide-selection", "material"],
+  ["images/manufacturing/finishing", "material"],
+  ["images/manufacturing/assembly", "human"],
+  ["images/manufacturing/", "factory"],
+  ["images/quality/", "factory"],
+  ["images/export/", "export"],
+  ["images/gallery/packaging", "export"],
+  ["images/gallery/machinery", "factory"],
+  ["images/gallery/products", "product"],
+  ["images/gallery/factory", "factory"],
+  ["images/gallery/events", "human"],
+  ["images/certificates/", "product"],
+  ["images/blog/", "material"],
+  ["images/og/", "hero"],
 ];
+
+function roleFor(name) {
+  const match = ROLE_BY_PREFIX.find(([prefix]) => name.startsWith(prefix));
+  return ROLES[match ? match[1] : "material"];
+}
 
 const RATIO = {
   hero: [2400, 1200],
@@ -143,41 +247,80 @@ const IMAGES = [
   ["images/placeholder", "wide"],
 ];
 
-/** Stable tone per path, so regenerating produces identical output. */
-function toneFor(name) {
-  let hash = 0;
-  for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) % 100000;
-  return TONES[hash % TONES.length];
+/**
+ * Deterministic 0–1 noise, so regenerating produces byte-identical files.
+ * `Math.random()` would rewrite every image on every run and churn the repo.
+ */
+function seeded(seed) {
+  let state = seed >>> 0;
+  return () => {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
 }
 
-function svg(width, height, label, [from, to]) {
-  const fontSize = Math.round(Math.min(width, height) * 0.045);
+/**
+ * A tonal field for one role: a directional key, a placed light, a vignette.
+ *
+ * No text and no depiction. The filename used to be stamped across the middle
+ * in serif caps, which is why the home page read "HOME" through its own
+ * headline. A placeholder holds tone, key and aspect ratio so the layout can be
+ * judged; the moment it draws something it starts pretending to be evidence.
+ */
+function svg(width, height, role) {
+  const [from, to] = role.key;
+  const [lx, ly] = role.light;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
   <defs>
-    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <linearGradient id="g" x1="0" y1="0" x2="0.8" y2="1">
       <stop offset="0%" stop-color="${from}"/>
       <stop offset="100%" stop-color="${to}"/>
     </linearGradient>
-    <pattern id="lines" width="14" height="14" patternUnits="userSpaceOnUse" patternTransform="rotate(35)">
-      <line x1="0" y1="0" x2="0" y2="14" stroke="#ffffff" stroke-opacity="0.05" stroke-width="3"/>
-    </pattern>
+    <radialGradient id="l" cx="${lx}%" cy="${ly}%" r="62%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="${role.lift}"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="v" cx="50%" cy="48%" r="76%">
+      <stop offset="45%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="${role.falloff}"/>
+    </radialGradient>
   </defs>
   <rect width="100%" height="100%" fill="url(#g)"/>
-  <rect width="100%" height="100%" fill="url(#lines)"/>
-  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="middle"
-        font-family="Georgia, 'Times New Roman', serif" font-size="${fontSize}"
-        fill="#ffffff" fill-opacity="0.72" letter-spacing="${fontSize * 0.12}">${label}</text>
+  <rect width="100%" height="100%" fill="url(#l)"/>
+  <rect width="100%" height="100%" fill="url(#v)"/>
 </svg>`;
 }
 
-const title = (name) =>
-  name
-    .split("/")
-    .pop()
-    .replace(/-(thumb|hero|front|detail|interior|hardware|cover)$/, "")
-    .replace(/-/g, " ")
-    .toUpperCase();
+/**
+ * Fine grain, composited over the field. Generated at a third of the frame and
+ * scaled up, which gives soft photographic grain rather than television static.
+ * Values sit near mid-grey so `overlay` nudges the tone instead of bleaching it.
+ */
+async function grain(width, height, seed, amount) {
+  const w = Math.max(2, Math.round(width / 3));
+  const h = Math.max(2, Math.round(height / 3));
+  const random = seeded(seed);
+  const data = Buffer.allocUnsafe(w * h);
+  const base = 128 - Math.round(amount / 2);
+
+  for (let i = 0; i < data.length; i += 1) {
+    data[i] = base + Math.floor(random() * amount);
+  }
+
+  return sharp(data, { raw: { width: w, height: h, channels: 1 } })
+    .resize(width, height)
+    .blur(0.5)
+    .png()
+    .toBuffer();
+}
+
+/** Stable seed per path, so output is byte-identical across runs. */
+function seedFor(name) {
+  let hash = 0;
+  for (const char of name) hash = (hash * 31 + char.charCodeAt(0)) % 100000;
+  return hash + 7;
+}
 
 let written = 0;
 
@@ -186,8 +329,12 @@ for (const [name, ratio] of IMAGES) {
   const target = path.join(PUBLIC_DIR, `${name}.webp`);
 
   await mkdir(path.dirname(target), { recursive: true });
-  await sharp(Buffer.from(svg(width, height, title(name), toneFor(name))))
-    .webp({ quality: 72 })
+  const role = roleFor(name);
+  await sharp(Buffer.from(svg(width, height, role)))
+    .composite([
+      { input: await grain(width, height, seedFor(name), role.grain), blend: "overlay" },
+    ])
+    .webp({ quality: 74 })
     .toFile(target);
 
   written += 1;
@@ -196,9 +343,15 @@ for (const [name, ratio] of IMAGES) {
 // The organisation logo is referenced as PNG from JSON-LD.
 const logoPath = path.join(PUBLIC_DIR, "images/logos/logo.png");
 await mkdir(path.dirname(logoPath), { recursive: true });
-await sharp(Buffer.from(svg(512, 512, "EE", TONES[0])))
-  .png()
-  .toFile(logoPath);
+// The logo is the one asset a monogram belongs on — it is a mark, not a
+// stand-in for a photograph.
+const logoSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512">
+  <rect width="100%" height="100%" fill="#1B1B1B"/>
+  <text x="50%" y="50%" text-anchor="middle" dominant-baseline="central"
+        font-family="Georgia, 'Times New Roman', serif" font-size="150"
+        letter-spacing="6" fill="#F8F5F0">NEE</text>
+</svg>`;
+await sharp(Buffer.from(logoSvg)).png().toFile(logoPath);
 written += 1;
 
 await writeFile(

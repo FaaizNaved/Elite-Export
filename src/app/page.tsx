@@ -1,19 +1,11 @@
-import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { CategoryCard } from "@/components/cards";
-import { Hero } from "@/components/hero";
-import { CtaBanner } from "@/components/layout";
-import { Counter, ImageReveal, SlideUp, Stagger, StaggerItem } from "@/components/motion";
-import { EditorialSpread, FullBleedImage, SectionHeader } from "@/components/sections";
-import { StickyCta } from "@/components/scroll";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { buttonVariants } from "@/components/ui/button";
-import { Container } from "@/components/ui/container";
-import { Icon } from "@/components/ui/icon";
+import { ImageReveal, SlideUp } from "@/components/motion";
+import { HomeOpening, StatementPanel } from "@/components/sections";
 import { ContentImage } from "@/components/ui/image";
 import { Section } from "@/components/ui/section";
 import { Typography } from "@/components/ui/typography";
+import { cn } from "@/lib/cn";
 import { company, siteConfig } from "@/config";
 import { ROUTES } from "@/constants";
 import {
@@ -21,9 +13,12 @@ import {
   getCompanyPage,
   getFeaturedMachines,
   getHomeContent,
+  getProducts,
+  getStatement,
 } from "@/lib/content";
 import { buildMetadata } from "@/lib/seo";
 import { countryName } from "@/utils/country";
+import type { Product } from "@/types";
 
 export const metadata: Metadata = buildMetadata({
   title: siteConfig.name,
@@ -31,399 +26,420 @@ export const metadata: Metadata = buildMetadata({
   path: ROUTES.home,
 });
 
+/** Page gutter, matched to `Container size="lg"`. */
+const gutter = "mx-auto w-full max-w-wide px-6 md:px-8";
+
+const quietLink =
+  "group inline-flex items-center gap-2 self-start border-b border-border-strong pb-1 font-sans text-button font-medium tracking-[0.06em] uppercase transition-base hover:border-accent hover:text-accent-strong";
+
+const arrow = "transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0";
+
 /**
- * Home page — implements `docs/design-system/home-creative-direction.md`.
+ * Home.
  *
- * The narrative runs identity → story → manufacturing → technology → pause →
- * products → quality → reach → action. Manufacturing precedes the catalogue
- * deliberately: a buyer doing due diligence is asking whether this is a real
- * factory, and the answer has to arrive before the products do.
+ * The governing decision of this pass: the placeholders are empty tonal fields,
+ * and an empty field given 99% of the viewport is not a powerful image — it is
+ * a large blank rectangle. The previous version handed nearly every act a
+ * full-bleed frame, so the page read as a stack of coloured blocks with good
+ * typography between them.
  *
- * Every figure on this page is derived from `config/company.ts` or the
- * catalogue at render time. Nothing countable is authored in the home content
- * files, so an unverified statistic cannot be introduced by a content edit.
- * The process, quality and machinery content files all carry figures — AQL
- * bands, rejection rates, cutting tonnage, per-shift capacity — and none of
- * them are on this page, because none of them are client-confirmed (§0).
+ * The identity is carried by the *document* instead: a manufacturer's index
+ * with item codes and leather weights, a production register, a shipping
+ * manifest. Those are things only this company can print. Photographs sit in
+ * considered, modest frames — big enough to matter, not so big that emptiness
+ * becomes the composition. When real photography lands in the same paths the
+ * frames are already placed, and the page gains a subject rather than gaining
+ * its first idea.
+ *
+ * Every figure derives from `config/company.ts` or the catalogue.
+ *
+ * The frames on this page are sized for photographs that do not exist yet.
+ * What each one is waiting for — subject, orientation, distance, and the area
+ * that has to stay quiet because type sits over it — is written down in
+ * `docs/design-system/photography-brief.md`. Read it before changing any
+ * aspect ratio here; the ratios are the brief.
  */
 export default async function HomePage() {
-  const [categories, manufacturing, quality, machines, home] = await Promise.all([
+  const [categories, products, manufacturing, machines, home, statement] = await Promise.all([
     getCategories(),
+    getProducts(),
     getCompanyPage("manufacturing"),
-    getCompanyPage("quality"),
     getFeaturedMachines(3),
     getHomeContent(),
+    getStatement(),
   ]);
 
-  const { hero, intro, pause, sections, cta } = home;
-  const yearsManufacturing = new Date().getFullYear() - company.foundedYear;
+  const { hero, intro, sections } = home;
+  const credentials = company.certifications.map((certification) => certification.name);
 
-  /**
-   * §1 credential rail. Blueprint §4 specified five items; three survive the
-   * facts register — OEM/ODM and the MOQ figure are unverified placeholder copy.
-   */
-  const credentials = [
-    `Est. ${company.foundedYear}`,
-    company.certifications.map((certification) => certification.name).join(" · "),
-    `${company.exportMarkets.length} export markets`,
-  ].filter(Boolean);
-
-  /** Figures. Config only — no capacity or floor-area claims. */
-  const figures = [
-    { value: yearsManufacturing, label: "Years manufacturing" },
-    { value: company.exportMarkets.length, label: "Export markets" },
-    { value: company.certifications.length, label: "Independent certifications" },
-  ];
-
-  /**
-   * Named rather than sliced. `slice(0, 4)` returned the first four in file
-   * order and ended the section on "Machine processing" — a sequence titled
-   * "the route every order takes" that never reached a finished piece, and that
-   * dropped the two stages blueprint §7 chose precisely because they describe a
-   * checkable mechanism (the saddle stitch, the three burnishing passes).
-   */
-  const stageTitles = ["Hide selection", "Cutting", "Assembly", "Finishing"];
-  const namedStages = stageTitles.flatMap(
+  const stageTitles = ["Hide selection", "Assembly", "Finishing"];
+  const stages = stageTitles.flatMap(
     (title) => manufacturing?.steps.find((step) => step.title === title) ?? [],
   );
-  const stages =
-    namedStages.length === stageTitles.length ? namedStages : (manufacturing?.steps.slice(0, 4) ?? []);
 
-  /** The inspection photograph for §7. Falls back to the page hero. */
-  const inspectionImage =
-    quality?.steps.find((step) => step.image)?.image ?? quality?.hero;
+  /** The catalogue, grouped the way the factory is laid out. */
+  const index = categories
+    .map((category) => ({
+      category,
+      items: products.filter((product) => product.categorySlug === category.slug),
+    }))
+    .filter((group) => group.items.length > 0);
+
+  const materials = [...new Set(products.map((product) => product.material).filter(Boolean))];
 
   return (
     <>
-      {/* ---------------------------------------------------------------- §1 */}
-      {/* Copy anchored to the lower left rather than the centre of the frame.
-          Centred copy over a photograph makes a poster; a title in the corner
-          of a live frame makes a photograph that happens to carry a title, and
-          it leaves the upper two-thirds — where the blueprint's blurred factory
-          plane lives — unobstructed. */}
-      <Hero
-        variant="image"
-        align="start"
+      {/* ══════════════════════════════════════ I — ARRIVAL ════════════════ */}
+      <HomeOpening
         eyebrow={hero.eyebrow}
         heading={hero.heading}
         description={hero.description}
-        backgroundImage={hero.image}
-        overlay="strong"
-        height="full"
-        scrollIndicator
-        className="justify-end pb-28 md:pb-32"
-        actions={
-          <>
-            <Link href={hero.primaryCta.href} className={buttonVariants({ size: "lg" })}>
-              {hero.primaryCta.label}
-            </Link>
-            {/* One button, one decision. The second action stays reachable as a
-                quiet link — two buttons of equal weight is a choice, and a
-                choice is not confidence. */}
-            {hero.secondaryCta && (
-              <Link
-                href={hero.secondaryCta.href}
-                className="group inline-flex items-center gap-2 font-sans text-button font-medium text-primary-foreground/80 underline-offset-8 transition-base hover:text-accent sm:ml-4"
-              >
-                {hero.secondaryCta.label}
-                <Icon
-                  icon={ArrowRight}
-                  size="xs"
-                  className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                />
-              </Link>
-            )}
-          </>
-        }
-        meta={
-          <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 font-sans text-caption tracking-[0.08em] uppercase text-primary-foreground/70">
-            {credentials.map((credential, index) => (
-              <li
-                key={credential}
-                // The certifications item is dropped whole below 640px, not just
-                // its label — hiding the text alone left its gap behind.
-                className={
-                  index === 1 ? "flex items-center gap-6 max-sm:hidden" : "flex items-center gap-6"
-                }
-              >
-                {/* Thin gold dividers between items, never before the first. */}
-                {index > 0 && <span aria-hidden className="h-3 w-px bg-accent/40 max-sm:hidden" />}
-                <span>{credential}</span>
-              </li>
-            ))}
-          </ul>
-        }
+        image={hero.image}
+        action={hero.primaryCta}
+        credentials={credentials}
       />
 
-      {/* ------------------------------------------- §2 The house — story -- */}
-      {/* The photograph breaks the container and runs to the left screen edge.
-          A workshop contained in a rounded rectangle is an illustration of a
-          point; a workshop running off the page is a building. */}
-      <Section spacing="lg" texture="grain">
-        <div className="grid items-center gap-10 lg:grid-cols-12 lg:gap-0">
-          <ImageReveal amount={0.15} className="lg:col-span-7 lg:col-start-1">
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-sunken lg:aspect-[4/3] lg:rounded-r-image">
-              <ContentImage image={intro.image} sizes="(min-width: 1024px) 58vw, 100vw" />
+      {/* ══════════════════════════════════════ II — THE OBJECT ════════════ */}
+      {/* An index, not a pair of tiles.
+          A buyer landing here asks one question — what do you actually make —
+          and a manufacturer answers it the way its catalogue does: the pieces by
+          name, the leather each is cut from, and the code it is ordered by. The
+          plate beside each line is small on purpose. The line is the content;
+          the photograph confirms it. */}
+      {index.length > 0 && (
+        <Section spacing="lg">
+          <div className={gutter}>
+            <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <Typography variant="overline">{sections.categories?.eyebrow}</Typography>
+              <Typography
+                variant="small"
+                className="max-w-sm text-foreground-secondary md:text-right"
+              >
+                {sections.categories?.description}
+              </Typography>
+            </div>
+
+            <div className="mt-12 flex flex-col gap-14 md:mt-16 md:gap-16">
+              {index.map(({ category, items }) => (
+                <section key={category.href} aria-labelledby={`cat-${category.slug}`}>
+                  <div className="flex items-baseline justify-between gap-6 border-b border-foreground/25 pb-3">
+                    <Link href={category.href} className="group">
+                      <h2
+                        id={`cat-${category.slug}`}
+                        className="font-display text-h3 font-medium transition-base group-hover:text-accent-strong"
+                      >
+                        {category.name}
+                      </h2>
+                    </Link>
+                    <span className="shrink-0 text-right font-sans text-caption tracking-[0.1em] uppercase text-foreground-muted">
+                      {category.subcategories
+                        .filter((sub) => sub.productCount > 0)
+                        .map((sub) => sub.name)
+                        .join(" · ")}
+                    </span>
+                  </div>
+
+                  <ul>
+                    {items.map((item) => (
+                      <li key={item.href}>
+                        <IndexRow product={item} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+
+            <Link href={ROUTES.products} className={`${quietLink} mt-12`}>
+              The full catalogue
+              <span aria-hidden className={arrow}>
+                &rarr;
+              </span>
+            </Link>
+          </div>
+        </Section>
+      )}
+
+      {/* ══════════════════════════════════════ III — THE HAND ═════════════ */}
+      {/* The one place on the page where somebody is present, and the quietest
+          thing on it. A plate, one line set at the foot of it, and three empty
+          columns between them.
+
+          It used to be a heading, a paragraph and a link — the "image + heading
+          + paragraph" block the rest of the page was built to avoid — and the
+          paragraph restated the hero almost exactly. Subtracting it left the
+          sentence that was authored for this section and never rendered: the
+          heading and its second half now read as one line, which is the whole
+          annotation. The section is deliberately the only one without an
+          eyebrow. It is an interruption, not a chapter. */}
+      <Section spacing="lg" className="bg-surface-sunken">
+        <div className={gutter}>
+          <div className="grid items-end gap-8 md:grid-cols-12 md:gap-10">
+            <ImageReveal amount={0.15} className="md:col-span-5">
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-background">
+                <ContentImage image={intro.image} sizes="(min-width: 768px) 42vw, 100vw" />
+              </div>
+            </ImageReveal>
+
+            {/* Set at reading size rather than heading size. A section carrying
+                one sentence does not need that sentence enlarged; the
+                photograph is the evidence and this is the caption under it. */}
+            <SlideUp delay={0.1} className="flex flex-col gap-4 pb-1 md:col-span-4 md:col-start-8">
+              <h2 className="font-display text-body-lg font-medium">
+                {intro.heading}
+                {intro.description && (
+                  <span className="text-foreground-secondary"> {intro.description}</span>
+                )}
+              </h2>
+              {/* The quiet reference link, not the chapter link the other acts
+                  use. An uppercase letterspaced rule-under-it action was the
+                  last piece of website marketing left in this section; a
+                  caption cites its source, it does not call anyone to act.
+                  Same treatment as "How we inspect" in the record — no new
+                  vocabulary, just the softer of the two that already exist. */}
+              <Link
+                href={ROUTES.about}
+                className="self-start font-sans text-small text-foreground-secondary underline underline-offset-4 transition-fast hover:text-accent-strong"
+              >
+                About the company
+              </Link>
+            </SlideUp>
+          </div>
+        </div>
+      </Section>
+
+      {/* ══════════════════════════════════════ IV — THE MATERIAL ══════════ */}
+      {/* One transformation. The hide is a wide shallow band — a material
+          sample, not a cinematic still. The bench is smaller and set right; the
+          finished piece smaller again and set left, carrying only its name. The
+          leather gets more resolved as the frames get quieter, which is the
+          argument of the section. */}
+      {stages.length === 3 && (
+        <Section spacing="lg">
+          <div className={gutter}>
+            <div className="flex flex-col gap-3">
+              <Typography variant="overline">{sections.manufacturing?.eyebrow}</Typography>
+              <Typography variant="h3" as="h2" className="max-w-xl">
+                {sections.manufacturing?.heading ?? "How it is made"}
+              </Typography>
+            </div>
+          </div>
+
+          <ImageReveal amount={0.15} className={`${gutter} mt-12 md:mt-14`}>
+            {/* The band is only a band once there is width to run across. At
+                360px a 5:2 crop is 119px tall — a strip, not a hide, and
+                shorter than the finished piece three frames later, which
+                inverts the whole argument of the section. */}
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-surface-sunken sm:aspect-[5/2] lg:aspect-[3/1]">
+              <ContentImage image={stages[0].image ?? intro.image} sizes="100vw" quality={88} />
             </div>
           </ImageReveal>
 
-          <SlideUp
-            delay={0.1}
-            className="flex flex-col gap-8 px-6 md:px-8 lg:col-span-4 lg:col-start-9 lg:px-0 lg:pr-8"
-          >
-            <SectionHeader eyebrow={intro.eyebrow} heading={intro.heading} />
-            <Typography variant="body" className="max-w-narrow text-foreground-secondary">
-              {intro.body}
-            </Typography>
-            <Link
-              href={ROUTES.about}
-              className={buttonVariants({ variant: "text", className: "group self-start" })}
-            >
-              About the company
-              <Icon
-                icon={ArrowRight}
-                size="xs"
-                className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
-          </SlideUp>
-        </div>
-      </Section>
-
-      {/* --------------------------- §3 How it is made — manufacturing ----- */}
-      {/* Four stages, four photographs, alternating sides. This was a 2×2 text
-          grid while four stage photographs sat unused in the content layer —
-          a section about a factory floor that showed no factory floor. It is
-          now the longest stretch of the page, which is correct: it is the part
-          that answers the question the buyer actually arrived with. */}
-      {stages.length > 0 && (
-        <Section spacing="lg" texture="blueprint">
-          <Container size="lg" className="mb-20 md:mb-24">
-            <SectionHeader
-              eyebrow={sections.manufacturing?.eyebrow}
-              heading={sections.manufacturing?.heading ?? "How it is made"}
-              description={sections.manufacturing?.description}
-              as="h2"
-            />
-          </Container>
-
-          <div className="flex flex-col gap-24 md:gap-32">
-            {stages.map((stage, index) => (
-              <EditorialSpread
-                key={stage.title}
-                marker={String(index + 1).padStart(2, "0")}
-                title={stage.title}
-                description={stage.description}
-                image={stage.image ?? intro.image}
-                side={index % 2 === 0 ? "left" : "right"}
-                ratio={index % 2 === 0 ? "landscape" : "portrait"}
-              />
-            ))}
+          {/* Every caption in this sequence is set identically: one column,
+              four grid units wide, name over note, same two sizes. This one was
+              a wider heading laid out beside its note instead of above it,
+              which made the first stage read as a section of its own rather
+              than the first of three. With the text held constant the only
+              thing changing down the sequence is the size of the plate — which
+              is the argument being made. */}
+          <div className={`${gutter} mt-5`}>
+            <div className="grid gap-6 md:grid-cols-12 md:gap-10">
+              <SlideUp className="flex flex-col gap-2 md:col-span-4">
+                <h3 className="font-display text-body-lg font-medium">{stages[0].title}</h3>
+                <p className="font-sans text-small text-foreground-secondary">
+                  {stages[0].description}
+                </p>
+              </SlideUp>
+            </div>
           </div>
 
-          <Container size="lg" className="mt-20 md:mt-24">
-            <Link
-              href={ROUTES.manufacturing}
-              className={buttonVariants({ variant: "text", className: "group" })}
-            >
-              See the full process
-              <Icon
-                icon={ArrowRight}
-                size="xs"
-                className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
-          </Container>
+          <div className={`${gutter} mt-16 md:mt-20`}>
+            <div className="grid items-end gap-6 md:grid-cols-12 md:gap-10">
+              <SlideUp className="order-2 flex flex-col gap-2 pb-1 md:order-1 md:col-span-4">
+                <h3 className="font-display text-body-lg font-medium">{stages[1].title}</h3>
+                <p className="font-sans text-small text-foreground-secondary">
+                  {stages[1].description}
+                </p>
+              </SlideUp>
+              <ImageReveal
+                amount={0.15}
+                className="order-1 md:order-2 md:col-span-7 md:col-start-6"
+              >
+                <div className="relative aspect-[3/2] w-full overflow-hidden bg-surface-sunken">
+                  <ContentImage
+                    image={stages[1].image ?? intro.image}
+                    sizes="(min-width: 768px) 58vw, 100vw"
+                  />
+                </div>
+              </ImageReveal>
+            </div>
+          </div>
+
+          <div className={`${gutter} mt-16 md:mt-20`}>
+            <div className="grid items-end gap-6 md:grid-cols-12 md:gap-10">
+              {/* The resolution of the sequence, and it has to survive being
+                  the smallest thing in it. At three columns this plate came
+                  out 314px on a 1440 screen — narrower than an ordinary
+                  product card in the catalogue grid, so the object every
+                  previous frame was working towards arrived smaller than
+                  routine furniture elsewhere on the site. One column wider
+                  reads as a finished piece set down and looked at. The drop
+                  from the bench is still emphatic: roughly 96 / 55 / 30 per
+                  cent of the measure, and now decelerating evenly instead of
+                  falling off a cliff at the end.
+
+                  Held narrow on phones by the same argument — stacking every
+                  frame to the full measure made the finished object the
+                  largest plate in the sequence. */}
+              <ImageReveal amount={0.2} className="max-w-52 md:col-span-4 md:max-w-none">
+                <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface-sunken">
+                  <ContentImage
+                    image={stages[2].image ?? intro.image}
+                    sizes="(min-width: 768px) 33vw, 100vw"
+                  />
+                </div>
+              </ImageReveal>
+              <SlideUp className="flex flex-col gap-2 pb-1 md:col-span-4 md:col-start-6">
+                <h3 className="font-display text-body-lg font-medium">{stages[2].title}</h3>
+                <Link href={ROUTES.manufacturing} className={`${quietLink} mt-3`}>
+                  See the full process
+                  <span aria-hidden className={arrow}>
+                    &rarr;
+                  </span>
+                </Link>
+              </SlideUp>
+            </div>
+          </div>
         </Section>
       )}
 
-      {/* ------------------------------------- §4 Technology — capability -- */}
-      {/* The only tonal shift in the middle of the page, and the only section
-          on charcoal before the close. A buyer discounts "manufacturer" and
-          "technology" harder than any other claim; named equipment is evidence,
-          and an icon grid of "Advanced Machinery / Skilled Team" is not.
-          Specifications — tonnage, stitch speed, per-shift capacity — stay on
-          the machine pages until the client confirms them. */}
+      {/* ══════════════════════════════════════ V — THE WORKSHOP ═══════════ */}
+      {/* A production register on a warm charcoal floor. Stage against
+          equipment, hairline-ruled, set in sans. Equipment gets recorded, not
+          advertised — the register is the section, and the photograph is one
+          modest plate beside it rather than a black hero. */}
       {machines.length > 0 && (
-        <Section spacing="lg" className="bg-primary text-primary-foreground">
-          <Container size="lg" className="flex flex-col gap-16 md:gap-20">
-            <div className="flex flex-col gap-5 lg:max-w-2xl">
-              <div className="flex flex-col gap-3">
-                <Typography variant="overline" className="text-primary-foreground/50">
-                  Technology
+        <Section spacing="md" className="bg-ink text-primary-foreground">
+          <div className={gutter}>
+            <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+              <div className="flex flex-col gap-4 lg:col-span-4">
+                <Typography variant="overline" className="text-primary-foreground/60">
+                  The floor
                 </Typography>
-                <span aria-hidden className="rule-stitch" />
+                <Typography variant="h4" as="h2" className="font-display text-primary-foreground">
+                  Hands decide how it ages. Machines decide whether the five hundredth matches the
+                  first.
+                </Typography>
+
+                <ImageReveal amount={0.2} className="mt-2">
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-primary">
+                    <ContentImage
+                      image={machines[0].gallery.thumbnail}
+                      sizes="(min-width: 1024px) 33vw, 100vw"
+                    />
+                  </div>
+                </ImageReveal>
               </div>
-              <Typography variant="h2" as="h2" className="text-primary-foreground">
-                The floor is equipped for repeatability
-              </Typography>
-              <Typography variant="lead" className="max-w-xl text-primary-foreground/70">
-                Hand finishing decides how a piece ages. Machinery decides whether the five
-                hundredth matches the first.
-              </Typography>
+
+              <div className="lg:col-span-7 lg:col-start-6">
+                <div className="flex items-baseline justify-between border-b border-primary-foreground/25 pb-2 font-sans text-caption tracking-[0.1em] uppercase text-primary-foreground/55">
+                  <span>Stage</span>
+                  <span>Equipment</span>
+                </div>
+
+                <ul>
+                  {machines.map((machine) => (
+                    <li key={machine.slug}>
+                      <Link
+                        href={machine.href}
+                        // Two columns once the row can hold them. At 360px the
+                        // equipment names wrap to two lines while the stage
+                        // stays pinned to the first baseline, so the register
+                        // reads ragged; stacked, it stays a register.
+                        className="group flex flex-col gap-1 border-b border-primary-foreground/15 py-4 transition-fast hover:text-accent sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+                      >
+                        <span className="shrink-0 font-sans text-caption tracking-[0.1em] uppercase text-primary-foreground/65">
+                          {machine.stage}
+                        </span>
+                        <span className="font-sans text-body font-medium sm:text-right">
+                          {machine.title}
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+
+                <Link
+                  href={ROUTES.technology}
+                  className="group mt-8 inline-flex items-center gap-2 border-b border-primary-foreground/25 pb-1 font-sans text-button font-medium tracking-[0.06em] uppercase text-primary-foreground/90 transition-base hover:border-accent hover:text-accent"
+                >
+                  The full register
+                  <span aria-hidden className={arrow}>
+                    &rarr;
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </Section>
+      )}
+
+      {/* ══════════════════════════════════════ VI — THE RECORD ════════════ */}
+      {/* Paperwork, set as paperwork. Nothing here is larger than body size.
+          The materials column quotes the leather weights straight from the
+          catalogue — the most specific language the company owns, and it was
+          not on this page at all before. */}
+      <Section spacing="md">
+        <div className={gutter}>
+          <div className="grid gap-8 border-y border-border py-8 sm:grid-cols-2 lg:gap-20">
+            <div className="flex flex-col gap-3">
+              <Typography variant="overline">Audited by</Typography>
+              <ul className="flex flex-col gap-1.5">
+                {company.certifications.map((certification) => (
+                  <li key={certification.name} className="font-sans text-small">
+                    {certification.name}
+                    <span className="text-foreground-muted">
+                      {" — "}
+                      {[certification.issuer, certification.year].filter(Boolean).join(", ")}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href={ROUTES.quality}
+                className="mt-1 self-start font-sans text-small text-foreground-secondary underline underline-offset-4 transition-fast hover:text-accent-strong"
+              >
+                How we inspect
+              </Link>
             </div>
 
-            <Stagger className="grid gap-12 md:grid-cols-3 md:gap-8">
-              {machines.map((machine) => (
-                <StaggerItem key={machine.slug} className="group flex flex-col gap-6">
-                  <Link href={machine.href} className="flex flex-col gap-6">
-                    <AspectRatio
-                      ratio="landscape"
-                      className="overflow-hidden bg-primary-foreground/5"
-                    >
-                      <ContentImage
-                        image={machine.gallery.thumbnail}
-                        sizes="(min-width: 768px) 33vw, 100vw"
-                        className="object-cover transition-premium group-hover:scale-[1.03] motion-reduce:group-hover:scale-100"
-                      />
-                    </AspectRatio>
-
-                    <div className="flex flex-col gap-3">
-                      <Typography variant="overline" className="text-accent">
-                        {machine.stage}
-                      </Typography>
-                      <Typography
-                        variant="h3"
-                        as="h3"
-                        className="text-primary-foreground transition-base group-hover:text-accent"
-                      >
-                        {machine.title}
-                      </Typography>
-                      <Typography variant="small" className="text-primary-foreground/60">
-                        {machine.shortDescription}
-                      </Typography>
-                    </div>
-                  </Link>
-                </StaggerItem>
-              ))}
-            </Stagger>
-
-            <Link
-              href={ROUTES.technology}
-              className="group inline-flex items-center gap-2 self-start font-sans text-button font-medium text-primary-foreground underline-offset-8 transition-base hover:text-accent"
-            >
-              All machinery and specifications
-              <Icon
-                icon={ArrowRight}
-                size="xs"
-                className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
-          </Container>
-        </Section>
-      )}
-
-      {/* --------------------------------------------- §5 The Pause ------- */}
-      <FullBleedImage image={pause.image} label={pause.label} />
-
-      {/* --------------------------------------- §6 What we make ---------- */}
-      {/* Offset plates, not a two-up grid. Symmetry is the signature of a
-          template; the second plate drops to break it. */}
-      <Section spacing="lg" texture="pattern" className="bg-surface-sunken">
-        <Container size="lg" className="flex flex-col gap-16 md:gap-20">
-          <SectionHeader
-            eyebrow={sections.categories?.eyebrow}
-            heading={sections.categories?.heading ?? "What we make"}
-            description={sections.categories?.description}
-            as="h2"
-          />
-
-          <Stagger className="grid gap-16 md:grid-cols-2 md:gap-12">
-            {categories.map((category, index) => (
-              <StaggerItem key={category.href} className={index % 2 === 1 ? "md:mt-24" : undefined}>
-                <CategoryCard category={category} variant="editorial" />
-              </StaggerItem>
-            ))}
-          </Stagger>
-
-          <Link
-            href={ROUTES.products}
-            className={buttonVariants({ variant: "text", className: "group self-start" })}
-          >
-            All products
-            <Icon
-              icon={ArrowRight}
-              size="xs"
-              className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-            />
-          </Link>
-        </Container>
-      </Section>
-
-      {/* ------------------------------------ §7 Why the quality holds ---- */}
-      {/* Was two ruled lines of text with the inspection photography unused.
-          The certifications now carry display weight, because the whole point
-          of a certification is that somebody outside the building signed it. */}
-      <Section spacing="lg" texture="stitch">
-        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-0">
-          {inspectionImage && (
-            <ImageReveal amount={0.15} className="lg:col-span-6 lg:col-start-1">
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-surface-sunken lg:rounded-r-image">
-                <ContentImage image={inspectionImage} sizes="(min-width: 1024px) 50vw, 100vw" />
+            {materials.length > 0 && (
+              <div className="flex flex-col gap-3">
+                <Typography variant="overline">Leather we cut</Typography>
+                <ul className="flex flex-col gap-1.5">
+                  {materials.map((material) => (
+                    <li key={material} className="font-sans text-small text-foreground-secondary">
+                      {material}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </ImageReveal>
-          )}
-
-          <SlideUp
-            delay={0.1}
-            className="flex flex-col gap-10 px-6 md:px-8 lg:col-span-5 lg:col-start-8 lg:px-0 lg:pr-8"
-          >
-            <SectionHeader
-              eyebrow={sections.quality?.eyebrow}
-              heading={sections.quality?.heading ?? "Why the quality holds"}
-              description={sections.quality?.description}
-              as="h2"
-            />
-
-            <ul className="flex flex-col">
-              {company.certifications.map((certification) => (
-                <li
-                  key={certification.name}
-                  className="flex flex-col gap-2 border-t border-border py-8 last:border-b"
-                >
-                  <Typography variant="h3" as="p" className="text-h2">
-                    {certification.name}
-                  </Typography>
-                  <Typography variant="small" className="text-foreground-secondary">
-                    {[certification.issuer, certification.year].filter(Boolean).join(" · ")}
-                  </Typography>
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              href={ROUTES.quality}
-              className={buttonVariants({ variant: "text", className: "group self-start" })}
-            >
-              How we inspect
-              <Icon
-                icon={ArrowRight}
-                size="xs"
-                className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
-          </SlideUp>
+            )}
+          </div>
         </div>
       </Section>
 
-      {/* ---------------------------------------- §8 Origin and markets --- */}
-      {/* The markets were eight emoji flags in a grid — OS-rendered glyphs
-          outside the type system, and the single most off-brand detail on the
-          page. They are now typography: eight country names set large reads as
-          a shipping manifest, a flag grid reads as a locale switcher. */}
-      <Section spacing="lg" texture="hardware" className="bg-surface-sunken">
-        <Container size="lg" className="flex flex-col gap-16 md:gap-20">
-          <SectionHeader
-            eyebrow={sections.origin?.eyebrow}
-            heading={sections.origin?.heading ?? "Origin and markets"}
-            description={sections.origin?.description}
-            as="h2"
-          />
-
-          <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_2fr] lg:gap-20">
-            <div className="flex flex-col gap-3">
+      {/* ══════════════════════════════════════ VII — THE DEPARTURE ════════ */}
+      {/* Made here, then it goes. Set as a manifest: the origin on one side, the
+          destinations ruled off on the other. Typographic rather than a
+          photograph of a container, because the fact is the point and both
+          sides of it come from config. */}
+      <Section spacing="lg" className="bg-surface-sunken">
+        <div className={gutter}>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+            <div className="flex flex-col gap-2 lg:col-span-4">
               <Typography variant="overline">Made in</Typography>
-              <Typography variant="h3" as="p">
+              <Typography variant="h3" as="h2">
                 {company.contact.address.city}
               </Typography>
               <Typography variant="small" className="text-foreground-secondary">
@@ -431,92 +447,76 @@ export default async function HomePage() {
               </Typography>
             </div>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4 lg:col-span-7 lg:col-start-6">
               <Typography variant="overline">Shipped to</Typography>
-              <Stagger
-                step={0.04}
-                className="grid gap-x-12 gap-y-4 sm:grid-cols-2 lg:grid-cols-3"
-              >
+              <ul className="grid grid-cols-2 gap-x-8 sm:grid-cols-3">
                 {company.exportMarkets.map((code) => (
-                  <StaggerItem key={code}>
-                    <Typography variant="h3" as="p" className="text-foreground">
-                      {countryName(code)}
-                    </Typography>
-                  </StaggerItem>
+                  <li key={code} className="border-b border-border py-2.5 font-sans text-small">
+                    {countryName(code)}
+                  </li>
                 ))}
-              </Stagger>
+              </ul>
+              <Link href={ROUTES.exportCapabilities} className={`${quietLink} mt-3`}>
+                How we ship
+                <span aria-hidden className={arrow}>
+                  &rarr;
+                </span>
+              </Link>
             </div>
           </div>
-
-          {/* The record, moved here from the company section: three figures
-              belong beside the reach they describe, not beside the story. */}
-          <Stagger className="grid gap-8 border-t border-border pt-12 sm:grid-cols-3">
-            {figures.map((figure) => (
-              <StaggerItem key={figure.label} className="flex flex-col gap-2">
-                <span className="font-sans text-h1 font-semibold tabular-nums">
-                  <Counter value={figure.value} />
-                </span>
-                <Typography variant="small" className="text-foreground-secondary">
-                  {figure.label}
-                </Typography>
-              </StaggerItem>
-            ))}
-          </Stagger>
-        </Container>
+        </div>
       </Section>
 
-      {/* §8 In their words — omitted. The only quotes in the project are
-          fabricated sample data, and blueprint §10 requires real, attributable,
-          permissioned quotes or none. */}
-
-      {/* ------------------------------------- §9 What happens next ------- */}
-      <CtaBanner
-        eyebrow={cta.eyebrow}
-        heading={cta.heading}
-        description={cta.description}
-        align="left"
-        texture="tooling"
-        reassurances={cta.reassurances}
-        primaryAction={
-          <Link
-            href={cta.primaryCta.href}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            {cta.primaryCta.label}
-          </Link>
-        }
-        secondaryAction={
-          cta.secondaryCta && (
-            <Link
-              href={cta.secondaryCta.href}
-              className="group inline-flex items-center gap-2 font-sans text-button font-medium text-primary-foreground/80 underline-offset-8 transition-base hover:text-accent sm:ml-4"
-            >
-              {cta.secondaryCta.label}
-              <Icon
-                icon={ArrowRight}
-                size="xs"
-                className="transition-base group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
-          )
-        }
-      />
-
-      {/* Intent peaks at the process section, so the bar appears after it. The
-          figure is a scroll distance rather than a section boundary, so it
-          lands inside the manufacturing spreads — later than a buyer has
-          finished reading the company story, which is the point. */}
-      <StickyCta threshold={4300}>
-        <Typography variant="small" className="hidden sm:block">
-          Tell us what you need manufactured.
-        </Typography>
-        <Link
-          href={ROUTES.buyerEnquiry}
-          className={buttonVariants({ size: "sm", className: "max-sm:w-full" })}
-        >
-          Start an enquiry
-        </Link>
-      </StickyCta>
+      {/* ══════════════════════════════════════ VIII — SILENCE ═════════════ */}
+      <StatementPanel statement={statement.statement} caption={statement.caption} />
     </>
+  );
+}
+
+/**
+ * One line of the catalogue index: plate, name, leather, code.
+ *
+ * The whole row is the link, so the target is the piece rather than a word
+ * inside a card. The code sits in tabular figures on the right, where a trade
+ * catalogue would put a price — this house does not publish prices, so what
+ * occupies that column is the order reference.
+ */
+function IndexRow({ product }: { product: Product }) {
+  return (
+    <Link
+      href={product.href}
+      aria-label={`${product.title}, item code ${product.itemCode}`}
+      className={cn(
+        "group grid grid-cols-[4rem_1fr] items-center gap-x-5 gap-y-1 border-b border-border py-4",
+        "transition-fast hover:border-border-strong",
+        "md:grid-cols-[5rem_minmax(0,15rem)_1fr_auto] md:gap-x-8",
+      )}
+    >
+      <div className="relative aspect-square w-16 shrink-0 overflow-hidden bg-surface-sunken md:w-20">
+        <ContentImage
+          image={product.gallery.thumbnail}
+          sizes="80px"
+          className="object-cover transition-premium group-hover:scale-[1.04] motion-reduce:group-hover:scale-100"
+        />
+      </div>
+
+      <span className="font-display text-body-lg font-medium transition-base group-hover:text-accent-strong">
+        {product.title}
+      </span>
+
+      {/* The leather, in the manufacturer's own words. Hidden on phones, where
+          the name and the code are what identify the piece. */}
+      <span className="font-sans text-small text-foreground-secondary max-md:hidden">
+        {product.material}
+      </span>
+
+      {/* Tracked like the other technical labels on the page. Set solid, the
+          code read as ordinary small print sitting next to the leather; a
+          reference number on an order sheet is something a buyer transcribes
+          into an email, and it should look like one. */}
+      <span className="col-start-2 font-sans text-caption tracking-[0.08em] tabular-nums text-foreground-muted md:col-start-4 md:text-right">
+        {product.itemCode}
+      </span>
+    </Link>
   );
 }

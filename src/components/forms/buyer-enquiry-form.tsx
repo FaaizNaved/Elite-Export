@@ -60,11 +60,11 @@ export function BuyerEnquiryForm({ fallbackEmail }: BuyerEnquiryFormProps) {
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <Field label="Company name" required error={errors.companyName?.message}>
-          <Input autoComplete="organization" placeholder="Harding Equestrian" {...register("companyName")} />
+          <Input autoComplete="organization" placeholder="Your company" {...register("companyName")} />
         </Field>
 
         <Field label="Contact person" required error={errors.contactPerson?.message}>
-          <Input autoComplete="name" placeholder="Daniel Harding" {...register("contactPerson")} />
+          <Input autoComplete="name" placeholder="Your name" {...register("contactPerson")} />
         </Field>
       </div>
 
@@ -123,7 +123,7 @@ export function BuyerEnquiryForm({ fallbackEmail }: BuyerEnquiryFormProps) {
 
       <Field label="Consent" hideLabel error={errors.consent?.message}>
         <Checkbox
-          label="I agree to Elite Export contacting me about this enquiry."
+          label="I agree to New Elite Exports contacting me about this enquiry."
           {...register("consent")}
         />
       </Field>

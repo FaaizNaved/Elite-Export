@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Card, CardBody, CardDescription, CardFooter, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
-import type { Category, Subcategory } from "@/types";
+import type { Category } from "@/types";
 import { formatCount } from "@/utils/format";
 import { CardAction } from "./card-action";
 import { CardImage } from "./card-image";
@@ -108,22 +108,5 @@ export function CategoryCard({
   );
 }
 
-export interface SubcategoryCardProps {
-  subcategory: Subcategory;
-  className?: string;
-}
-
-/** Lighter sibling of `CategoryCard` for the second level of the hierarchy. */
-export function SubcategoryCard({ subcategory, className }: SubcategoryCardProps) {
-  return (
-    <Card variant="interactive" className={className}>
-      <Link href={subcategory.href} className="flex flex-1 flex-col">
-        <CardImage image={subcategory.thumbnail} ratio="square" sizes="(min-width: 768px) 25vw, 50vw" />
-        <CardBody className="gap-2 p-5">
-          <CardTitle className="text-body-lg">{subcategory.name}</CardTitle>
-          <CardDescription>{subcategory.shortDescription}</CardDescription>
-        </CardBody>
-      </Link>
-    </Card>
-  );
-}
+// `SubcategoryCard` was deleted with the subcategory route. Subcategories are
+// headed bands on the category page now, so there is no tile to click through.

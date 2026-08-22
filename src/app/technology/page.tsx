@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MachineCard } from "@/components/cards";
-import { CtaBanner } from "@/components/layout";
 import { Stagger, StaggerItem } from "@/components/motion";
-import { FeatureGrid, PageHero, Prose, SectionHeader, StatsBand } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
+import {
+  FeatureGrid,
+  FullBleedImage,
+  PageHero,
+  Prose,
+  SectionHeader,
+} from "@/components/sections";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
-import { ROUTES } from "@/constants";
 import { getCompanyPage, getMachinesByStage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
 import { loadCompanyContent } from "@/lib/mdx";
@@ -51,8 +53,6 @@ export default async function TechnologyPage() {
         <Content />
       </Prose>
 
-      <StatsBand stats={page.stats} tone="dark" />
-
       {/* Machinery, grouped by where it sits in the production line. */}
       {stages.map((group, index) => (
         <Section
@@ -83,17 +83,14 @@ export default async function TechnologyPage() {
 
       <FeatureGrid features={page.features} eyebrow="How we run it" heading="Equipment discipline" />
 
-      <CtaBanner
-        heading="Need a process we have not listed?"
-        description="Tell us what the piece requires and we will confirm whether we can produce it in-house."
-        primaryAction={
-          <Link
-            href={ROUTES.buyerEnquiry}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Ask about capability
-          </Link>
-        }
+      {/* Ends on the machinery itself rather than on a grid of claims about it. */}
+      <FullBleedImage
+        image={{
+          src: "/images/machinery/clicking-press/clicking-press-hero.webp",
+          alt: "Hydraulic clicking press on the cutting floor",
+          width: 2400,
+          height: 1200,
+        }}
       />
     </>
   );

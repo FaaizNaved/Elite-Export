@@ -38,10 +38,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry(ROUTES.blog, 0.6, "weekly"),
 
     ...companyPages.map((page) => entry(page.href, 0.8)),
-    ...catalog.categories.flatMap((category) => [
-      entry(category.href, 0.8, "weekly"),
-      ...category.subcategories.map((subcategory) => entry(subcategory.href, 0.7, "weekly")),
-    ]),
+    // Subcategories are anchors on their category page, not URLs of their own,
+    // so they are deliberately absent here — listing `#fragment` entries in a
+    // sitemap advertises pages that do not exist.
+    ...catalog.categories.map((category) => entry(category.href, 0.8, "weekly")),
     ...catalog.products.map((product) => entry(product.href, 0.7, "monthly", product.updatedAt)),
     ...machines.map((machine) => entry(machine.href, 0.5, "yearly", machine.updatedAt)),
     ...posts.map((post) => entry(post.href, 0.5, "yearly", post.updatedAt ?? post.publishedAt)),

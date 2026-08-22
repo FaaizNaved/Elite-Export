@@ -22,15 +22,30 @@
   --color-surface-sunken: #f2eee7;
 
   /* Text */
+  /* All three clear 4.5:1 on both ivory surfaces. `muted` was #8c8c8c, which
+     measures 3.09:1 on the background and 2.9:1 on the sunken surface — it was
+     carrying captions, meta lines and breadcrumb links, so the smallest text on
+     the site was also the least legible. The three tones now sit closer
+     together in value than they used to; the hierarchy between them is carried
+     by size and weight, which is where it belongs. Contrast is a floor, not a
+     style choice — do not lighten these back. */
   --color-foreground: #202020;
-  --color-foreground-secondary: #666666;
-  --color-foreground-muted: #8c8c8c;
+  --color-foreground-secondary: #5c5c5c;
+  --color-foreground-muted: #6e6e6e;
 
   /* Lines */
-  --color-border: #eaeaea;
+  /* Warm, like everything else here. `#eaeaea` is a neutral grey, and against
+     the ivory surfaces it read faintly cold and blue — the one element in the
+     palette not agreeing with the rest of it. */
+  --color-border: #e7e2d9;
   --color-border-strong: #d8d4cd;
 
   /* Brand — Deep Charcoal, Warm Ivory, Antique Gold */
+  /* `ink` is the workshop surface: warm charcoal with brown in it, used for the
+     one dark section on the home page. `primary` (#1b1b1b) is near-neutral and
+     reads as black on a large plane; leather photography sits in a room, and a
+     room has a temperature. */
+  --color-ink: #211d19;
   --color-primary: #1b1b1b;
   --color-primary-foreground: #f8f5f0;
   --color-secondary: #f8f5f0;
@@ -38,6 +53,12 @@
   --color-accent: #b68d40;
   --color-accent-foreground: #ffffff;
   --color-accent-subtle: #f3ead9;
+  /* The gold, dark enough to be read as text on ivory. `--color-accent` is
+     3.06:1 there, which is fine for a rule, a border or an icon and fails for
+     a 12px letterspaced eyebrow. Use `accent` for marks and `accent-strong`
+     whenever the gold is carrying words on a light surface; on charcoal the
+     plain accent already clears the floor comfortably. */
+  --color-accent-strong: #8a6a1f;
 
   /* Status */
   --color-success: #2e7d32;
@@ -106,10 +127,20 @@
   --spacing: 0.25rem;
 
   /* --------------------------------------------------------- Border radius */
-  --radius-button: 14px;
-  --radius-input: 14px;
-  --radius-card: 20px;
-  --radius-image: 24px;
+  /* Near-square, and deliberately so. The scale used to run 14–24px, which is
+     the radius language of a friendly consumer product; on a 20px-rounded card
+     a leather photograph reads as an app tile. Luxury goods are photographed
+     against straight edges, and the frame should not be softer than the object
+     inside it. Kept at 2px rather than 0 so the corner still catches the
+     border — a true square edge reads as unfinished at small sizes.
+
+     `badge` stays a pill on purpose: it is the one shape in the system that
+     has to read as a *token* — a filter chip, a tag — rather than a container,
+     and the contrast with square containers is what makes it legible as one. */
+  --radius-button: 2px;
+  --radius-input: 2px;
+  --radius-card: 2px;
+  --radius-image: 2px;
   --radius-badge: 999px;
 
   /* -------------------------------------------------------------- Shadows */

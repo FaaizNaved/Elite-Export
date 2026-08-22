@@ -47,18 +47,34 @@ function MdxLink({ href = "", children, ...props }: AnchorHTMLAttributes<HTMLAnc
   );
 }
 
+/**
+ * Long-form headings, in the house voice.
+ *
+ * These were `text-4xl / text-3xl / text-2xl` and `font-semibold` in the
+ * default sans — raw Tailwind steps, outside the type scale, in a typeface the
+ * rest of the site reserves for machinery and specifications. Every long-form
+ * page (about, quality, export, manufacturing, technology, the journal, the
+ * legal pages) therefore set its headings in a different family, a different
+ * weight and a different, non-fluid size ramp from the homepage. That single
+ * detail is most of what made the interior of the site read as a different
+ * template.
+ *
+ * They now use `font-display` and the `h1`–`h4` tokens, which is what every
+ * heading outside MDX already used. `tracking-tight` is gone because the tokens
+ * carry their own letter-spacing; setting it here overrode them.
+ */
 export const mdxComponents: MDXComponents = {
   h1: (props: ComponentPropsWithoutRef<"h1">) => (
-    <h1 className="mt-12 mb-6 text-4xl font-semibold tracking-tight" {...props} />
+    <h1 className="mt-12 mb-6 font-display text-h1 font-medium" {...props} />
   ),
   h2: (props: ComponentPropsWithoutRef<"h2">) => (
-    <h2 className="mt-12 mb-4 text-3xl font-semibold tracking-tight" {...props} />
+    <h2 className="mt-12 mb-4 font-display text-h2 font-medium" {...props} />
   ),
   h3: (props: ComponentPropsWithoutRef<"h3">) => (
-    <h3 className="mt-8 mb-3 text-2xl font-semibold tracking-tight" {...props} />
+    <h3 className="mt-8 mb-3 font-display text-h3 font-medium" {...props} />
   ),
   h4: (props: ComponentPropsWithoutRef<"h4">) => (
-    <h4 className="mt-6 mb-2 text-xl font-semibold" {...props} />
+    <h4 className="mt-6 mb-2 font-display text-h4 font-medium" {...props} />
   ),
   p: (props: ComponentPropsWithoutRef<"p">) => <p className="mb-6 leading-relaxed" {...props} />,
   ul: (props: ComponentPropsWithoutRef<"ul">) => (
@@ -71,15 +87,22 @@ export const mdxComponents: MDXComponents = {
     <blockquote className="my-8 border-l-2 pl-6 italic" {...props} />
   ),
   hr: () => <hr className="my-12 border-t" />,
+  // A table in a long-form page is a specification, so it takes the sans
+  // voice and the same hairline the registers use — not prose styling.
   table: (props: ComponentPropsWithoutRef<"table">) => (
     <div className="my-8 overflow-x-auto">
-      <table className="w-full border-collapse text-left text-sm" {...props} />
+      <table className="w-full border-collapse text-left font-sans text-small" {...props} />
     </div>
   ),
   th: (props: ComponentPropsWithoutRef<"th">) => (
-    <th className="border-b px-4 py-3 font-semibold" {...props} />
+    <th
+      className="border-b border-border px-4 py-3 font-sans text-caption tracking-[0.1em] uppercase text-foreground-muted"
+      {...props}
+    />
   ),
-  td: (props: ComponentPropsWithoutRef<"td">) => <td className="border-b px-4 py-3" {...props} />,
+  td: (props: ComponentPropsWithoutRef<"td">) => (
+    <td className="border-b border-border px-4 py-3" {...props} />
+  ),
   a: MdxLink,
   img: MdxImage as MDXComponents["img"],
 };

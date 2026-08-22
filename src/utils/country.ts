@@ -1,32 +1,71 @@
-import { DEFAULT_LOCALE } from "../constants/locale";
 
 /**
- * Country helpers.
- *
- * Names are resolved with `Intl.DisplayNames` rather than shipped as data, so
- * this file only has to carry ISO 3166-1 alpha-2 codes and ITU dialling codes.
- * This table is the single source of truth for the country select and the
+ * Country helpers — the single source of truth for the country select and the
  * phone input.
  */
 
-/** `"AD:376 AE:971 …"` — kept as one string so the list stays diff-friendly. */
-const DIAL_CODES =
-  "AD:376 AE:971 AF:93 AG:1 AI:1 AL:355 AM:374 AO:244 AR:54 AS:1 AT:43 AU:61 AW:297 AX:358 AZ:994 " +
-  "BA:387 BB:1 BD:880 BE:32 BF:226 BG:359 BH:973 BI:257 BJ:229 BL:590 BM:1 BN:673 BO:591 BQ:599 BR:55 " +
-  "BS:1 BT:975 BW:267 BY:375 BZ:501 CA:1 CD:243 CF:236 CG:242 CH:41 CI:225 CK:682 CL:56 CM:237 CN:86 " +
-  "CO:57 CR:506 CU:53 CV:238 CW:599 CY:357 CZ:420 DE:49 DJ:253 DK:45 DM:1 DO:1 DZ:213 EC:593 EE:372 " +
-  "EG:20 ER:291 ES:34 ET:251 FI:358 FJ:679 FK:500 FM:691 FO:298 FR:33 GA:241 GB:44 GD:1 GE:995 GF:594 " +
-  "GG:44 GH:233 GI:350 GL:299 GM:220 GN:224 GP:590 GQ:240 GR:30 GT:502 GU:1 GW:245 GY:592 HK:852 HN:504 " +
-  "HR:385 HT:509 HU:36 ID:62 IE:353 IL:972 IM:44 IN:91 IQ:964 IR:98 IS:354 IT:39 JE:44 JM:1 JO:962 " +
-  "JP:81 KE:254 KG:996 KH:855 KI:686 KM:269 KN:1 KP:850 KR:82 KW:965 KY:1 KZ:7 LA:856 LB:961 LC:1 " +
-  "LI:423 LK:94 LR:231 LS:266 LT:370 LU:352 LV:371 LY:218 MA:212 MC:377 MD:373 ME:382 MF:590 MG:261 " +
-  "MH:692 MK:389 ML:223 MM:95 MN:976 MO:853 MP:1 MQ:596 MR:222 MS:1 MT:356 MU:230 MV:960 MW:265 MX:52 " +
-  "MY:60 MZ:258 NA:264 NC:687 NE:227 NF:672 NG:234 NI:505 NL:31 NO:47 NP:977 NR:674 NU:683 NZ:64 OM:968 " +
-  "PA:507 PE:51 PF:689 PG:675 PH:63 PK:92 PL:48 PM:508 PR:1 PS:970 PT:351 PW:680 PY:595 QA:974 RE:262 " +
-  "RO:40 RS:381 RU:7 RW:250 SA:966 SB:677 SC:248 SD:249 SE:46 SG:65 SH:290 SI:386 SJ:47 SK:421 SL:232 " +
-  "SM:378 SN:221 SO:252 SR:597 SS:211 ST:239 SV:503 SX:1 SY:963 SZ:268 TC:1 TD:235 TG:228 TH:66 TJ:992 " +
-  "TK:690 TL:670 TM:993 TN:216 TO:676 TR:90 TT:1 TV:688 TW:886 TZ:255 UA:380 UG:256 US:1 UY:598 UZ:998 " +
-  "VA:39 VC:1 VE:58 VG:1 VI:1 VN:84 VU:678 WF:681 WS:685 YE:967 YT:262 ZA:27 ZM:260 ZW:263";
+/**
+ * `"CODE:DIAL:Name"` per country, space separated, wrapped for diffability.
+ *
+ * The names are a **snapshot** of `Intl.DisplayNames` for `en-IN`, not a
+ * runtime lookup, and that is the whole point. Node and Chrome ship different
+ * ICU data: the server rendered "Falkland Islands" while the browser rendered
+ * "Falkland Islands (Islas Malvinas)", so React threw a hydration error and
+ * rebuilt the entire form on `/contact` and `/buyer-enquiry`. Sort order
+ * diverged for the same reason. Pinning the locale was not enough — the data
+ * behind the locale differs between the two runtimes.
+ *
+ * Regenerate deliberately, never at runtime.
+ */
+const COUNTRY_TABLE =
+  "AD:376:Andorra|AE:971:United Arab Emirates|AF:93:Afghanistan|AG:1:Antigua & Barbuda|" +
+  "AI:1:Anguilla|AL:355:Albania|AM:374:Armenia|AO:244:Angola|AR:54:Argentina|" +
+  "AS:1:American Samoa|AT:43:Austria|AU:61:Australia|AW:297:Aruba|AX:358:Åland Islands|" +
+  "AZ:994:Azerbaijan|BA:387:Bosnia & Herzegovina|BB:1:Barbados|BD:880:Bangladesh|BE:32:Belgium|" +
+  "BF:226:Burkina Faso|BG:359:Bulgaria|BH:973:Bahrain|BI:257:Burundi|BJ:229:Benin|" +
+  "BL:590:St Barthélemy|BM:1:Bermuda|BN:673:Brunei|BO:591:Bolivia|BQ:599:Caribbean Netherlands|" +
+  "BR:55:Brazil|BS:1:Bahamas|BT:975:Bhutan|BW:267:Botswana|BY:375:Belarus|BZ:501:Belize|" +
+  "CA:1:Canada|CD:243:Congo - Kinshasa|CF:236:Central African Republic|" +
+  "CG:242:Congo - Brazzaville|CH:41:Switzerland|CI:225:Côte d’Ivoire|CK:682:Cook Islands|" +
+  "CL:56:Chile|CM:237:Cameroon|CN:86:China|CO:57:Colombia|CR:506:Costa Rica|CU:53:Cuba|" +
+  "CV:238:Cape Verde|CW:599:Curaçao|CY:357:Cyprus|CZ:420:Czechia|DE:49:Germany|DJ:253:Djibouti|" +
+  "DK:45:Denmark|DM:1:Dominica|DO:1:Dominican Republic|DZ:213:Algeria|EC:593:Ecuador|" +
+  "EE:372:Estonia|EG:20:Egypt|ER:291:Eritrea|ES:34:Spain|ET:251:Ethiopia|FI:358:Finland|" +
+  "FJ:679:Fiji|FK:500:Falkland Islands|FM:691:Micronesia|FO:298:Faroe Islands|FR:33:France|" +
+  "GA:241:Gabon|GB:44:United Kingdom|GD:1:Grenada|GE:995:Georgia|GF:594:French Guiana|" +
+  "GG:44:Guernsey|GH:233:Ghana|GI:350:Gibraltar|GL:299:Greenland|GM:220:Gambia|GN:224:Guinea|" +
+  "GP:590:Guadeloupe|GQ:240:Equatorial Guinea|GR:30:Greece|GT:502:Guatemala|GU:1:Guam|" +
+  "GW:245:Guinea-Bissau|GY:592:Guyana|HK:852:Hong Kong SAR China|HN:504:Honduras|HR:385:Croatia|" +
+  "HT:509:Haiti|HU:36:Hungary|ID:62:Indonesia|IE:353:Ireland|IL:972:Israel|IM:44:Isle of Man|" +
+  "IN:91:India|IQ:964:Iraq|IR:98:Iran|IS:354:Iceland|IT:39:Italy|JE:44:Jersey|JM:1:Jamaica|" +
+  "JO:962:Jordan|JP:81:Japan|KE:254:Kenya|KG:996:Kyrgyzstan|KH:855:Cambodia|KI:686:Kiribati|" +
+  "KM:269:Comoros|KN:1:St Kitts & Nevis|KP:850:North Korea|KR:82:South Korea|KW:965:Kuwait|" +
+  "KY:1:Cayman Islands|KZ:7:Kazakhstan|LA:856:Laos|LB:961:Lebanon|LC:1:St Lucia|" +
+  "LI:423:Liechtenstein|LK:94:Sri Lanka|LR:231:Liberia|LS:266:Lesotho|LT:370:Lithuania|" +
+  "LU:352:Luxembourg|LV:371:Latvia|LY:218:Libya|MA:212:Morocco|MC:377:Monaco|MD:373:Moldova|" +
+  "ME:382:Montenegro|MF:590:St Martin|MG:261:Madagascar|MH:692:Marshall Islands|" +
+  "MK:389:North Macedonia|ML:223:Mali|MM:95:Myanmar (Burma)|MN:976:Mongolia|" +
+  "MO:853:Macao SAR China|MP:1:Northern Mariana Islands|MQ:596:Martinique|MR:222:Mauritania|" +
+  "MS:1:Montserrat|MT:356:Malta|MU:230:Mauritius|MV:960:Maldives|MW:265:Malawi|MX:52:Mexico|" +
+  "MY:60:Malaysia|MZ:258:Mozambique|NA:264:Namibia|NC:687:New Caledonia|NE:227:Niger|" +
+  "NF:672:Norfolk Island|NG:234:Nigeria|NI:505:Nicaragua|NL:31:Netherlands|NO:47:Norway|" +
+  "NP:977:Nepal|NR:674:Nauru|NU:683:Niue|NZ:64:New Zealand|OM:968:Oman|PA:507:Panama|PE:51:Peru|" +
+  "PF:689:French Polynesia|PG:675:Papua New Guinea|PH:63:Philippines|PK:92:Pakistan|" +
+  "PL:48:Poland|PM:508:St Pierre & Miquelon|PR:1:Puerto Rico|PS:970:Palestinian Territories|" +
+  "PT:351:Portugal|PW:680:Palau|PY:595:Paraguay|QA:974:Qatar|RE:262:Réunion|RO:40:Romania|" +
+  "RS:381:Serbia|RU:7:Russia|RW:250:Rwanda|SA:966:Saudi Arabia|SB:677:Solomon Islands|" +
+  "SC:248:Seychelles|SD:249:Sudan|SE:46:Sweden|SG:65:Singapore|SH:290:St Helena|SI:386:Slovenia|" +
+  "SJ:47:Svalbard & Jan Mayen|SK:421:Slovakia|SL:232:Sierra Leone|SM:378:San Marino|" +
+  "SN:221:Senegal|SO:252:Somalia|SR:597:Suriname|SS:211:South Sudan|ST:239:São Tomé & Príncipe|" +
+  "SV:503:El Salvador|SX:1:Sint Maarten|SY:963:Syria|SZ:268:Eswatini|" +
+  "TC:1:Turks & Caicos Islands|TD:235:Chad|TG:228:Togo|TH:66:Thailand|TJ:992:Tajikistan|" +
+  "TK:690:Tokelau|TL:670:Timor-Leste|TM:993:Turkmenistan|TN:216:Tunisia|TO:676:Tonga|" +
+  "TR:90:Türkiye|TT:1:Trinidad & Tobago|TV:688:Tuvalu|TW:886:Taiwan|TZ:255:Tanzania|" +
+  "UA:380:Ukraine|UG:256:Uganda|US:1:United States|UY:598:Uruguay|UZ:998:Uzbekistan|" +
+  "VA:39:Vatican City|VC:1:St Vincent & the Grenadines|VE:58:Venezuela|" +
+  "VG:1:British Virgin Islands|VI:1:US Virgin Islands|VN:84:Vietnam|VU:678:Vanuatu|" +
+  "WF:681:Wallis & Futuna|WS:685:Samoa|YE:967:Yemen|YT:262:Mayotte|ZA:27:South Africa|" +
+  "ZM:260:Zambia|ZW:263:Zimbabwe";
 
 export interface Country {
   /** ISO 3166-1 alpha-2. */
@@ -51,19 +90,23 @@ export function flagEmoji(code: string): string {
     .join("");
 }
 
-const displayNames = new Intl.DisplayNames([DEFAULT_LOCALE], { type: "region" });
+/** Every country, sorted by name. Byte-identical on server and client. */
+export const COUNTRIES: readonly Country[] = COUNTRY_TABLE.split("|")
+  .filter(Boolean)
+  .map((entry) => {
+    const [code, dialCode, ...rest] = entry.split(":");
+    return { code, dialCode, name: rest.join(":"), flag: flagEmoji(code) };
+  })
+  // Plain codepoint compare, not `localeCompare` — collation is another thing
+  // the two runtimes can disagree about, and the order has to be stable.
+  .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+
+const NAME_BY_CODE = new Map(COUNTRIES.map((country) => [country.code, country.name]));
 
 export function countryName(code: string): string {
-  return displayNames.of(code.toUpperCase()) ?? code.toUpperCase();
+  const upper = code.toUpperCase();
+  return NAME_BY_CODE.get(upper) ?? upper;
 }
-
-/** Every country, sorted by localised name. */
-export const COUNTRIES: readonly Country[] = DIAL_CODES.split(" ")
-  .map((entry) => {
-    const [code, dialCode] = entry.split(":");
-    return { code, dialCode, name: countryName(code), flag: flagEmoji(code) };
-  })
-  .sort((a, b) => a.name.localeCompare(b.name, DEFAULT_LOCALE));
 
 export function findCountry(code: string): Country | undefined {
   return COUNTRIES.find((country) => country.code === code.toUpperCase());

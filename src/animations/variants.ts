@@ -46,17 +46,24 @@ export const scaleIn: Variants = {
 /**
  * Editorial masked reveal — the text wipes up from behind its own baseline.
  *
- * Every `inset()` value carries a unit. Framer interpolates the four numbers
- * positionally, and a keyframe pair that mixes unitless `0` with `100%` does
- * not parse — the element simply stays at its `hidden` value forever. Keep all
- * four percentages here and in `imageReveal`.
+ * A pure translate. `<Reveal>` supplies the mask by clipping an
+ * `overflow-hidden` wrapper, exactly as `<ImageReveal>` does, so nothing here
+ * depends on animating `clip-path`.
+ *
+ * It *was* a `clipPath` inset, and it never animated once — the wrapper held
+ * its hidden value forever and its content stayed invisible. That is the same
+ * failure `imageReveal` hit and was rewritten to a transform to escape; this
+ * variant kept the bug for longer only because nothing called it. Transforms
+ * are what this project can rely on. Do not reintroduce `clip-path` here.
+ *
+ * 115%, not 100%: the glyphs have to start fully below the mask edge including
+ * descenders, or the first frame shows the tail of every "g" already sitting in
+ * the open.
  */
 export const reveal: Variants = {
-  hidden: { opacity: 0, y: "40%", clipPath: "inset(0% 0% 100% 0%)" },
+  hidden: { y: "115%" },
   visible: {
-    opacity: 1,
     y: "0%",
-    clipPath: "inset(0% 0% 0% 0%)",
     transition: transition(duration.premium, easing.premium),
   },
 };

@@ -16,9 +16,15 @@ export const cardVariants = cva("group relative flex flex-col overflow-hidden ro
       default: "border border-border bg-surface",
       elevated: "bg-surface shadow-md",
       outlined: "border border-border-strong bg-transparent",
-      /** Lifts on hover — use when the whole card is a link. */
+      /**
+       * Use when the whole card is a link. The response is the border darkening
+       * and the photograph pushing in (`CardMedia`) — it does not lift.
+       * A card that jumps up and casts a shadow on hover is a consumer-app
+       * gesture, and it fights the near-square frame the rest of the system
+       * uses. The image doing the moving keeps attention on the product.
+       */
       interactive:
-        "border border-border bg-surface transition-premium hover:-translate-y-1 hover:border-border-strong hover:shadow-lg motion-reduce:hover:translate-y-0",
+        "border border-border bg-surface transition-premium hover:border-border-strong",
       /** Editorial highlight — dark, for feature blocks on ivory backgrounds. */
       feature: "bg-primary text-primary-foreground",
       /** Media-led: the image is the card, content overlays it. */

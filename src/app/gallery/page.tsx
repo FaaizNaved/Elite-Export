@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Gallery } from "@/components/gallery";
-import { CtaBanner } from "@/components/layout";
 import { PageHero } from "@/components/sections";
 import { Tabs } from "@/components/tabs";
-import { buttonVariants } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { EmptyState } from "@/components/ui/loading";
 import { Section } from "@/components/ui/section";
@@ -15,7 +12,7 @@ import { buildMetadata } from "@/lib/seo";
 export const metadata: Metadata = buildMetadata({
   title: "Gallery",
   description:
-    "Inside the Elite Export factory — cutting floor, machinery, finished products, export packing and buyer visits.",
+    "Inside the New Elite Exports factory — cutting floor, machinery, finished products, export packing and buyer visits.",
   path: ROUTES.gallery,
 });
 
@@ -26,7 +23,7 @@ export default async function GalleryPage() {
     <>
       <PageHero
         title="Gallery"
-        eyebrow="Inside Elite Export"
+        eyebrow="Inside New Elite Exports"
         summary="The factory, the machinery and the work — photographed on ordinary production days."
         image={albums[0]?.cover}
         href={ROUTES.gallery}
@@ -58,19 +55,6 @@ export default async function GalleryPage() {
           )}
         </Container>
       </Section>
-
-      <CtaBanner
-        heading="See it for yourself"
-        description="Photographs only go so far. Buyers and their agencies are welcome on the factory floor."
-        primaryAction={
-          <Link
-            href={ROUTES.contact}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Arrange a visit
-          </Link>
-        }
-      />
     </>
   );
 }

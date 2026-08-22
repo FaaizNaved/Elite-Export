@@ -1,4 +1,3 @@
-export * from "./cta-banner";
 export * from "./footer";
 export * from "./mega-menu";
 export * from "./mobile-menu";

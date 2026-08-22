@@ -47,7 +47,7 @@ export function ContactForm({ fallbackEmail }: ContactFormProps) {
       className="flex flex-col gap-5"
     >
       <Field label="Name" required error={errors.name?.message}>
-        <Input autoComplete="name" placeholder="Jane Harding" {...register("name")} />
+        <Input autoComplete="name" placeholder="Your name" {...register("name")} />
       </Field>
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -76,7 +76,7 @@ export function ContactForm({ fallbackEmail }: ContactFormProps) {
 
       <Field label="Consent" hideLabel error={errors.consent?.message}>
         <Checkbox
-          label="I agree to Elite Export contacting me about this enquiry."
+          label="I agree to New Elite Exports contacting me about this enquiry."
           {...register("consent")}
         />
       </Field>

@@ -39,8 +39,7 @@ export function GalleryCard({
         alt={image.alt}
         fill
         sizes={sizes}
-        priority={priority}
-        loading={priority ? undefined : "lazy"}
+        loading={priority ? "eager" : "lazy"}
         placeholder="blur"
         blurDataURL={BLUR_DATA_URL}
         className="object-cover transition-premium group-hover/tile:scale-[1.03] motion-reduce:group-hover/tile:scale-100"

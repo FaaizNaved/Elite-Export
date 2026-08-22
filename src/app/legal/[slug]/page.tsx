@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PageHero, Prose } from "@/components/sections";
-import { ROUTES } from "@/constants";
 import { buildBreadcrumbs } from "@/lib/breadcrumbs";
 import { getLegalPage, getLegalRoutes } from "@/lib/content";
 import { legalPageMetadata } from "@/lib/seo";
@@ -31,16 +30,15 @@ export default async function LegalPage({ params }: PageProps) {
 
   const Content = await loadLegalContent(slug);
 
+  // No "Legal" crumb: `/legal` has no index page, so it was a dead link in the
+  // trail on every legal document.
   return (
     <>
       <PageHero
         title={page.title}
         eyebrow={`Last updated ${formatDate(page.updatedAt)}`}
         summary={page.summary}
-        breadcrumbs={buildBreadcrumbs([
-          { label: "Legal", href: ROUTES.legal },
-          { label: page.title, href: page.href },
-        ])}
+        breadcrumbs={buildBreadcrumbs([{ label: page.title, href: page.href }])}
       />
 
       <Prose>

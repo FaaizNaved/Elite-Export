@@ -1,5 +1,5 @@
 import { ROUTES, routeTo } from "../constants/routes";
-import type { Breadcrumb, Category, Product, Subcategory } from "../types";
+import type { Breadcrumb, Category, Product } from "../types";
 
 /**
  * Breadcrumb generation.
@@ -25,17 +25,12 @@ export function categoryBreadcrumbs(category: Pick<Category, "name" | "href">): 
   ]);
 }
 
-export function subcategoryBreadcrumbs(
-  category: Pick<Category, "name" | "href">,
-  subcategory: Pick<Subcategory, "name" | "href">,
-): Breadcrumb[] {
-  return buildBreadcrumbs([
-    { label: "Products", href: ROUTES.products },
-    { label: category.name, href: category.href },
-    { label: subcategory.name, href: subcategory.href },
-  ]);
-}
-
+/**
+ * The subcategory crumb points at a band on the category page, not a page of
+ * its own — see `routeTo.subcategory`. It stays in the trail because it is
+ * still how a buyer describes where they are ("western tack, headstalls"); only
+ * the destination changed.
+ */
 export function productBreadcrumbs(product: Product): Breadcrumb[] {
   return buildBreadcrumbs([
     { label: "Products", href: ROUTES.products },

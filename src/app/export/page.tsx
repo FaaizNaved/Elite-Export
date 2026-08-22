@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CountryCard } from "@/components/cards";
-import { CtaBanner } from "@/components/layout";
 import { Stagger, StaggerItem } from "@/components/motion";
-import { FeatureGrid, PageHero, ProcessSteps, Prose, SectionHeader, StatsBand } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
+import {
+  FeatureGrid,
+  FullBleedImage,
+  PageHero,
+  ProcessSteps,
+  Prose,
+  SectionHeader,
+} from "@/components/sections";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { company } from "@/config";
-import { ROUTES } from "@/constants";
 import { getCompanyPage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
 import { loadCompanyContent } from "@/lib/mdx";
@@ -37,8 +40,6 @@ export default async function ExportPage() {
         image={page.hero}
         href={page.href}
       />
-
-      <StatsBand stats={page.stats} tone="dark" />
 
       <FeatureGrid
         features={page.features}
@@ -76,17 +77,14 @@ export default async function ExportPage() {
         <Content />
       </Prose>
 
-      <CtaBanner
-        heading="Ready to place an enquiry?"
-        description="Tell us the styles, quantities and incoterm you need and we will come back within three working days."
-        primaryAction={
-          <Link
-            href={ROUTES.buyerEnquiry}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Buyer enquiry
-          </Link>
-        }
+      {/* Ends on the container, which is what export actually looks like. */}
+      <FullBleedImage
+        image={{
+          src: "/images/export/container-loading.webp",
+          alt: "Export cartons being loaded for shipment",
+          width: 1600,
+          height: 900,
+        }}
       />
     </>
   );

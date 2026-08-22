@@ -31,9 +31,17 @@ export const homeHeroSchema = z.object({
   secondaryCta: ctaSchema.optional(),
 });
 
-/** `home/company.json` — §2, the house. */
+/**
+ * `home/company.json` — §2, the house.
+ *
+ * `body` is optional because the house section earns its place by *not*
+ * explaining itself. The paragraph that used to live here restated the hero
+ * almost word for word — Kanpur, 1998, cut/stitched/finished, our own facility
+ * — so the one section on the page with a person in it was also the only one
+ * carrying no new information. A photograph and a line is the whole section.
+ */
 export const homeCompanySchema = sectionIntroSchema.extend({
-  body: z.string().min(1),
+  body: z.string().min(1).optional(),
   image: imageSchema,
 });
 
@@ -43,13 +51,25 @@ export const homePauseSchema = z.object({
   label: z.string().optional(),
 });
 
-/** `home/cta.json` — §9. */
-export const homeCtaSchema = sectionIntroSchema.extend({
-  primaryCta: ctaSchema,
-  secondaryCta: ctaSchema.optional(),
-  image: imageSchema.optional(),
-  /** Operationally checkable commitments. Three at most; each one is a promise. */
-  reassurances: z.array(z.string()).default([]),
+/**
+ * `statement.json` — the close, on every page.
+ *
+ * Replaced the closing sales banner. Pages now end on one sentence and the
+ * place the work is done, which is the last thing a buyer should be left
+ * holding. Deliberately has no CTA field: the moment a heading like this
+ * carries a button it stops being a statement and goes back to being an
+ * advertisement.
+ *
+ * Site-level content, but rendered by the home page alone. It was briefly in
+ * the root layout so every route ended identically — which made the ending
+ * furniture rather than a moment. Interior pages close on their own subject
+ * instead: manufacturing on packed goods, technology on a press, about on a
+ * person.
+ */
+export const homeStatementSchema = z.object({
+  statement: z.string().min(1),
+  /** The place, set as a signature — "Kanpur, India". */
+  caption: z.string().min(1),
 });
 
 /** Section files that carry only a heading group. */
@@ -61,12 +81,11 @@ export const homeContentSchema = z.object({
   intro: homeCompanySchema,
   pause: homePauseSchema,
   sections: z.record(z.string(), homeSectionSchema),
-  cta: homeCtaSchema,
 });
 
 export type HomeHero = z.infer<typeof homeHeroSchema>;
 export type HomeCompany = z.infer<typeof homeCompanySchema>;
 export type HomePause = z.infer<typeof homePauseSchema>;
-export type HomeCta = z.infer<typeof homeCtaSchema>;
+export type HomeStatement = z.infer<typeof homeStatementSchema>;
 export type HomeSection = z.infer<typeof homeSectionSchema>;
 export type HomeContent = z.infer<typeof homeContentSchema>;

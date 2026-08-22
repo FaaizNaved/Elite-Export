@@ -14,12 +14,6 @@ export interface FooterColumn {
   links: readonly NavLink[];
 }
 
-/** A single proof point in the trust strip — "27" / "Years manufacturing". */
-export interface FooterTrustItem {
-  value: string;
-  label: string;
-}
-
 export interface FooterProps {
   /** Brand mark. Usually the same node passed to `Navbar`. */
   logo?: ReactNode;
@@ -30,13 +24,7 @@ export interface FooterProps {
   social?: readonly SocialLink[];
   /** Privacy, terms — rendered inline beside the copyright. */
   legalLinks?: readonly NavLink[];
-  /**
-   * Proof points shown above the link columns — years manufacturing, export
-   * markets, monthly capacity. Values are strings so the caller controls
-   * formatting; the footer only lays them out.
-   */
-  trust?: readonly FooterTrustItem[];
-  /** Certification names, rendered as badges beside the trust strip. */
+  /** Certification names, rendered as badges above the link columns. */
   certifications?: readonly string[];
   /** Defaults to `© {year} {companyName}`. */
   companyName?: string;
@@ -57,7 +45,6 @@ export function Footer({
   contact,
   social = [],
   legalLinks = [],
-  trust = [],
   certifications = [],
   companyName,
   className,
@@ -66,38 +53,28 @@ export function Footer({
 
   return (
     <footer className={cn("mt-auto bg-primary text-primary-foreground", className)}>
-      <Container size="lg" className="py-16 md:py-24">
-        {(trust.length > 0 || certifications.length > 0) && (
-          <div className="mb-14 flex flex-col gap-8 border-b border-primary-foreground/15 pb-12">
-            {trust.length > 0 && (
-              <dl className="grid grid-cols-2 gap-8 lg:grid-cols-4">
-                {trust.map((item) => (
-                  <div key={item.label} className="flex flex-col gap-1">
-                    <dt className="sr-only">{item.label}</dt>
-                    <dd className="font-display text-h2 font-medium">{item.value}</dd>
-                    <p className="font-sans text-caption tracking-[0.08em] uppercase text-primary-foreground/50">
-                      {item.label}
-                    </p>
-                  </div>
-                ))}
-              </dl>
-            )}
-
-            {certifications.length > 0 && (
-              <ul className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                {certifications.map((certification) => (
-                  <li key={certification}>
-                    <Badge
-                      variant="outline"
-                      className="border-primary-foreground/25 text-primary-foreground/70"
-                    >
-                      {certification}
-                    </Badge>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+      {/* Back cover, not a final section. Was py-16/py-24 — the same vertical
+          weight as a content section, so the page appeared to start again. */}
+      <Container size="lg" className="py-12 md:py-14">
+        {/* The trust strip that used to sit here counted years, markets and
+            headcount in display type. It is gone, and so is the prop that fed
+            it: the figures were already stated above where they are sourced,
+            and an empty numeric slot on a back cover is an invitation to fill
+            it with something nobody can verify. Certifications stay — they are
+            the one claim a buyer can check. */}
+        {certifications.length > 0 && (
+          <ul className="mb-14 flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-primary-foreground/15 pb-12">
+            {certifications.map((certification) => (
+              <li key={certification}>
+                <Badge
+                  variant="outline"
+                  className="border-primary-foreground/25 text-primary-foreground/70"
+                >
+                  {certification}
+                </Badge>
+              </li>
+            ))}
+          </ul>
         )}
 
         <div className="grid gap-12 lg:grid-cols-[1.4fr_2fr]">
@@ -156,9 +133,14 @@ export function Footer({
                 <Typography variant="overline" className="text-primary-foreground/50">
                   Contact
                 </Typography>
+                {/* The glyphs are muted, not brass. Three gold icons stacked in
+                    the contact block were the densest use of the accent
+                    anywhere on the site — gold as an icon colour rather than
+                    as a mark. An address already looks like an address; the
+                    icon only has to locate the row. */}
                 <ul className="flex flex-col gap-3 font-sans text-small text-primary-foreground/70">
                   <li className="flex gap-3">
-                    <Icon icon={MapPin} size="sm" className="mt-0.5 text-accent" />
+                    <Icon icon={MapPin} size="sm" className="mt-0.5 text-primary-foreground/40" />
                     <address className="not-italic">
                       {contact.address.street}
                       <br />
@@ -170,13 +152,13 @@ export function Footer({
                     </address>
                   </li>
                   <li className="flex gap-3">
-                    <Icon icon={Phone} size="sm" className="mt-0.5 text-accent" />
+                    <Icon icon={Phone} size="sm" className="mt-0.5 text-primary-foreground/40" />
                     <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="hover:text-accent">
                       {contact.phone}
                     </a>
                   </li>
                   <li className="flex gap-3">
-                    <Icon icon={Mail} size="sm" className="mt-0.5 text-accent" />
+                    <Icon icon={Mail} size="sm" className="mt-0.5 text-primary-foreground/40" />
                     <a href={`mailto:${contact.email}`} className="hover:text-accent">
                       {contact.email}
                     </a>

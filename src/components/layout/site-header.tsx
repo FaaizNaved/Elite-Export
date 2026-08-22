@@ -23,17 +23,11 @@ export async function SiteHeader() {
       items={mainNav}
       megaMenu={megaMenu}
       overlayRoutes={OVERLAY_ROUTES}
+      // Two, and labels only. A navigation panel that explains itself is
+      // making the visitor read instead of letting them move.
       megaMenuUtilities={[
-        {
-          label: "Request samples",
-          href: ROUTES.buyerEnquiry,
-          description: "Tell us the styles and finishes you need.",
-        },
-        {
-          label: "Talk to us",
-          href: ROUTES.contact,
-          description: "A person reads every message.",
-        },
+        { label: "All products", href: ROUTES.products },
+        { label: "Request samples", href: ROUTES.buyerEnquiry },
       ]}
       contact={
         <a

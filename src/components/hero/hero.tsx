@@ -106,8 +106,15 @@ export function Hero({
       {breadcrumb}
       {badge}
 
+      {/* Muted, not brass — the same treatment the home hero gives this exact
+          element. Every interior page opened on a gold eyebrow while the
+          homepage opened on a quiet one, which made the accent read as a
+          section marker rather than a signature. */}
       {eyebrow && (
-        <Typography variant="overline" className={hasBackdrop ? "text-accent" : undefined}>
+        <Typography
+          variant="overline"
+          className={hasBackdrop ? "text-primary-foreground/70" : undefined}
+        >
           {eyebrow}
         </Typography>
       )}
@@ -186,7 +193,7 @@ export function Hero({
           alt=""
           aria-hidden
           fill
-          priority
+          preload
           sizes="100vw"
           placeholder="blur"
           blurDataURL={BLUR_DATA_URL}

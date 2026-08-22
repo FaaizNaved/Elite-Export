@@ -24,8 +24,18 @@ export type StaticRoute = (typeof ROUTES)[keyof typeof ROUTES];
 /** Builders for content-driven routes. Segments are already slugs. */
 export const routeTo = {
   category: (category: string) => joinPath(ROUTES.products, category),
+  /**
+   * A subcategory is a band on its category page, not a page of its own.
+   *
+   * It was a fourth level, which put every product four clicks from the nav on
+   * a catalogue of roughly thirty pieces — a filing cabinet, not a showroom.
+   * The grouping is still visible and still linkable; it just no longer costs a
+   * navigation. Everything that linked to a subcategory (mega menu,
+   * breadcrumbs, category cards) reads this builder, so the anchor propagates
+   * from here.
+   */
   subcategory: (category: string, subcategory: string) =>
-    joinPath(ROUTES.products, category, subcategory),
+    `${joinPath(ROUTES.products, category)}#${subcategory}`,
   product: (category: string, subcategory: string, product: string) =>
     joinPath(ROUTES.products, category, subcategory, product),
   machine: (slug: string) => joinPath(ROUTES.technology, slug),

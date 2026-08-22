@@ -7,6 +7,7 @@ The site exists to showcase capability and generate buyer enquiries.
 | --- | --- |
 | [`architecture/`](./architecture) | How the system is put together — stack, content model, assets, site structure |
 | [`design-system/`](./design-system) | Visual and motion language, component inventory |
+| [`design-system/photography-brief.md`](./design-system/photography-brief.md) | What every image frame is waiting for: subject, ratio, crop-safe area, lighting |
 | [`content/`](./content) | How to author and publish content |
 | [`development/`](./development) | Roadmap and day-to-day working notes |
 | [`deployment/`](./deployment) | Environments, variables and release steps |

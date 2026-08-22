@@ -93,7 +93,7 @@ export function FileUpload({
       >
         <Icon icon={Upload} size="lg" tone="muted" />
         <Typography variant="small" as="span">
-          Drag a file here, or <span className="text-accent underline">browse</span>
+          Drag a file here, or <span className="text-accent-strong underline">browse</span>
         </Typography>
         <Typography variant="caption" as="span">
           Up to {maxSizeMb} MB{accept_ ? ` · ${accept_}` : ""}

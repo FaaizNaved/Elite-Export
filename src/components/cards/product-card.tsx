@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardBody, CardDescription, CardFooter, CardTitle } from "@/components/ui/card";
+import { Card, CardTitle } from "@/components/ui/card";
 import { Typography } from "@/components/ui/typography";
 import { cn } from "@/lib/cn";
 import type { Product } from "@/types";
-import { CardAction } from "./card-action";
 import { CardImage } from "./card-image";
 
 export type ProductCardVariant = "grid" | "featured" | "compact" | "minimal";
@@ -73,37 +71,51 @@ export function ProductCard({
 
   const featured = variant === "featured";
 
+  /**
+   * Not a card.
+   *
+   * This was a bordered surface carrying two badges, an item code, a
+   * two-line description and a "View product →" footer — six pieces of chrome
+   * around one photograph, repeated across a grid. In a showroom the object is
+   * the whole proposition; the label next to it is small and says what it is.
+   *
+   * The photograph now sits in a plain frame with no border, the name has
+   * display weight, and the only supporting text is the subcategory. The
+   * item code moves to the product page, where a buyer who needs it is
+   * actually looking for it.
+   */
   return (
-    <Card variant="interactive" className={className}>
-      <Link href={product.href} aria-label={label} className="flex flex-1 flex-col">
-        <CardImage
-          image={product.gallery.thumbnail}
-          ratio={featured ? "portrait" : "product"}
-          priority={priority}
-          sizes={
-            featured
-              ? "(min-width: 1024px) 50vw, 100vw"
-              : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          }
-        />
+    <div className={cn("group", className)}>
+      <Link href={product.href} aria-label={label} className="flex h-full flex-col gap-5">
+        <div className="relative overflow-hidden bg-surface-sunken">
+          <CardImage
+            image={product.gallery.thumbnail}
+            ratio={featured ? "portrait" : "product"}
+            priority={priority}
+            sizes={
+              featured
+                ? "(min-width: 1024px) 50vw, 100vw"
+                : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            }
+          />
+        </div>
 
-        <CardBody>
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <Badge variant="neutral">{product.categoryName}</Badge>
-            {product.featured && !featured && <Badge variant="secondary">Featured</Badge>}
-            <Typography variant="caption" as="span" className="ml-auto tabular-nums">
-              {product.itemCode}
-            </Typography>
-          </div>
-
-          <CardTitle className={featured ? "text-h3" : undefined}>{product.title}</CardTitle>
-          <CardDescription className="line-clamp-2">{product.shortDescription}</CardDescription>
-        </CardBody>
-
-        <CardFooter>
-          <CardAction label="View product" />
-        </CardFooter>
+        <div className="flex flex-col gap-1.5">
+          <Typography variant="caption" as="span" className="text-foreground-muted">
+            {product.subcategoryName}
+          </Typography>
+          <Typography
+            variant="h4"
+            as="h3"
+            className={cn(
+              "font-display font-medium transition-base group-hover:text-accent-strong",
+              featured && "text-h3",
+            )}
+          >
+            {product.title}
+          </Typography>
+        </div>
       </Link>
-    </Card>
+    </div>
   );
 }

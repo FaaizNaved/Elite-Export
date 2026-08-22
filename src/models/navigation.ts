@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { imageSchema } from "./primitives";
 
 export const navLinkSchema = z.object({
   label: z.string().min(1),
@@ -28,17 +27,16 @@ export const megaMenuColumnSchema = z.object({
   links: z.array(navLinkSchema),
 });
 
+/**
+ * The products menu is columns and nothing else.
+ *
+ * A `feature` field held a promoted product with a photograph. It made the menu
+ * a second catalogue page, so it was dropped from the panel — and then from
+ * here, because a schema field nothing renders is a promise the UI does not
+ * keep.
+ */
 export const megaMenuSchema = z.object({
   columns: z.array(megaMenuColumnSchema),
-  /** Optional promoted item rendered alongside the columns. */
-  feature: z
-    .object({
-      label: z.string().min(1),
-      href: z.string().min(1),
-      description: z.string().optional(),
-      image: imageSchema,
-    })
-    .optional(),
 });
 
 export const breadcrumbSchema = z.object({

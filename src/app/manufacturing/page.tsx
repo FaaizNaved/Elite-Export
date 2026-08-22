@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CtaBanner } from "@/components/layout";
-import { PageHero, ProcessSteps, Prose, StatsBand } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
-import { ROUTES } from "@/constants";
+import { FullBleedImage, PageHero, ProcessSteps, Prose } from "@/components/sections";
 import { getCompanyPage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
 import { loadCompanyContent } from "@/lib/mdx";
@@ -36,38 +32,20 @@ export default async function ManufacturingPage() {
         <Content />
       </Prose>
 
-      <StatsBand stats={page.stats} tone="dark" />
-
       <ProcessSteps
         steps={page.steps}
         eyebrow="The route"
         heading="Every order takes the same eight stages"
       />
 
-      <CtaBanner
-        heading="Have a piece you want manufactured?"
-        description="Send drawings, a reference sample or photographs and we will return a prototype for approval."
-        primaryAction={
-          <Link
-            href={ROUTES.buyerEnquiry}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Start an enquiry
-          </Link>
-        }
-        secondaryAction={
-          <Link
-            href={ROUTES.technology}
-            className={buttonVariants({
-              variant: "outline",
-              size: "lg",
-              className:
-                "border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary",
-            })}
-          >
-            See the machinery
-          </Link>
-        }
+      {/* Ends where the process ends: packed, marked and going out. */}
+      <FullBleedImage
+        image={{
+          src: "/images/manufacturing/packaging.webp",
+          alt: "Finished goods being packed into export cartons",
+          width: 1600,
+          height: 900,
+        }}
       />
     </>
   );

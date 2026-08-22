@@ -1,5 +1,5 @@
 import type { MegaMenu } from "../../types";
-import { getCatalog, getFeaturedProducts } from "./catalog";
+import { getCatalog } from "./catalog";
 
 /**
  * Builds the products mega menu from the catalog.
@@ -10,24 +10,23 @@ import { getCatalog, getFeaturedProducts } from "./catalog";
  */
 export async function getProductsMegaMenu(): Promise<MegaMenu> {
   const { categories } = await getCatalog();
-  const [featured] = await getFeaturedProducts(1);
 
   return {
     columns: categories.map((category) => ({
       label: category.name,
       href: category.href,
-      links: category.subcategories.map((subcategory) => ({
-        label: subcategory.name,
-        href: subcategory.href,
-        description: subcategory.shortDescription,
-        external: false,
-      })),
+      // Empty subcategories are dropped. Their link is an anchor on the
+      // category page, and that page only renders a band for a subcategory
+      // that has products — so listing an empty one puts a dead jump in the
+      // primary navigation. A subcategory reappears the moment it has stock.
+      links: category.subcategories
+        .filter((subcategory) => subcategory.productCount > 0)
+        .map((subcategory) => ({
+          label: subcategory.name,
+          href: subcategory.href,
+          description: subcategory.shortDescription,
+          external: false,
+        })),
     })),
-    feature: featured && {
-      label: featured.title,
-      href: featured.href,
-      description: featured.shortDescription,
-      image: featured.gallery.thumbnail,
-    },
   };
 }

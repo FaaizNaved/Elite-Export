@@ -11,6 +11,13 @@ const iconVariants = cva("shrink-0", {
       lg: "size-6",
       xl: "size-8",
     },
+    /**
+     * `accent` exists but is deliberately unused across the site. Brass is a
+     * mark — a stitch, a fitting, a hairline — not an icon colour; six gold
+     * glyphs on one page was the densest use of it anywhere. Reach for `muted`
+     * or `secondary` and leave the accent to the two rule-stitch seams, the
+     * wordmark's full stop and the active navigation item.
+     */
     tone: {
       inherit: "text-current",
       accent: "text-accent",

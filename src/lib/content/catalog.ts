@@ -258,11 +258,6 @@ export async function getCategoryRoutes(): Promise<Array<{ category: string }>> 
   return (await getCategories()).map((category) => ({ category: category.slug }));
 }
 
-export async function getSubcategoryRoutes(): Promise<
-  Array<{ category: string; subcategory: string }>
-> {
-  const categories = await getCategories();
-  return categories.flatMap((category) =>
-    category.subcategories.map((sub) => ({ category: category.slug, subcategory: sub.slug })),
-  );
-}
+// `getSubcategoryRoutes` was removed with the subcategory route: subcategories
+// are bands on the category page now, so there is nothing left to prerender for
+// them. The grouping still exists in the catalog — see `Category.subcategories`.

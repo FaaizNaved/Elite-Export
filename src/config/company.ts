@@ -9,17 +9,39 @@ import type { CompanyProfile } from "../types";
  * may restate them; derive from here instead.
  *
  * Parsed at module load, so a typo fails the build rather than a page.
+ *
+ * ─────────────────────────────────────────────────────────────────────────
+ * PLACEHOLDER DATA — awaiting the client. Replace here and nowhere else.
+ *
+ *   contact.phone       dialling code is right, the number is not
+ *   contact.whatsapp    invented digits
+ *   contact.email       domain does not match the trading name
+ *   contact.salesEmail  same
+ *   contact.address     street and postcode unconfirmed
+ *   social[].href       every link points at a bare platform root
+ *
+ * Everything else on this object is real: the legal name, the founding year,
+ * both certifications with their issuers and years, and the export markets.
+ * Those are quoted verbatim across the site, so do not edit them to make a
+ * layout work.
+ *
+ * Nothing outside this file contains a contact string — verified by grep for
+ * "+91", the mail domain and the postcode. Swapping in the real details is a
+ * one-file change.
+ * ─────────────────────────────────────────────────────────────────────────
  */
 export const company: CompanyProfile = companyProfileSchema.parse({
-  legalName: "Elite Export Pvt. Ltd.",
-  tradingName: "Elite Export",
+  legalName: "New Elite Exports Pvt. Ltd.",
+  tradingName: "New Elite Exports",
   tagline: "Hand-crafted leather goods, engineered for export.",
   foundedYear: 1998,
-  employees: "250+",
   contact: {
     email: "info@eliteexport.com",
     salesEmail: "sales@eliteexport.com",
-    phone: "+91 581 000 0000",
+    // 512 is Kanpur. This read 581, which is Bareilly — a wrong-city dialling
+    // code on a manufacturer whose whole proposition is where it makes things.
+    // The subscriber digits stay obviously blank rather than invented.
+    phone: "+91 512 000 0000",
     whatsapp: "+91 90000 00000",
     address: {
       street: "Industrial Estate, Phase II",

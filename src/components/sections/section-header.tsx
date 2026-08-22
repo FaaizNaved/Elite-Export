@@ -42,14 +42,11 @@ export function SectionHeader({
       )}
     >
       <div className={cn("flex flex-col gap-5", centered ? "items-center" : "max-w-2xl")}>
-        {/* Eyebrow and seam are one unit — the label and its mark — so they sit
-            closer to each other than the group does to the heading. */}
-        {eyebrow && (
-          <div className={cn("flex flex-col gap-3", centered && "items-center")}>
-            <Typography variant="overline">{eyebrow}</Typography>
-            <span aria-hidden className="rule-stitch" />
-          </div>
-        )}
+        {/* No gold seam here. It sat under the eyebrow of every section on
+            every page, which made it wallpaper rather than a mark — and it is
+            the main reason each section spoke in the same premium accent. The
+            seam now appears twice on the site, where it signs something. */}
+        {eyebrow && <Typography variant="overline">{eyebrow}</Typography>}
         <Typography variant="h2" as={as}>
           {heading}
         </Typography>

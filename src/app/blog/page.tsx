@@ -18,7 +18,7 @@ import { BLUR_DATA_URL } from "@/utils/image";
 export const metadata: Metadata = buildMetadata({
   title: "Journal",
   description:
-    "Notes on leather, manufacturing and sourcing from the Elite Export workshop floor.",
+    "Notes on leather, manufacturing and sourcing from the New Elite Exports workshop floor.",
   path: ROUTES.blog,
 });
 
@@ -50,7 +50,7 @@ export default async function BlogPage() {
                           alt={post.cover.alt}
                           fill
                           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                          priority={index < 3}
+                          loading={index < 3 ? "eager" : "lazy"}
                           placeholder="blur"
                           blurDataURL={BLUR_DATA_URL}
                           className="object-cover"

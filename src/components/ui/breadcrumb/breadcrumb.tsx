@@ -24,15 +24,20 @@ export function Breadcrumb({ items, className }: BreadcrumbProps) {
       <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 font-sans text-caption">
         {items.map((item, index) => (
           <li key={item.href} className="flex items-center gap-x-2">
-            {index > 0 && <Icon icon={ChevronRight} size="xs" tone="muted" />}
+            {/* Every colour here inherits the surface. The trail is rendered
+                inside `PageHero`, which sits on a darkened photograph on most
+                interior pages — with `text-foreground` (#202020) pinned on the
+                current crumb, the name of the page the visitor was actually on
+                was near-black text on a near-black scrim. */}
+            {index > 0 && <Icon icon={ChevronRight} size="xs" className="text-current/45" />}
             {item.current ? (
-              <span aria-current="page" className="text-foreground">
+              <span aria-current="page" className="text-current">
                 {item.label}
               </span>
             ) : (
               <Link
                 href={item.href}
-                className={cn("text-foreground-muted transition-fast hover:text-accent")}
+                className={cn("text-current/65 transition-fast hover:text-accent")}
               >
                 {item.label}
               </Link>

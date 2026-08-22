@@ -60,6 +60,16 @@ export function Lightbox({
     if (!open) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
+      // Escape is handled explicitly rather than left to the `<dialog>` element's
+      // own behaviour. A modal dialog is supposed to fire `cancel` on Escape and
+      // this one did not — measured with focus inside the dialog and the keydown
+      // arriving unprevented at `window`. Closing the viewer is not a behaviour
+      // to leave to a user-agent default, so it is wired directly.
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
       if (event.key === "ArrowRight") go(1);
       if (event.key === "ArrowLeft") go(-1);
       if (event.key === "Home") onIndexChange(0);
@@ -68,7 +78,7 @@ export function Lightbox({
 
     document.addEventListener("keydown", onKeyDown);
     return () => document.removeEventListener("keydown", onKeyDown);
-  }, [open, go, onIndexChange, count]);
+  }, [open, go, onIndexChange, onClose, count]);
 
   useEffect(() => {
     if (!open) return;
@@ -131,7 +141,9 @@ export function Lightbox({
               alt={current.alt}
               fill
               sizes="100vw"
-              priority
+              // Mounts only once the viewer is open, so there is nothing to
+              // preload into the document head — it just must not lazy-load.
+              loading="eager"
               className="object-contain select-none"
             />
 
@@ -154,10 +166,13 @@ export function Lightbox({
                       aria-label={`Show image ${thumbIndex + 1}`}
                       aria-current={thumbIndex === index ? "true" : undefined}
                       className={cn(
-                        "relative size-16 overflow-hidden rounded-button transition-fast",
+                        "relative size-16 overflow-hidden transition-fast",
+                        // A hairline, not a gold ring. Gold on a selected
+                        // thumbnail is shop chrome; the frame only needs to read
+                        // as current.
                         thumbIndex === index
-                          ? "ring-2 ring-accent"
-                          : "opacity-50 hover:opacity-100",
+                          ? "outline outline-primary-foreground/70"
+                          : "opacity-45 hover:opacity-100",
                       )}
                     >
                       <Image src={image.src} alt="" fill sizes="64px" className="object-cover" />

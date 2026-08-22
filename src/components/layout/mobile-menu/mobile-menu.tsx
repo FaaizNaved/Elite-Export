@@ -40,6 +40,41 @@ export function MobileMenu({ open, onClose, items, megaMenu, cta, className }: M
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
+  /**
+   * Escape, wired explicitly, and the native `close` event listened for on the
+   * element rather than through React's `onClose` prop.
+   *
+   * Measured: the drawer closed on Escape but React's `onClose` never ran, so
+   * `open` stayed `true`. That left the body scroll-locked with no visible
+   * drawer, and — because `setMobileOpen(true)` is a no-op when the state is
+   * already `true` — the trigger went inert. The menu button did nothing until
+   * it was pressed a second time. The image viewer hit the same thing and
+   * solved it locally with its own key handler; this is that fix, plus the
+   * element-level `close` listener so a non-keyboard dismissal (a back
+   * gesture) cannot desync the state either.
+   */
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const sync = () => onClose();
+    dialog.addEventListener("close", sync);
+    return () => dialog.removeEventListener("close", sync);
+  }, [onClose]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      event.preventDefault();
+      onClose();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
+
   // Any navigation dismisses the drawer.
   useEffect(() => {
     if (open) onClose();
@@ -59,7 +94,6 @@ export function MobileMenu({ open, onClose, items, megaMenu, cta, className }: M
     <dialog
       ref={dialogRef}
       aria-label="Site navigation"
-      onClose={onClose}
       onClick={(event) => {
         if (event.target === dialogRef.current) onClose();
       }}
@@ -188,7 +222,7 @@ function DrawerLink({
       className={cn(
         "block py-2 transition-fast",
         subdued ? "font-sans text-small" : "font-sans text-body-lg",
-        active ? "text-accent" : "text-foreground-secondary hover:text-foreground",
+        active ? "text-accent-strong" : "text-foreground-secondary hover:text-foreground",
       )}
     >
       {link.label}

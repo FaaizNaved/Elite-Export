@@ -47,20 +47,11 @@ export interface NavbarProps {
 const SCROLL_THRESHOLD = 24;
 
 /**
- * Grace period before a panel closes on mouse-out. Without it, the diagonal
- * travel from a nav label down into the panel below it crosses a few pixels of
- * dead space and snaps the panel shut — the one interaction on the site that
- * consistently reads as cheap. Short enough to be invisible when the user
- * genuinely leaves.
- */
-const CLOSE_DELAY = 140;
-
-/**
  * Sticky primary navigation.
  *
- * Shrinks and gains a translucent surface on scroll. Dropdowns and the mega
- * menu open on hover for pointer users and on Enter/Space for keyboard users,
- * close on Escape, and are wired with `aria-expanded`/`aria-controls`.
+ * Shrinks and gains a translucent surface on scroll. Panels open on click or
+ * Enter/Space — never on hover — and close on Escape, on a click outside the
+ * header, or on a route change. Wired with `aria-expanded`/`aria-controls`.
  */
 export function Navbar({
   logo,
@@ -77,27 +68,18 @@ export function Navbar({
   const [openItem, setOpenItem] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const panelId = useId();
   const pathname = usePathname();
 
-  const cancelClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-    closeTimer.current = null;
-  };
-
-  /** Opening is immediate; only closing waits. Latency on the way in is felt. */
-  const showPanel = (label: string | null) => {
-    cancelClose();
-    setOpenItem(label);
-  };
-
-  const hidePanel = () => {
-    cancelClose();
-    closeTimer.current = setTimeout(() => setOpenItem(null), CLOSE_DELAY);
-  };
-
-  useEffect(() => cancelClose, []);
+  /**
+   * Panels open on click and on Enter/Space, never on hover.
+   *
+   * Hovering used to open the products panel, which meant a pointer crossing
+   * the bar on its way anywhere dropped a full-width drawer over the page
+   * unasked. Opening a catalogue should be a decision. Hover still lights the
+   * trigger; it no longer commits the visitor to anything.
+   */
+  const showPanel = (label: string | null) => setOpenItem(label);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > SCROLL_THRESHOLD);
@@ -116,23 +98,40 @@ export function Navbar({
 
   useEffect(() => {
     if (!openItem) return;
+
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpenItem(null);
     };
+    // A click-opened panel has to be dismissable by clicking away from it —
+    // there is no pointer-out to close it now that hover does not open it.
+    const onPointerDown = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) setOpenItem(null);
+    };
+
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("pointerdown", onPointerDown);
+    };
   }, [openItem]);
 
   const overlaid = overlay || (overlayRoutes?.includes(pathname) ?? false);
   const transparent = overlaid && !scrolled && !openItem;
+  /**
+   * The bar is charcoal over a hero and ivory everywhere else, so the gold that
+   * marks the current section has to change with it. `--color-accent` reads
+   * cleanly on the dark bar and measures 3.06:1 on the ivory one, which is
+   * under the floor for a 13px label — the active nav item was the least
+   * legible word in the header on every page except home.
+   */
+  const activeClass = transparent ? "text-accent" : "text-accent-strong";
   const activeMenu = items.find((item) => item.label === openItem);
   const activeColumns = activeMenu?.megaMenu === "products" ? megaMenu : null;
 
   return (
     <header
       ref={headerRef}
-      onMouseLeave={hidePanel}
-      onMouseEnter={cancelClose}
       className={cn(
         "fixed inset-x-0 top-0 z-sticky transition-base",
         transparent
@@ -179,10 +178,6 @@ export function Navbar({
                 return (
                   <li
                     key={item.href}
-                    // Moving onto a plain link closes whatever was open —
-                    // otherwise the products panel stayed up while the pointer
-                    // sat on "About".
-                    onMouseEnter={() => showPanel(hasPanel ? item.label : null)}
                     className="group/nav-item relative"
                   >
                     {hasPanel ? (
@@ -191,7 +186,7 @@ export function Navbar({
                         aria-expanded={expanded}
                         aria-controls={expanded ? panelId : undefined}
                         onClick={() => showPanel(expanded ? null : item.label)}
-                        className={cn(navLinkClasses, active && "text-accent")}
+                        className={cn(navLinkClasses, active && activeClass)}
                       >
                         {item.label}
                         <Icon
@@ -204,7 +199,7 @@ export function Navbar({
                       <Link
                         href={item.href}
                         aria-current={active ? "page" : undefined}
-                        className={cn(navLinkClasses, active && "text-accent")}
+                        className={cn(navLinkClasses, active && activeClass)}
                       >
                         {item.label}
                       </Link>

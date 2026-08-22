@@ -12,22 +12,16 @@ import { getCategories, getLegalPages } from "@/lib/content";
 export async function SiteFooter() {
   const [categories, legalPages] = await Promise.all([getCategories(), getLegalPages()]);
 
-  // Proof points, derived from the company record so they never go stale.
-  const trust = [
-    { value: `${new Date().getFullYear() - company.foundedYear}`, label: "Years manufacturing" },
-    { value: `${company.exportMarkets.length}`, label: "Export markets" },
-    { value: company.employees ?? "", label: "Craftspeople and staff" },
-    { value: `${company.certifications.length}`, label: "Certifications held" },
-  ].filter((item) => item.value.length > 0);
-
+  // A back page restates nothing: it says who made the catalogue and how to
+  // reach them. The certification badges are the exception, because they are
+  // the one claim on the page a buyer can independently verify.
   return (
     <Footer
       logo={<Logo label={siteConfig.name} />}
-      description={siteConfig.description}
+      description={company.tagline}
       companyName={siteConfig.legalName}
       contact={company.contact}
       social={company.social}
-      trust={trust}
       certifications={company.certifications.map((certification) => certification.name)}
       columns={[
         ...footerNav.map((group) => ({ heading: group.heading, links: group.links })),

@@ -1,12 +1,12 @@
 import { faqCollectionSchema, testimonialCollectionSchema } from "../../models";
 import {
   homeCompanySchema,
-  homeCtaSchema,
   homeHeroSchema,
   homePauseSchema,
   homeSectionSchema,
+  homeStatementSchema,
 } from "../../models/home";
-import type { HomeContent } from "../../models/home";
+import type { HomeContent, HomeStatement } from "../../models/home";
 import type { Faq, FaqTopic, Testimonial } from "../../types";
 import { once } from "../../utils/cache";
 import { readJsonFile } from "./source";
@@ -49,11 +49,10 @@ const homeFile = (name: string) => `home/${name}.json`;
 export const getHomeContent = once(async (): Promise<HomeContent> => {
   const sectionKeys = Object.keys(HOME_SECTIONS) as Array<keyof typeof HOME_SECTIONS>;
 
-  const [hero, intro, pause, cta, ...sectionValues] = await Promise.all([
+  const [hero, intro, pause, ...sectionValues] = await Promise.all([
     readJsonFile(homeFile("hero"), homeHeroSchema),
     readJsonFile(homeFile("company"), homeCompanySchema),
     readJsonFile(homeFile("pause"), homePauseSchema),
-    readJsonFile(homeFile("cta"), homeCtaSchema),
     ...sectionKeys.map((key) => readJsonFile(homeFile(HOME_SECTIONS[key]), homeSectionSchema)),
   ]);
 
@@ -61,7 +60,18 @@ export const getHomeContent = once(async (): Promise<HomeContent> => {
     sectionKeys.map((key, index) => [key, sectionValues[index]]),
   ) as HomeContent["sections"];
 
-  return { hero, intro, pause, sections, cta };
+  return { hero, intro, pause, sections };
+});
+
+/**
+ * The closing statement, rendered by the root layout on every page.
+ *
+ * Site-level, not part of the home document — every page ends with it, so
+ * hanging it off `getHomeContent()` would make the home page the owner of
+ * something the whole site depends on.
+ */
+export const getStatement = once(async (): Promise<HomeStatement> => {
+  return readJsonFile("statement.json", homeStatementSchema);
 });
 
 /* -------------------------------------------------------------------------- */

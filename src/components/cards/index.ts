@@ -2,8 +2,8 @@ export { CardAction } from "./card-action";
 export type { CardActionProps } from "./card-action";
 export { CardImage } from "./card-image";
 export type { CardImageProps } from "./card-image";
-export { CategoryCard, SubcategoryCard } from "./category-card";
-export type { CategoryCardProps, SubcategoryCardProps } from "./category-card";
+export { CategoryCard } from "./category-card";
+export type { CategoryCardProps } from "./category-card";
 export {
   CertificateCard,
   CountryCard,

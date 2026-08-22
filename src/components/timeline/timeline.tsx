@@ -42,7 +42,11 @@ export function Timeline({ entries, variant = "vertical", className }: TimelineP
             key={entry.marker + entry.title}
             className="w-72 shrink-0 snap-start border-t border-border pt-5"
           >
-            <span aria-hidden className="mb-4 block size-2.5 rotate-45 bg-accent" />
+            {/* Ink, not brass. Six gold markers down a column was three times the
+                whole homepage's brass budget inside one component, which turned
+                the accent into a list bullet. A milestone record wants a node on
+                a rule, in the same ink as the catalogue's own rules. */}
+            <span aria-hidden className="mb-4 block size-2.5 rotate-45 bg-foreground/30" />
             <EntryBody entry={entry} />
           </li>
         ))}
@@ -82,7 +86,7 @@ export function Timeline({ entries, variant = "vertical", className }: TimelineP
             <span
               aria-hidden
               className={cn(
-                "absolute top-1.5 left-4 block size-2.5 -translate-x-1/2 rotate-45 bg-accent",
+                "absolute top-1.5 left-4 block size-2.5 -translate-x-1/2 rotate-45 bg-foreground/30",
                 leftSide && "md:left-full",
                 rightSide && "md:left-0",
               )}
@@ -98,7 +102,7 @@ export function Timeline({ entries, variant = "vertical", className }: TimelineP
 function EntryBody({ entry }: { entry: TimelineEntry }) {
   return (
     <div className="flex flex-col gap-2">
-      <Typography variant="overline" className="text-accent">
+      <Typography variant="overline">
         {entry.marker}
       </Typography>
       <Typography variant="h4" as="h3">

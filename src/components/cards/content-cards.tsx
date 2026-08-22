@@ -33,9 +33,9 @@ export interface FeatureCardProps {
 export function FeatureCard({ icon, title, description, step, className }: FeatureCardProps) {
   return (
     <Card variant="outlined" padding="lg" className={cn("gap-4", className)}>
-      {icon && <Icon icon={icon} size="lg" tone="accent" />}
+      {icon && <Icon icon={icon} size="lg" tone="muted" />}
       {step !== undefined && (
-        <Typography variant="overline" className="text-accent">
+        <Typography variant="overline">
           {String(step).padStart(2, "0")}
         </Typography>
       )}
@@ -237,7 +237,7 @@ export function StatCard({
 }: StatCardProps) {
   return (
     <div className={cn("flex flex-col gap-2", className)}>
-      {icon && <Icon icon={icon} size="md" tone="accent" />}
+      {icon && <Icon icon={icon} size="md" tone="muted" />}
 
       <span className="font-display text-h1 font-medium">
         {animate ? (
@@ -251,7 +251,12 @@ export function StatCard({
         )}
       </span>
 
-      <Typography variant="small" className="text-foreground-secondary">
+      {/* Inherits its surface. This was pinned to `text-foreground-secondary`
+          (#666), which is correct on ivory and measures 3.0:1 on the charcoal
+          band — and `StatsBand tone="dark"` is how about, manufacturing,
+          quality, technology and export all render it, so the label under every
+          headline figure on the site failed contrast. */}
+      <Typography variant="small" className="text-current/70">
         {label}
       </Typography>
     </div>

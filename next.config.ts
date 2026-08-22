@@ -5,6 +5,16 @@ const nextConfig: NextConfig = {
   pageExtensions: ["ts", "tsx", "md", "mdx"],
   images: {
     formats: ["image/avif", "image/webp"],
+    /**
+     * Next 16 changed the default from "any quality" to `[75]`, and a `quality`
+     * prop outside the list is silently coerced to the nearest allowed value —
+     * it does not error. The hero (90), the full-bleed plates (90) and the hide
+     * band (88) were all being served at 75, which is precisely the wrong place
+     * to lose detail: they are the largest photographs on the site and the ones
+     * that have to carry leather grain. Every value used in the codebase has to
+     * appear here.
+     */
+    qualities: [75, 88, 90],
   },
 };
 

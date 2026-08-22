@@ -104,9 +104,49 @@ export function ScaleIn(props: MotionProps) {
   return <Animated variants={scaleIn} {...props} />;
 }
 
-/** Editorial masked reveal — the content wipes up from behind its own baseline. */
-export function Reveal(props: MotionProps) {
-  return <Animated variants={reveal} {...props} />;
+/**
+ * Editorial masked reveal — the content wipes up from behind its own baseline.
+ *
+ * The mask is this component's `overflow-hidden`, not a `clip-path` keyframe:
+ * the content translates up inside a box that clips it. Same construction as
+ * `ImageReveal`, and for the same reason — see the note on the `reveal` variant.
+ */
+export function Reveal({
+  className,
+  children,
+  delay = 0,
+  trigger = "viewport",
+  once = true,
+  amount = 0.25,
+  ...props
+}: MotionProps) {
+  const prefersReducedMotion = useReducedMotion();
+
+  if (prefersReducedMotion) {
+    return (
+      <div className={className} {...props}>
+        {children}
+      </div>
+    );
+  }
+
+  return (
+    // The padding/negative-margin pair gives the mask room to clear descenders.
+    // Without it the box clips at the baseline and every "g" and "y" loses its
+    // tail permanently — at rest, not just mid-animation. The negative margin
+    // hands the space back to the layout so callers keep their own spacing.
+    <div className={cn("overflow-hidden pb-[0.18em] -mb-[0.18em]", className)} {...props}>
+      <motion.div
+        initial="hidden"
+        {...(trigger === "mount"
+          ? { animate: "visible" }
+          : { whileInView: "visible", viewport: { once, amount } })}
+        variants={withDelay(reveal, delay)}
+      >
+        {children}
+      </motion.div>
+    </div>
+  );
 }
 
 /**

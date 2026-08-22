@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CertificateCard } from "@/components/cards";
-import { CtaBanner } from "@/components/layout";
 import { Stagger, StaggerItem } from "@/components/motion";
-import { FeatureGrid, PageHero, ProcessSteps, Prose, SectionHeader, StatsBand } from "@/components/sections";
-import { buttonVariants } from "@/components/ui/button";
+import { FeatureGrid, PageHero, ProcessSteps, Prose, SectionHeader } from "@/components/sections";
 import { Container } from "@/components/ui/container";
 import { Section } from "@/components/ui/section";
 import { company } from "@/config";
-import { ROUTES } from "@/constants";
 import { getCompanyPage } from "@/lib/content";
 import { companyPageMetadata } from "@/lib/seo";
 import { loadCompanyContent } from "@/lib/mdx";
@@ -37,8 +33,6 @@ export default async function QualityPage() {
         image={page.hero}
         href={page.href}
       />
-
-      <StatsBand stats={page.stats} tone="dark" />
 
       <Prose>
         <Content />
@@ -81,19 +75,6 @@ export default async function QualityPage() {
           </Container>
         </Section>
       )}
-
-      <CtaBanner
-        heading="Book an inspection"
-        description="We host buyer and third-party inspections at any stage of production, announced or unannounced."
-        primaryAction={
-          <Link
-            href={ROUTES.contact}
-            className={buttonVariants({ variant: "secondary", size: "lg" })}
-          >
-            Contact quality team
-          </Link>
-        }
-      />
     </>
   );
 }
